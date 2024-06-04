@@ -50,6 +50,7 @@ class CommunityMembersViewModel @Inject constructor(
     //gets list of all community members
     fun getAllMembers(showList: Int, page: Int) {
         viewModelScope.launchIO {
+            Log.d("PUI", "getAllMembers: ")
             val requestBuilder = GetAllMemberRequest.Builder()
                 .page(page)
                 .excludeSelfUser(true)

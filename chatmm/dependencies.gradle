@@ -100,5 +100,5 @@ dependencies {
     androidTestImplementation deps.android_test.espresso
 
     // chat-sdk
-    implementation 'community.likeminds:likemindschat:2.2.1'
+    implementation 'community.likeminds:likemindschat:2.2.1000'
 }

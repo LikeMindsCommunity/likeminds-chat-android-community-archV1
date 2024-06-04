@@ -2,6 +2,7 @@ package com.likeminds.chatmm.member.view
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
@@ -77,7 +78,6 @@ class LMChatCommunityMembersFragment :
         initializeClickListener()
         initRecyclerView()
         initData()
-        initializeSearchView()
     }
 
     override fun observeData() {
@@ -132,6 +132,7 @@ class LMChatCommunityMembersFragment :
     }
 
     private fun initData() {
+        Log.d("PUI", "initData: ")
         viewModel.getAllMembers(extras.showList, 1)
     }
 
@@ -145,8 +146,11 @@ class LMChatCommunityMembersFragment :
             override fun onLoadMore(currentPage: Int) {
                 if (currentPage > 0) {
                     if (searchKeyword == null) {
+                        Log.d("PUI", "scrollListener: searchKeyword nulllll")
+
                         viewModel.getAllMembers(extras.showList, currentPage)
                     } else {
+                        Log.d("PUI", "scrollListener: searchKeyword not")
                         viewModel.searchMembers(extras.showList, currentPage, searchKeyword ?: "")
                     }
                 }
@@ -258,6 +262,7 @@ class LMChatCommunityMembersFragment :
         binding.searchBar.apply {
             show()
             post {
+                initializeSearchView()
                 openSearch()
             }
         }
@@ -269,11 +274,15 @@ class LMChatCommunityMembersFragment :
 
             setSearchViewListener(object : CustomSearchBar.SearchViewListener {
                 override fun onSearchViewClosed() {
-                    binding.searchBar.hide()
+                    Log.d("PUI", "onSearchViewClosed: ")
+
+                    hide()
                     clearMemberSearch()
                 }
 
                 override fun crossClicked() {
+                    Log.d("PUI", "crossClicked: ")
+
                     clearMemberSearch()
                 }
 
@@ -285,6 +294,8 @@ class LMChatCommunityMembersFragment :
                 }
 
                 override fun emptyKeywordEntered() {
+                    Log.d("PUI", "emptyKeywordEntered: ")
+
                     clearMemberSearch()
                 }
             })
