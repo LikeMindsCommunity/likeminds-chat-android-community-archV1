@@ -2,12 +2,12 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_search"
+    android:id="@+id/lm_chat_nav_search"
     app:startDestination="@id/fragment_search">
 
     <fragment
         android:id="@+id/fragment_search"
-        android:name="com.likeminds.chatmm.search.view.SearchFragment"
+        android:name="com.likeminds.chatmm.search.view.LMChatSearchFragment"
         android:label="SearchFragment"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/lm_chat_fragment_search" />
 </navigation>

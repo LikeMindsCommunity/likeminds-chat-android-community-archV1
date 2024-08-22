@@ -25,7 +25,7 @@ import com.likeminds.chatmm.databinding.FragmentChatBinding
 import com.likeminds.chatmm.dm.model.CheckDMTabViewData
 import com.likeminds.chatmm.member.model.MemberViewData
 import com.likeminds.chatmm.member.util.MemberImageUtil
-import com.likeminds.chatmm.search.view.SearchActivity
+import com.likeminds.chatmm.search.view.LMChatSearchActivity
 import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.utils.connectivity.ConnectivityBroadcastReceiver
 import com.likeminds.chatmm.utils.connectivity.ConnectivityReceiverListener
@@ -158,7 +158,7 @@ class LMChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(),
             viewModel.getUserFromLocalDb()
 
             ivSearch.setOnClickListener {
-                SearchActivity.start(requireContext())
+                LMChatSearchActivity.start(requireContext())
                 Log.d(SDKApplication.LOG_TAG, "search started")
             }
         }

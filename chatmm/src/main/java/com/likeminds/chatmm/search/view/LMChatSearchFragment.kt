@@ -5,11 +5,11 @@ import com.likeminds.chatmm.LMAnalytics
 import com.likeminds.chatmm.SDKApplication
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
-import com.likeminds.chatmm.databinding.FragmentSearchBinding
+import com.likeminds.chatmm.databinding.LmChatFragmentSearchBinding
 import com.likeminds.chatmm.homefeed.model.HomeChatroomListShimmerViewData
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.search.model.*
-import com.likeminds.chatmm.search.util.CustomSearchBar
+import com.likeminds.chatmm.search.util.LMChatCustomSearchBar
 import com.likeminds.chatmm.search.util.SearchScrollListener
 import com.likeminds.chatmm.search.view.adapter.SearchAdapter
 import com.likeminds.chatmm.search.view.adapter.SearchAdapterListener
@@ -19,14 +19,14 @@ import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.customview.BaseFragment
 import javax.inject.Inject
 
-class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(),
+class LMChatSearchFragment : BaseFragment<LmChatFragmentSearchBinding, SearchViewModel>(),
     SearchAdapterListener {
     override fun getViewModelClass(): Class<SearchViewModel> {
         return SearchViewModel::class.java
     }
 
-    override fun getViewBinding(): FragmentSearchBinding {
-        return FragmentSearchBinding.inflate(layoutInflater)
+    override fun getViewBinding(): LmChatFragmentSearchBinding {
+        return LmChatFragmentSearchBinding.inflate(layoutInflater)
     }
 
     override fun attachDagger() {
@@ -42,8 +42,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(),
     companion object {
         const val TAG = "SearchFragment"
 
-        fun getInstance(): SearchFragment {
-            return SearchFragment()
+        fun getInstance(): LMChatSearchFragment {
+            return LMChatSearchFragment()
         }
     }
 
@@ -180,7 +180,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(),
 
             //set search listener
             setSearchViewListener(
-                object : CustomSearchBar.SearchViewListener {
+                object : LMChatCustomSearchBar.SearchViewListener {
                     override fun onSearchViewOpened() {
                         ViewUtils.showKeyboard(context)
                         viewModel.sendSearchIconClickedEvent()

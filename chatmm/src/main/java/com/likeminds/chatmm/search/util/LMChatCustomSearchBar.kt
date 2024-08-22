@@ -4,9 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.res.Configuration
-import android.text.Editable
-import android.text.TextUtils
-import android.text.TextWatcher
+import android.text.*
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -18,8 +16,8 @@ import android.widget.TextView
 import androidx.annotation.CheckResult
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LifecycleCoroutineScope
+import com.likeminds.chatmm.databinding.LmChatLayoutSearchBarBinding
 import com.likeminds.chatmm.theme.model.LMTheme
-import com.likeminds.chatmm.databinding.LayoutSearchBarBinding
 import com.likeminds.chatmm.utils.AnimationUtils
 import com.likeminds.chatmm.utils.ViewUtils
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,7 +26,7 @@ import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 
-class CustomSearchBar @JvmOverloads constructor(
+class LMChatCustomSearchBar @JvmOverloads constructor(
     mContext: Context,
     attributeSet: AttributeSet? = null
 ) : ConstraintLayout(mContext, attributeSet) {
@@ -61,7 +59,8 @@ class CustomSearchBar @JvmOverloads constructor(
     var isOpen = false
         private set
 
-    private val binding = LayoutSearchBarBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding =
+        LmChatLayoutSearchBarBinding.inflate(LayoutInflater.from(context), this, true)
 
     private lateinit var lifecycleScope: LifecycleCoroutineScope
 

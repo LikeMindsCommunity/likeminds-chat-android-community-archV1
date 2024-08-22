@@ -17,22 +17,22 @@ object ThemeUtil {
 
         val typeface = when (fontStyle) {
             "bold" -> {
-                if (currentFont != null) {
-                    Typeface.createFromAsset(context.assets, currentFont.bold)
+                if (currentFont?.bold != null) {
+                    ResourcesCompat.getFont(context,  currentFont.bold)
                 } else {
                     ResourcesCompat.getFont(context, R.font.lm_chat_roboto_bold)
                 }
             }
             "medium" -> {
-                if (currentFont != null) {
-                    Typeface.createFromAsset(context.assets, currentFont.medium)
+                if (currentFont?.medium != null) {
+                    ResourcesCompat.getFont(context, R.font.lm_chat_roboto_regular)
                 } else {
                     ResourcesCompat.getFont(context, R.font.lm_chat_roboto_medium)
                 }
             }
             "regular" -> {
-                if (currentFont != null) {
-                    Typeface.createFromAsset(context.assets, currentFont.regular)
+                if (currentFont?.regular != null) {
+                    ResourcesCompat.getFont(context, R.font.lm_chat_roboto_regular)
                 } else {
                     ResourcesCompat.getFont(context, R.font.lm_chat_roboto_regular)
                 }

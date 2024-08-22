@@ -33,9 +33,9 @@ class ChatMMApplication : Application(), LMChatCoreCallback {
             .textLinkColor(authPreferences.getTextLinkColor())
             .fonts(
                 LMFonts.Builder()
-                    .bold("fonts/montserrat-bold.ttf")
-                    .medium("fonts/montserrat-medium.ttf")
-                    .regular("fonts/montserrat-regular.ttf")
+                    .bold(com.likeminds.chatmm.R.font.lm_chat_roboto_bold)
+                    .medium(com.likeminds.chatmm.R.font.lm_chat_roboto_regular)
+                    .regular(com.likeminds.chatmm.R.font.lm_chat_roboto_regular)
                     .build()
             )
             .build()

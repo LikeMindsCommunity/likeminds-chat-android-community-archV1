@@ -32,13 +32,12 @@ import com.likeminds.chatmm.member.model.MemberViewData
 import com.likeminds.chatmm.member.util.MemberImageUtil
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.pushnotification.viewmodel.LMNotificationViewModel
-import com.likeminds.chatmm.search.view.SearchActivity
+import com.likeminds.chatmm.search.view.LMChatSearchActivity
 import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.utils.ValueUtils.isValidIndex
 import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
-import com.likeminds.chatmm.utils.connectivity.ConnectivityBroadcastReceiver
 import com.likeminds.chatmm.utils.connectivity.ConnectivityReceiverListener
 import com.likeminds.chatmm.utils.customview.BaseFragment
 import com.likeminds.chatmm.utils.observeInLifecycle
@@ -74,10 +73,6 @@ class HomeFeedFragment : BaseFragment<FragmentHomeFeedBinding, HomeFeedViewModel
 
     private var communityId: String = ""
     private var communityName: String = ""
-
-    private val connectivityBroadcastReceiver by lazy {
-        ConnectivityBroadcastReceiver()
-    }
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -330,7 +325,7 @@ class HomeFeedFragment : BaseFragment<FragmentHomeFeedBinding, HomeFeedViewModel
             viewModel.getUserFromLocalDb()
 
             ivSearch.setOnClickListener {
-                SearchActivity.start(requireContext())
+                LMChatSearchActivity.start(requireContext())
                 Log.d(LOG_TAG, "search started")
             }
         }

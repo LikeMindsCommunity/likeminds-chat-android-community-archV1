@@ -3,7 +3,7 @@
     <dimen name="labeled_default_width">72dp</dimen>
     <dimen name="labeled_default_height">32dp</dimen>
     <dimen name="design_snackbar_padding_vertical_2lines" tools:override="true">14dp</dimen>
-    <dimen name="lm_chat_dm_badge_horizontal_margin">-6dp</dimen>
-    <dimen name="lm_chat_dm_badge_vertical_margin">18dp</dimen>
+    <dimen name="lm_chat_dm_badge_horizontal_margin">-10dp</dimen>
+    <dimen name="lm_chat_dm_badge_vertical_margin">10dp</dimen>
     <dimen name="video_timeline_frame_height">40dip</dimen>
 </resources>

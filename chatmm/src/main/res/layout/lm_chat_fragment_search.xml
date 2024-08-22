@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         android:background="@color/lm_chat_white">
 
-        <com.likeminds.chatmm.search.util.CustomSearchBar
+        <com.likeminds.chatmm.search.util.LMChatCustomSearchBar
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

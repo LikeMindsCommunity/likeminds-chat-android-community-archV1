@@ -20,7 +20,7 @@ import com.likeminds.chatmm.member.view.LMChatCommunityMembersActivity.Companion
 import com.likeminds.chatmm.member.view.adapter.CommunityMembersAdapter
 import com.likeminds.chatmm.member.view.adapter.CommunityMembersAdapterListener
 import com.likeminds.chatmm.member.viewmodel.CommunityMembersViewModel
-import com.likeminds.chatmm.search.util.CustomSearchBar
+import com.likeminds.chatmm.search.util.LMChatCustomSearchBar
 import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.ViewUtils.hide
@@ -269,7 +269,7 @@ class LMChatCommunityMembersFragment :
         binding.searchBar.apply {
             this.initialize(lifecycleScope)
 
-            setSearchViewListener(object : CustomSearchBar.SearchViewListener {
+            setSearchViewListener(object : LMChatCustomSearchBar.SearchViewListener {
                 override fun onSearchViewClosed() {
                     hide()
                     clearMemberSearch()

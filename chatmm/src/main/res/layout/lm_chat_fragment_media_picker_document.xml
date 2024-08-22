@@ -90,7 +90,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.appcompat.widget.Toolbar>
 
-        <com.likeminds.chatmm.search.util.CustomSearchBar
+        <com.likeminds.chatmm.search.util.LMChatCustomSearchBar
             android:id="@+id/searchBar"
             android:layout_width="0dp"
             android:layout_height="?attr/actionBarSize"

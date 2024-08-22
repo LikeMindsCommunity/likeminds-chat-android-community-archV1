@@ -27,7 +27,7 @@ import com.likeminds.chatmm.media.util.MediaPlayerListener
 import com.likeminds.chatmm.media.view.adapter.MediaPickerAdapter
 import com.likeminds.chatmm.media.view.adapter.MediaPickerAdapterListener
 import com.likeminds.chatmm.media.viewmodel.MediaViewModel
-import com.likeminds.chatmm.search.util.CustomSearchBar
+import com.likeminds.chatmm.search.util.LMChatCustomSearchBar
 import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.customview.BaseFragment
 
@@ -312,7 +312,7 @@ class MediaPickerAudioFragment :
         binding.searchBar.apply {
             initialize(lifecycleScope)
             setSearchViewListener(
-                object : CustomSearchBar.SearchViewListener {
+                object : LMChatCustomSearchBar.SearchViewListener {
                     override fun onSearchViewClosed() {
                         binding.searchBar.visibility = View.GONE
                         viewModel.clearAudioFilter()

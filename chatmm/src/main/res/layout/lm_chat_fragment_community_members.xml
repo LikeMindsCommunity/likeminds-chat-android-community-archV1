@@ -21,7 +21,7 @@
             app:title="@string/lm_chat_send_dm_to"
             app:titleTextColor="@color/lm_chat_black" />
 
-        <com.likeminds.chatmm.search.util.CustomSearchBar
+        <com.likeminds.chatmm.search.util.LMChatCustomSearchBar
             android:id="@+id/search_bar"
             android:layout_width="0dp"
             android:layout_height="?attr/actionBarSize"

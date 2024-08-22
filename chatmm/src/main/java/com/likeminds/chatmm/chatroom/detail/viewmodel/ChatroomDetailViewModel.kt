@@ -1070,7 +1070,7 @@ class ChatroomDetailViewModel @Inject constructor(
         } != null
     }
 
-    private fun getDateView(date: String?): ChatroomDateViewData {
+    fun getDateView(date: String?): ChatroomDateViewData {
         return ChatroomDateViewData.Builder()
             .date(date)
             .build()

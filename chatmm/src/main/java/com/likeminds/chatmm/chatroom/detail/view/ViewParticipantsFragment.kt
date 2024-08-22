@@ -13,7 +13,7 @@ import com.likeminds.chatmm.chatroom.detail.view.adapter.ViewParticipantsAdapter
 import com.likeminds.chatmm.chatroom.detail.viewmodel.ViewParticipantsViewModel
 import com.likeminds.chatmm.databinding.FragmentViewParticipantsBinding
 import com.likeminds.chatmm.member.model.MemberViewData
-import com.likeminds.chatmm.search.util.CustomSearchBar
+import com.likeminds.chatmm.search.util.LMChatCustomSearchBar
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.ErrorUtil.emptyExtrasException
 import com.likeminds.chatmm.utils.ViewUtils.hide
@@ -131,7 +131,7 @@ class ViewParticipantsFragment :
             this.initialize(lifecycleScope)
 
             setSearchViewListener(object :
-                CustomSearchBar.SearchViewListener {
+                LMChatCustomSearchBar.SearchViewListener {
                 override fun onSearchViewClosed() {
                     hide()
                     clearParticipants()

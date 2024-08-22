@@ -67,7 +67,7 @@
             android:theme="@style/LMAppTheme.NoActionBar" />
 
         <activity
-            android:name=".search.view.SearchActivity"
+            android:name=".search.view.LMChatSearchActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/LMAppTheme.NoActionBar" />

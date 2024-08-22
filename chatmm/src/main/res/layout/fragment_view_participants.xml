@@ -107,7 +107,7 @@
 
         </com.likeminds.chatmm.theme.customview.LikeMindsToolbar>
 
-        <com.likeminds.chatmm.search.util.CustomSearchBar
+        <com.likeminds.chatmm.search.util.LMChatCustomSearchBar
             android:id="@+id/search_bar"
             android:layout_width="0dp"
             android:layout_height="?attr/actionBarSize"
