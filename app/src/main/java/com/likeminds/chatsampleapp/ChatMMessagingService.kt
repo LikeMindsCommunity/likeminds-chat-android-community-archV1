@@ -23,7 +23,10 @@ class ChatMMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Log.d(LOG_TAG, "message generated: ${message.data}")
+        Log.d(
+            LOG_TAG,
+            "message generated: ${message.data} timestamp: ${System.currentTimeMillis()}"
+        )
         mNotificationHandler.handleNotification(message.data)
     }
 }

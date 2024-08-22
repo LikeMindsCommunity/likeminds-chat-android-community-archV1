@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.Keep
 import androidx.core.app.*
 import androidx.core.app.Person
@@ -13,13 +14,14 @@ import androidx.core.app.RemoteInput
 import com.google.gson.Gson
 import com.likeminds.chatmm.LMAnalytics
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.di.DaggerLikeMindsChatComponent
 import com.likeminds.chatmm.di.LikeMindsChatComponent
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.media.util.MediaUtils
 import com.likeminds.chatmm.pushnotification.model.*
 import com.likeminds.chatmm.pushnotification.viewmodel.LMNotificationViewModel
+import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.utils.Route
 import com.likeminds.chatmm.utils.ValueUtils
 import com.likeminds.chatmm.utils.file.util.FileUtil
@@ -277,6 +279,11 @@ class LMChatNotificationHandler {
 
     //handle and show notification
     fun handleNotification(data: MutableMap<String, String>) {
+        Log.d(
+            LOG_TAG,
+            "notification received with timestamp:${System.currentTimeMillis()} data: $data"
+        )
+
         val title = data[NOTIFICATION_TITLE] ?: return
         val subTitle = data[NOTIFICATION_SUB_TITLE] ?: return
         val route = data[NOTIFICATION_ROUTE] ?: return
@@ -329,8 +336,16 @@ class LMChatNotificationHandler {
             }
             //chatroom notification -> for messages only
             Route.ROUTE_CHATROOM == routeHost -> {
+                Log.d(
+                    LOG_TAG,
+                    "chatroom notification for stack, timestamp:${System.currentTimeMillis()}"
+                )
+
                 getCommunityId(route)?.let { _ ->
                     lmNotificationViewModel.fetchUnreadConversations() {
+                        Log.d(LOG_TAG,"""
+                            conversations received from viewmodel with timestamp:${System.currentTimeMillis()}
+                        """.trimIndent())
                         if (it != null) {
                             val conversations = it.filter { notificationData ->
                                 !notificationData.chatroomLastConversationUserName.isNullOrEmpty()
@@ -379,6 +394,9 @@ class LMChatNotificationHandler {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.d(LOG_TAG,"""
+                channel created with timestamp:${System.currentTimeMillis()}
+            """.trimIndent())
             createGeneralNotificationChannel()
             createChatroomNotificationChannel()
         }
@@ -387,7 +405,8 @@ class LMChatNotificationHandler {
     private fun createGeneralNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = mApplication.getString(R.string.lm_chat_general_channel_name)
-            val descriptionText = mApplication.getString(R.string.lm_chat_general_channel_description)
+            val descriptionText =
+                mApplication.getString(R.string.lm_chat_general_channel_description)
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(GENERAL_CHANNEL_ID, name, importance).apply {
                 description = descriptionText
@@ -402,7 +421,8 @@ class LMChatNotificationHandler {
     private fun createChatroomNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = mApplication.getString(R.string.lm_chat_chatroom_channel_name)
-            val descriptionText = mApplication.getString(R.string.lm_chat_chatroom_channel_description)
+            val descriptionText =
+                mApplication.getString(R.string.lm_chat_chatroom_channel_description)
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHATROOM_CHANNEL_ID, name, importance).apply {
                 description = descriptionText

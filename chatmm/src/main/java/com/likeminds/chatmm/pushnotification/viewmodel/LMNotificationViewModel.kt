@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.likeminds.chatmm.LMAnalytics
-import com.likeminds.chatmm.SDKApplication
+import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.conversation.model.ConversationViewData
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.pushnotification.model.ChatroomNotificationViewData
@@ -23,14 +23,32 @@ class LMNotificationViewModel @Inject constructor(
 
     fun fetchUnreadConversations(cb: (List<ChatroomNotificationViewData>?) -> Unit) {
         viewModelScope.launchIO {
+            Log.d(
+                LOG_TAG,
+                "API Call to fetch unread conversations timestamp:${System.currentTimeMillis()}"
+            )
+
             val response = lmChatClient.getUnreadConversationNotification()
+
+            Log.d(LOG_TAG, "API Call response received timestamp:${System.currentTimeMillis()}")
+
             if (response.success) {
+                Log.d(
+                    LOG_TAG,
+                    "API Call response received  is successful timestamp:${System.currentTimeMillis()}"
+                )
                 val data = response.data?.unreadConversation ?: return@launchIO
                 val conversations = ViewDataConverter.convertChatroomNotificationDataList(data)
+
+                Log.d(
+                    LOG_TAG,
+                    "API Call response received and converted timestamp:${System.currentTimeMillis()}"
+                )
+
                 cb(conversations)
             } else {
                 Log.e(
-                    SDKApplication.LOG_TAG,
+                    LOG_TAG,
                     "unread notification failed: ${response.errorMessage}"
                 )
             }
