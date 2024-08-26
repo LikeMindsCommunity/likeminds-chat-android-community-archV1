@@ -101,7 +101,7 @@ class LMChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(),
         viewModel.checkDMTabResponse.observe(viewLifecycleOwner) { response ->
             if (response != null) {
                 setDMMeta(response)
-                updateUnreadDMCount(response.unreadDMCount)
+//                updateUnreadDMCount(response.unreadDMCount)
             }
         }
     }
@@ -190,27 +190,28 @@ class LMChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>(),
                 1 -> {
                     tab.apply {
                         text = getString(R.string.lm_chat_dms)
-                        val unreadDMCount = dmMeta?.unreadDMCount ?: 0
-                        if (unreadDMCount > 0) {
-                            val badge = orCreateBadge
-                            badge.apply {
-                                horizontalOffset =
-                                    resources.getDimension(R.dimen.lm_chat_dm_badge_horizontal_margin)
-                                        .roundToInt()
-                                verticalOffset =
-                                    resources.getDimension(R.dimen.lm_chat_dm_badge_vertical_margin)
-                                        .roundToInt()
-
-                                number = unreadDMCount
-                                maxCharacterCount = 2
-                                backgroundColor = LMTheme.getButtonsColor()
-
-                                badgeTextColor =
-                                    ContextCompat.getColor(requireContext(), R.color.lm_chat_white)
-                            }
-                        } else {
-                            removeBadge()
-                        }
+                        removeBadge()
+//                        val unreadDMCount = dmMeta?.unreadDMCount ?: 0
+//                        if (unreadDMCount > 0) {
+//                            val badge = orCreateBadge
+//                            badge.apply {
+//                                horizontalOffset =
+//                                    resources.getDimension(R.dimen.lm_chat_dm_badge_horizontal_margin)
+//                                        .roundToInt()
+//                                verticalOffset =
+//                                    resources.getDimension(R.dimen.lm_chat_dm_badge_vertical_margin)
+//                                        .roundToInt()
+//
+//                                number = unreadDMCount
+//                                maxCharacterCount = 2
+//                                backgroundColor = LMTheme.getButtonsColor()
+//
+//                                badgeTextColor =
+//                                    ContextCompat.getColor(requireContext(), R.color.lm_chat_white)
+//                            }
+//                        } else {
+//                            removeBadge()
+//                        }
                     }
                 }
 

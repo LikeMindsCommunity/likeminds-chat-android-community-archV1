@@ -198,6 +198,14 @@ class DMFeedViewModel @Inject constructor(
         }
     }
 
+    fun observeLiveHomeFeed(context: Context) {
+        lmChatClient.observeLiveHomeFeed(context)
+    }
+
+    fun removeLiveHomeFeedListener() {
+        lmChatClient.removeLiveHomeFeedListener()
+    }
+
     override fun onCleared() {
         compositeDisposable.dispose()
         super.onCleared()

@@ -138,6 +138,12 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
         if (!viewModel.isDBEmpty() && !userPreferences.getIsGuestUser()) {
             startSync()
         }
+        viewModel.observeLiveHomeFeed(requireContext())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.removeLiveHomeFeedListener()
     }
 
     private fun startSync() {
