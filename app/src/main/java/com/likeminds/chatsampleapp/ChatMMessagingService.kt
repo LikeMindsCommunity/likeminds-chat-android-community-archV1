@@ -12,6 +12,7 @@ class ChatMMessagingService : FirebaseMessagingService() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d(LOG_TAG, "service created")
         mNotificationHandler = LMChatNotificationHandler.getInstance()
         mNotificationHandler.create(this.application)
     }
@@ -23,6 +24,11 @@ class ChatMMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        Log.d(
+            LOG_TAG, """
+            notification received: ${message.notification?.title} ${message.notification?.body} 
+        """.trimIndent()
+        )
         Log.d(
             LOG_TAG,
             "message generated: ${message.data} timestamp: ${System.currentTimeMillis()}"

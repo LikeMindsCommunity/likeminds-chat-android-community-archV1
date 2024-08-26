@@ -1,8 +1,10 @@
 package com.likeminds.chatsampleapp
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import com.likeminds.chatmm.*
 import com.likeminds.chatmm.theme.model.LMChatTheme
@@ -46,13 +48,19 @@ class ChatMMApplication : Application(), LMChatCoreCallback {
             theme = chatTheme,
             domain = "",
             enablePushNotifications = true,
-            deviceId = ""
+            deviceId = deviceId()
         )
     }
 
     override fun login() {
         super.login()
         // override this function to trigger login.
+    }
+
+    @SuppressLint("HardwareIds")
+    fun deviceId(): String {
+        return Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+            ?: ""
     }
 
     //get widget data and modify the data and return updated data in ChatEvent

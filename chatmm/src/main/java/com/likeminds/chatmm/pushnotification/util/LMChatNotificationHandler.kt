@@ -320,6 +320,10 @@ class LMChatNotificationHandler {
         when {
             //when new chatroom is created
             unreadNewChatroom != null -> {
+                Log.d(
+                    LOG_TAG,
+                    "chatroom notification for new chatroom, timestamp:${System.currentTimeMillis()}"
+                )
                 val unreadNewChatroomData = gson.fromJson(
                     unreadNewChatroom,
                     ChatroomNotificationViewData::class.java
@@ -367,6 +371,10 @@ class LMChatNotificationHandler {
                 when (routeHost) {
                     //for poll chatroom
                     Route.ROUTE_POLL_CHATROOM -> {
+                        Log.d(
+                            LOG_TAG,
+                            "chatroom notification for poll chatroom, timestamp:${System.currentTimeMillis()}"
+                        )
                         sendNewPollChatRoomSingleNotification(
                             mApplication,
                             title,
@@ -445,6 +453,10 @@ class LMChatNotificationHandler {
         category: String?,
         subcategory: String?,
     ) {
+        Log.d(
+            LOG_TAG,
+            "chatroom notification for normal, timestamp:${System.currentTimeMillis()}"
+        )
         // notificationId is a unique int for each notification that you must define
         val notificationId = route.hashCode()
         val resultPendingIntent: PendingIntent? =
@@ -468,6 +480,10 @@ class LMChatNotificationHandler {
             notificationBuilder.setContentIntent(resultPendingIntent)
         }
         with(NotificationManagerCompat.from(mApplication)) {
+            Log.d(
+                LOG_TAG,
+                "displayed normal chatroom notification, timestamp:${System.currentTimeMillis()}"
+            )
             notify(notificationId, notificationBuilder.build())
         }
     }
@@ -946,6 +962,7 @@ class LMChatNotificationHandler {
         }
         //Notify group notification
         with(notificationManagerCompat) {
+            Log.d(LOG_TAG,"group notification displayed timestamp :${System.currentTimeMillis()}")
             notify(
                 groupRoute,
                 NOTIFICATION_UNREAD_CONVERSATION_GROUP_ID,
