@@ -1759,9 +1759,14 @@ class ChatroomDetailViewModel @Inject constructor(
             return@map builder.build()
         }
 
+        //Get widget from widgetMap and add it to updatedConversation
+        val widgetId = response.conversation.widgetId
+        val widget = response.widgets[widgetId]
+
         val updatedConversation = response.conversation.toBuilder()
             .uploadWorkerUUID(uploadWorkerUUID)
             .attachments(attachmentList)
+            .widget(widget)
             .build()
 
         // request to save the posted conversation

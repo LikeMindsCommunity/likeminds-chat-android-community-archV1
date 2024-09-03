@@ -12,9 +12,9 @@ import androidx.core.app.*
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import com.google.gson.Gson
-import com.likeminds.chatmm.LMAnalytics
-import com.likeminds.chatmm.R
+import com.likeminds.chatmm.*
 import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
+import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil
 import com.likeminds.chatmm.di.DaggerLikeMindsChatComponent
 import com.likeminds.chatmm.di.LikeMindsChatComponent
 import com.likeminds.chatmm.media.model.*
@@ -51,6 +51,8 @@ class LMChatNotificationHandler {
 
     companion object {
         private var notificationHandler: LMChatNotificationHandler? = null
+
+        private var launcherIntent: Intent? = null
 
         const val GENERAL_CHANNEL_ID = "notification_general"
         const val CHATROOM_CHANNEL_ID = "chatroom_channel_id"
@@ -239,11 +241,12 @@ class LMChatNotificationHandler {
             }
 
             var resultPendingIntent: PendingIntent? = null
+
             if (intent != null) {
-                resultPendingIntent = PendingIntent.getActivity(
+                resultPendingIntent = PendingIntent.getActivities(
                     context,
                     notificationId,
-                    intent,
+                    arrayOf(launcherIntent, intent),
                     PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
             }
@@ -252,7 +255,7 @@ class LMChatNotificationHandler {
     }
 
     //create the instance of the handler and channel for notification
-    fun create(application: Application) {
+    fun create(application: Application, launcherIntent: Intent) {
         mApplication = application
         createRockyComponent(application)
 
@@ -261,6 +264,8 @@ class LMChatNotificationHandler {
         notificationIcon = R.drawable.lm_chat_ic_notification
 
         notificationTextColor = LMTheme.getButtonsColor()
+
+        LMChatNotificationHandler.launcherIntent = launcherIntent
 
         createNotificationChannel()
     }
@@ -275,6 +280,11 @@ class LMChatNotificationHandler {
 
     private fun getCommunityId(route: String?): String? {
         return Route.getQueryParam(route, "community_id")
+    }
+
+    private fun getChatroomId(route: String?): String? {
+        return Route.getQueryParam(route, "collabcard_id")
+            ?: Route.getQueryParam(route, "chatroom_id")
     }
 
     //handle and show notification
@@ -346,28 +356,34 @@ class LMChatNotificationHandler {
                 )
 
                 getCommunityId(route)?.let { _ ->
-                    lmNotificationViewModel.fetchUnreadConversations() {
-                        Log.d(LOG_TAG,"""
+                    val chatroomIdReceivedFromRoute = getChatroomId(route)
+                    val chatroomIdOpened = SDKApplication.getInstance().openedChatroomId
+                    if (chatroomIdOpened != chatroomIdReceivedFromRoute) {
+                        lmNotificationViewModel.fetchUnreadConversations {
+                            Log.d(
+                                LOG_TAG, """
                             conversations received from viewmodel with timestamp:${System.currentTimeMillis()}
-                        """.trimIndent())
-                        if (it != null) {
-                            val conversations = it.filter { notificationData ->
-                                !notificationData.chatroomLastConversationUserName.isNullOrEmpty()
-                            }
-                            initConversationsGroupNotification(
-                                mApplication,
-                                conversations,
-                                title,
-                                subTitle,
-                                category,
-                                subcategory
+                        """.trimIndent()
                             )
+                            if (it != null) {
+                                val conversations = it.filter { notificationData ->
+                                    !notificationData.chatroomLastConversationUserName.isNullOrEmpty()
+                                }
+                                initConversationsGroupNotification(
+                                    mApplication,
+                                    conversations,
+                                    title,
+                                    subTitle,
+                                    category,
+                                    subcategory
+                                )
+                            }
                         }
                     }
                 }
             }
 
-            !title.isBlank() && !subTitle.isBlank() && !route.isBlank() -> {
+            title.isNotBlank() && subTitle.isNotBlank() && route.isNotBlank() -> {
                 when (routeHost) {
                     //for poll chatroom
                     Route.ROUTE_POLL_CHATROOM -> {
@@ -386,14 +402,18 @@ class LMChatNotificationHandler {
                     }
                     //for other cases
                     else -> {
-                        sendNormalNotification(
-                            mApplication,
-                            title,
-                            subTitle,
-                            route,
-                            category,
-                            subcategory
-                        )
+                        val chatroomIdReceivedFromRoute = getChatroomId(route)
+                        val chatroomIdOpened = SDKApplication.getInstance().openedChatroomId
+                        if (chatroomIdOpened != chatroomIdReceivedFromRoute) {
+                            sendNormalNotification(
+                                mApplication,
+                                title,
+                                subTitle,
+                                route,
+                                category,
+                                subcategory
+                            )
+                        }
                     }
                 }
             }
@@ -402,9 +422,11 @@ class LMChatNotificationHandler {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Log.d(LOG_TAG,"""
+            Log.d(
+                LOG_TAG, """
                 channel created with timestamp:${System.currentTimeMillis()}
-            """.trimIndent())
+            """.trimIndent()
+            )
             createGeneralNotificationChannel()
             createChatroomNotificationChannel()
         }
@@ -962,7 +984,7 @@ class LMChatNotificationHandler {
         }
         //Notify group notification
         with(notificationManagerCompat) {
-            Log.d(LOG_TAG,"group notification displayed timestamp :${System.currentTimeMillis()}")
+            Log.d(LOG_TAG, "group notification displayed timestamp :${System.currentTimeMillis()}")
             notify(
                 groupRoute,
                 NOTIFICATION_UNREAD_CONVERSATION_GROUP_ID,
@@ -991,7 +1013,7 @@ class LMChatNotificationHandler {
         val audioCount = unreadConversation.attachments?.filter { it.type == AUDIO }?.size ?: 0
         val voiceNoteCount =
             unreadConversation.attachments?.filter { it.type == VOICE_NOTE }?.size ?: 0
-        var updatedContentText = contentText
+        var updatedContentText = ChatroomUtil.removeTemporaryText(contentText)
 
         updatedContentText = when {
             updatedContentText.isNotEmpty() -> updatedContentText

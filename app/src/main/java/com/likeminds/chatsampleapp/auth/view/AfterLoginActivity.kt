@@ -1,15 +1,20 @@
 package com.likeminds.chatsampleapp.auth.view
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.likeminds.chatmm.LMChatCore
-import com.likeminds.chatmm.chat.view.LMChatFragment
-import com.likeminds.chatmm.member.model.UserResponse
-import com.likeminds.chatsampleapp.*
+import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
+import com.likeminds.chatmm.utils.ExtrasUtil
+import com.likeminds.chatsampleapp.ChatMMApplication
 import com.likeminds.chatsampleapp.auth.model.LoginExtras
 import com.likeminds.chatsampleapp.auth.util.AuthPreferences
 import com.likeminds.chatsampleapp.databinding.ActivityAfterLoginBinding
+import com.likeminds.chatsampleapp.likemindschat.LikeMindsChatActivity
+import com.likeminds.likemindschat.LMChatClient
+import com.likeminds.likemindschat.user.model.LogoutRequest
 import kotlinx.coroutines.*
 
 class AfterLoginActivity : AppCompatActivity() {
@@ -25,89 +30,45 @@ class AfterLoginActivity : AppCompatActivity() {
         val binding = ActivityAfterLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        extra = intent.getParcelableExtra(ChatMMApplication.EXTRA_LOGIN)
-        if (extra == null) {
-            finish()
-        }
-
-        initCommunityTab()
-
-//        callInitiateUser { accessToken, refreshToken ->
-//            withAPIKeySecurity(accessToken, refreshToken)
-//        }
-
-        binding.bottomNav.setOnItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.community_tab -> {
-                    initCommunityTab()
-                }
-
-                R.id.user -> {
-                    initUserFragment()
-                }
-            }
-            return@setOnItemSelectedListener true
-        }
-    }
-
-    private fun initUserFragment() {
-        val fragment = UserFragment.getInstance()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.frameLayout, fragment, "UserFragment")
-            .commit()
-    }
-
-    private fun initCommunityTab() {
-        val successCallback = { userResponse: UserResponse ->
-            replaceFragment()
-        }
-
-        val errorCallback = { error: String? ->
-
-        }
-        LMChatCore.showChat(
-            this,
-            apiKey = authPreferences.getApiKey(),
-            userName = authPreferences.getUserName(),
-            uuid = authPreferences.getUserId(),
-            successCallback,
-            errorCallback
+        extra = ExtrasUtil.getParcelable(
+            intent.extras,
+            ChatMMApplication.EXTRA_LOGIN,
+            LoginExtras::class.java
         )
-    }
 
-    private fun withAPIKeySecurity(accessToken: String, refreshToken: String) {
-        val successCallback = { userResponse: UserResponse ->
-            replaceFragment()
+        binding.btnLogout.setOnClickListener {
+            logout()
         }
 
-        val errorCallback = { error: String? ->
+        binding.btnStartChat.setOnClickListener {
+            val intent = Intent(this, LikeMindsChatActivity::class.java)
+            startActivity(intent)
         }
 
-        LMChatCore.showChat(
-            this,
-            accessToken,
-            refreshToken,
-            successCallback,
-            errorCallback
-        )
     }
 
-    private fun replaceFragment() {
-        val containerViewId = R.id.frameLayout
-
-        val chatFragment = LMChatFragment.getInstance()
-
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(containerViewId, chatFragment, containerViewId.toString())
-        transaction.commit()
-    }
-
-    private fun callInitiateUser(callback: (String, String) -> Unit) {
+    private fun logout() {
         CoroutineScope(Dispatchers.IO).launch {
-            val task = GetTokensTask()
-            val tokens = task.getTokens(applicationContext, false)
-            Log.d("Example", "tokens: $tokens")
-            callback(tokens.first, tokens.second)
+            val client = LMChatClient.getInstance()
+            val logoutResponse = client.logout(
+                LogoutRequest.Builder()
+                    .deviceId(deviceId())
+                    .build()
+            )
+            if (logoutResponse.success) {
+                authPreferences.clearPrefs()
+                val intent = Intent(this@AfterLoginActivity, AuthActivity::class.java)
+                finish()
+                startActivity(intent)
+            } else {
+                Log.e(LOG_TAG, "logout failed error: ${logoutResponse.errorMessage}")
+            }
         }
+    }
+
+    @SuppressLint("HardwareIds")
+    fun deviceId(): String {
+        return Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+            ?: ""
     }
 }

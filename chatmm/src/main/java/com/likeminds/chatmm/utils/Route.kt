@@ -157,8 +157,8 @@ object Route {
     ): Intent? {
         val route = Uri.parse(routeString)
         var intent: Intent? = null
-        when {
-            route.host == ROUTE_CHATROOM -> {
+        when (route.host) {
+            ROUTE_CHATROOM -> {
                 intent = getRouteToChatroom(
                     context,
                     getChatroomRouteWithExtraParameters(route, map),
@@ -167,19 +167,19 @@ object Route {
                 )
             }
 
-            route.host == ROUTE_BROWSER -> {
+            ROUTE_BROWSER -> {
                 intent = getRouteToBrowser(route)
             }
 
-            route.host == ROUTE_CHATROOM_DETAIL -> {
+            ROUTE_CHATROOM_DETAIL -> {
                 intent = getRouteToChatroomDetail(context, route, source, deepLinkUrl)
             }
 
-            route.host == ROUTE_MAIL -> {
+            ROUTE_MAIL -> {
                 intent = getRouteToMail(route)
             }
 
-            route.host == ROUTE_DIRECT_MESSAGE -> {
+            ROUTE_DIRECT_MESSAGE -> {
                 intent = getRouteToDirectMessage(context, route)
             }
         }

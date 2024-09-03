@@ -2,11 +2,8 @@ package com.likeminds.chatmm
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import com.amazonaws.mobile.client.*
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
-import com.likeminds.chatmm.theme.model.LMTheme
-import com.likeminds.chatmm.theme.model.LMChatTheme
 import com.likeminds.chatmm.di.DaggerLikeMindsChatComponent
 import com.likeminds.chatmm.di.LikeMindsChatComponent
 import com.likeminds.chatmm.di.chat.ChatComponent
@@ -20,6 +17,8 @@ import com.likeminds.chatmm.di.polls.PollsComponent
 import com.likeminds.chatmm.di.reactions.ReactionsComponent
 import com.likeminds.chatmm.di.report.ReportComponent
 import com.likeminds.chatmm.di.search.SearchComponent
+import com.likeminds.chatmm.theme.model.LMChatTheme
+import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.LMChatSDKCallback
@@ -41,6 +40,9 @@ class SDKApplication : LMChatSDKCallback {
     private lateinit var mChatClient: LMChatClient
 
     private var likeMindsChatComponent: LikeMindsChatComponent? = null
+
+    //used to track opened chatroom
+    var openedChatroomId: String? = null
 
     private var homeFeedComponent: HomeFeedComponent? = null
     private var exploreComponent: ExploreComponent? = null
@@ -251,9 +253,9 @@ class SDKApplication : LMChatSDKCallback {
     override fun onRefreshTokenExpired(): Pair<String?, String?> {
         val apiKey = mChatClient.getAPIKey().data
 
-        return if (apiKey != null) {
+        return if (!apiKey.isNullOrEmpty()) {
             runBlocking {
-                val user = mChatClient.getLoggedInUser()?.data?.user
+                val user = mChatClient.getLoggedInUser().data?.user
                 if (user != null) {
                     val initiateUserRequest = InitiateUserRequest.Builder()
                         .apiKey(apiKey)
@@ -267,15 +269,14 @@ class SDKApplication : LMChatSDKCallback {
                         val refreshToken = response.data?.refreshToken ?: ""
                         Pair(accessToken, refreshToken)
                     } else {
-                        Pair("", "")
+                        Pair(null, null)
                     }
-
                 } else {
-                    Pair("", "")
+                    Pair(null, null)
                 }
             }
         } else {
-            lmChatCoreCallback?.onRefreshTokenExpired() ?: Pair("", "")
+            lmChatCoreCallback?.onRefreshTokenExpired() ?: Pair(null, null)
         }
     }
 }

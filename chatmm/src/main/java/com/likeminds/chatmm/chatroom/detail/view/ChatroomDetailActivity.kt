@@ -8,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.likeminds.chatmm.*
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.databinding.ActivityChatroomDetailBinding
+import com.likeminds.chatmm.utils.ErrorUtil.emptyExtrasException
 import com.likeminds.chatmm.utils.ExtrasUtil
 import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.customview.BaseAppCompatActivity
@@ -16,7 +17,7 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
 
     private lateinit var binding: ActivityChatroomDetailBinding
 
-    private var chatroomDetailExtras: ChatroomDetailExtras? = null
+    private lateinit var chatroomDetailExtras: ChatroomDetailExtras
 
     //Navigation
     private lateinit var navHostFragment: NavHostFragment
@@ -25,6 +26,7 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
     companion object {
         const val CHATROOM_DETAIL_EXTRAS = "CHATROOM_DETAIL_EXTRAS"
         const val FRAGMENT_TAG_CHATROOM_DETAIL = "FRAGMENT_TAG_CHATROOM_DETAIL"
+        const val TAG = "ChatroomDetailActivity"
 
         @JvmStatic
         fun start(
@@ -71,7 +73,8 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
                 bundle,
                 CHATROOM_DETAIL_EXTRAS,
                 ChatroomDetailExtras::class.java
-            )
+            ) ?: throw emptyExtrasException(TAG)
+
             val args = Bundle().apply {
                 putParcelable(CHATROOM_DETAIL_EXTRAS, chatroomDetailExtras)
             }
@@ -86,6 +89,18 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        val sdkApplication = SDKApplication.getInstance()
+        sdkApplication.openedChatroomId = chatroomDetailExtras.chatroomId
+    }
+
+    override fun onPause() {
+        val sdkApplication = SDKApplication.getInstance()
+        sdkApplication.openedChatroomId = null
+        super.onPause()
+    }
+
     override fun onBackPressed() {
         val chatroomDetailFragment = getChatroomDetailFragment()
 
@@ -96,12 +111,12 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
                         return
                     }
 
-                    chatroomDetailExtras?.isFromSearchChatroom == true -> {
+                    chatroomDetailExtras.isFromSearchChatroom == true -> {
                         sendSearchChatroomClosedEvent()
                         redirectActivity(false)
                     }
 
-                    chatroomDetailExtras?.isFromSearchMessage == true -> {
+                    chatroomDetailExtras.isFromSearchMessage == true -> {
                         sendSearchMessageClosedEvent()
                         redirectActivity(false)
                     }
@@ -151,8 +166,8 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
         LMAnalytics.track(
             LMAnalytics.Events.CHATROOM_SEARCH_CLOSED,
             mapOf(
-                LMAnalytics.Keys.CHATROOM_ID to chatroomDetailExtras?.chatroomId,
-                LMAnalytics.Keys.COMMUNITY_ID to chatroomDetailExtras?.communityId
+                LMAnalytics.Keys.CHATROOM_ID to chatroomDetailExtras.chatroomId,
+                LMAnalytics.Keys.COMMUNITY_ID to chatroomDetailExtras.communityId
             )
         )
     }
@@ -162,8 +177,8 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
         LMAnalytics.track(
             LMAnalytics.Events.MESSAGE_SEARCH_CLOSED,
             mapOf(
-                LMAnalytics.Keys.CHATROOM_ID to chatroomDetailExtras?.chatroomId,
-                LMAnalytics.Keys.COMMUNITY_ID to chatroomDetailExtras?.communityId
+                LMAnalytics.Keys.CHATROOM_ID to chatroomDetailExtras.chatroomId,
+                LMAnalytics.Keys.COMMUNITY_ID to chatroomDetailExtras.communityId
             )
         )
     }

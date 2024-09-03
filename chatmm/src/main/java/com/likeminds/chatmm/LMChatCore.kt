@@ -70,7 +70,8 @@ object LMChatCore {
             val lmChatUserMeta = LMChatUserMetaData.getInstance()
             val deviceId = lmChatUserMeta.deviceId
 
-            if (tokens?.first == null || tokens.second == null) {
+
+            if (tokens?.first.isNullOrEmpty()|| tokens?.second.isNullOrEmpty()) {
                 val initiateUserRequest = InitiateUserRequest.Builder()
                     .apiKey(apiKey)
                     .userName(userName)
@@ -95,7 +96,7 @@ object LMChatCore {
                     error?.let { it(response.errorMessage) }
                 }
             } else {
-                showChat(context, tokens.first, tokens.second, success, error)
+                showChat(context, tokens?.first, tokens?.second, success, error)
             }
         }
     }
@@ -120,7 +121,7 @@ object LMChatCore {
             val deviceId = lmChatUserMeta.deviceId
 
             val lmFeedClient = LMChatClient.getInstance()
-            val tokens = if (accessToken == null || refreshToken == null) {
+            val tokens = if (accessToken.isNullOrEmpty() || refreshToken.isNullOrEmpty()) {
                 lmFeedClient.getTokens().data ?: Pair("", "")
             } else {
                 Pair(accessToken, refreshToken)
