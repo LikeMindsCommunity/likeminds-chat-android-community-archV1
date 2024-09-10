@@ -62,17 +62,26 @@ class SearchViewModel @Inject constructor() : ViewModel() {
     /**
      * This function is used to call next page in case of various APIs
      * @param disablePagination is used to check if the API is already fetching data,
+     * @param chatroomId is used to search conversations inside a chatroom
      * so not to fetch data using scroll listener
      */
-    fun fetchNextPage(disablePagination: Boolean) {
+    fun fetchNextPage(disablePagination: Boolean, chatroomId: String?) {
         currentApiPage++
-        when (currentApi) {
-            API_SEARCH_FOLLOWED_HEADERS -> getFollowedHeaders(disablePagination)
-            API_SEARCH_UNFOLLOWED_HEADERS -> getUnfollowedHeaders(disablePagination)
-            API_SEARCH_FOLLOWED_TITLES -> getFollowedTitles(disablePagination)
-            API_SEARCH_UNFOLLOWED_TITLES -> getUnfollowedTitles(disablePagination)
-            API_SEARCH_FOLLOWED_CONVERSATIONS -> getFollowedConversations(disablePagination)
-            API_SEARCH_UNFOLLOWED_CONVERSATIONS -> getUnfollowedConversations(disablePagination)
+        if (chatroomId == null) {
+            when (currentApi) {
+                API_SEARCH_FOLLOWED_HEADERS -> getFollowedHeaders(disablePagination)
+                API_SEARCH_UNFOLLOWED_HEADERS -> getUnfollowedHeaders(disablePagination)
+                API_SEARCH_FOLLOWED_TITLES -> getFollowedTitles(disablePagination)
+                API_SEARCH_UNFOLLOWED_TITLES -> getUnfollowedTitles(disablePagination)
+                API_SEARCH_FOLLOWED_CONVERSATIONS -> getFollowedConversations(
+                    disablePagination,
+                    null
+                )
+
+                API_SEARCH_UNFOLLOWED_CONVERSATIONS -> getUnfollowedConversations(disablePagination)
+            }
+        } else {
+            getFollowedConversations(disablePagination, chatroomId)
         }
     }
 
@@ -139,15 +148,21 @@ class SearchViewModel @Inject constructor() : ViewModel() {
      * or else
      * getUnfollowedTitles if result size < [PAGE_SIZE]
      */
-    private fun getFollowedConversations(disablePagination: Boolean) {
+    private fun getFollowedConversations(disablePagination: Boolean, chatroomId: String?) {
         viewModelScope.launchIO {
-            val request = getSearchConversationRequest(true)
+            val request = getSearchConversationRequest(true, chatroomId)
             val response = lmChatClient.searchConversation(request)
 
             if (response.success) {
                 val conversations = response.data?.conversations.orEmpty()
                 if (conversations.size < PAGE_SIZE) {
-                    callNextApi(API_SEARCH_UNFOLLOWED_TITLES)
+                    if (chatroomId == null) {
+                        callNextApi(API_SEARCH_UNFOLLOWED_TITLES)
+                    } else {
+                        _searchLiveData.postValue(
+                            SearchViewData.Builder().dataList(emptyList()).build()
+                        )
+                    }
                 }
                 _searchLiveData.postValue(
                     SearchViewData.Builder()
@@ -163,7 +178,7 @@ class SearchViewModel @Inject constructor() : ViewModel() {
                         .checkForSeparator(true)
                         .build()
                 )
-            } else {
+            } else if (chatroomId == null) {
                 callNextApi(API_SEARCH_UNFOLLOWED_TITLES)
             }
         }
@@ -217,10 +232,12 @@ class SearchViewModel @Inject constructor() : ViewModel() {
 
     private fun getSearchConversationRequest(
         followStatus: Boolean,
+        chatroomId: String? = null
     ): SearchConversationRequest {
         return SearchConversationRequest.Builder()
             .search(getKeyword())
             .followStatus(followStatus)
+            .chatroomId(chatroomId)
             .page(currentApiPage)
             .pageSize(PAGE_SIZE)
             .build()
@@ -295,7 +312,7 @@ class SearchViewModel @Inject constructor() : ViewModel() {
     private fun callNextApi(nextApi: String) {
         currentApiPage = 0
         currentApi = nextApi
-        fetchNextPage(true)
+        fetchNextPage(true, null)
     }
 
     /**

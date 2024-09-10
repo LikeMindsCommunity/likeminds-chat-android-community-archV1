@@ -38,6 +38,7 @@ import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.likeminds.chatmm.*
 import com.likeminds.chatmm.R
+import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.chatroom.detail.model.*
 import com.likeminds.chatmm.chatroom.detail.util.*
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil.getTypeName
@@ -77,6 +78,8 @@ import com.likeminds.chatmm.reactions.viewmodel.ReactionsViewModel
 import com.likeminds.chatmm.report.model.*
 import com.likeminds.chatmm.report.view.ReportActivity
 import com.likeminds.chatmm.report.view.ReportSuccessDialog
+import com.likeminds.chatmm.search.model.LMChatSearchExtras
+import com.likeminds.chatmm.search.view.LMChatSearchActivity
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEditTextListener
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEmojiEditText
 import com.likeminds.chatmm.theme.model.LMTheme
@@ -5786,6 +5789,11 @@ class ChatroomDetailFragment :
         if (getChatroomViewData() == null) {
             return
         }
+
+        val searchMenuItem = actionsMenu?.findItem(R.id.menu_item_search)
+        searchMenuItem?.isVisible = true
+        searchMenuItem?.icon?.setTint(LMTheme.getToolbarColor())
+
         viewModel.getChatroomActions()?.forEach { chatroomActionViewData ->
             when (chatroomActionViewData.id) {
                 "2" -> {
@@ -5929,12 +5937,32 @@ class ChatroomDetailFragment :
                 )
             }
 
+            R.id.menu_item_search -> {
+                searchConversations()
+            }
+
             // todo: profile
 //            R.id.view_profile -> {
 //                redirectToProfile()
 //            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private val searchConversationsLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // todo: scroll to that conversation
+            }
+        }
+
+    private fun searchConversations() {
+        val extras = LMChatSearchExtras.Builder()
+            .chatroomId(chatroomId)
+            .build()
+
+        searchConversationsLauncher.launch(LMChatSearchActivity.getIntent(requireContext(), extras))
+        Log.d(LOG_TAG, "chatroom detail search started")
     }
 
     private fun openViewParticipantsActivity() {

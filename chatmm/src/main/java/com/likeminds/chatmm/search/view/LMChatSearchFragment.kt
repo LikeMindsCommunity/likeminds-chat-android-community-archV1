@@ -1,5 +1,7 @@
 package com.likeminds.chatmm.search.view
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import com.likeminds.chatmm.LMAnalytics
 import com.likeminds.chatmm.SDKApplication
@@ -11,9 +13,11 @@ import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.search.model.*
 import com.likeminds.chatmm.search.util.LMChatCustomSearchBar
 import com.likeminds.chatmm.search.util.SearchScrollListener
+import com.likeminds.chatmm.search.view.LMChatSearchActivity.Companion.SEARCH_EXTRAS
 import com.likeminds.chatmm.search.view.adapter.SearchAdapter
 import com.likeminds.chatmm.search.view.adapter.SearchAdapterListener
 import com.likeminds.chatmm.search.viewmodel.SearchViewModel
+import com.likeminds.chatmm.utils.ExtrasUtil
 import com.likeminds.chatmm.utils.ValueUtils.isValidIndex
 import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.customview.BaseFragment
@@ -39,6 +43,8 @@ class LMChatSearchFragment : BaseFragment<LmChatFragmentSearchBinding, SearchVie
 
     private lateinit var mAdapter: SearchAdapter
 
+    private var searchExtras: LMChatSearchExtras? = null
+
     companion object {
         const val TAG = "SearchFragment"
 
@@ -47,10 +53,25 @@ class LMChatSearchFragment : BaseFragment<LmChatFragmentSearchBinding, SearchVie
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun receiveExtras() {
+        super.receiveExtras()
+        if (arguments == null || arguments?.containsKey(SEARCH_EXTRAS) == false) {
+            requireActivity().supportFragmentManager.popBackStack()
+            return
+        }
+
+        searchExtras = ExtrasUtil.getParcelable(
+            requireArguments(),
+            SEARCH_EXTRAS,
+            LMChatSearchExtras::class.java
+        ) ?: return
+    }
+
     private val scrollListener = object : SearchScrollListener() {
         override fun onLoadMore() {
             showSingleShimmer()
-            viewModel.fetchNextPage(false)
+            viewModel.fetchNextPage(false, searchExtras?.chatroomId)
         }
     }
 
@@ -66,7 +87,7 @@ class LMChatSearchFragment : BaseFragment<LmChatFragmentSearchBinding, SearchVie
         viewModel.keywordSearched.observe(viewLifecycleOwner) {
             mAdapter.clearAndNotify()
             showFullShimmer()
-            viewModel.fetchNextPage(false)
+            viewModel.fetchNextPage(false, searchExtras?.chatroomId)
         }
 
         viewModel.searchLiveData.observe(viewLifecycleOwner) { searchData ->

@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_item_search"
+        android:background="?selectableItemBackgroundBorderless"
+        android:icon="@drawable/lm_chat_ic_material_icons_white_search"
+        android:title="@string/lm_chat_search"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/view_participants"
         android:title="@string/lm_chat_view_participants"
         android:visible="false" />
