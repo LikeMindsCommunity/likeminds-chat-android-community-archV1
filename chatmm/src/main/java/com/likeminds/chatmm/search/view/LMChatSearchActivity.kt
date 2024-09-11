@@ -23,19 +23,26 @@ class LMChatSearchActivity : BaseAppCompatActivity() {
     private lateinit var navController: NavController
 
     companion object {
+        const val LM_CHAT_SEARCH_EXTRAS = "LM_CHAT_SEARCH_EXTRAS"
+        const val LM_CHAT_SEARCH_RESULT = "LM_CHAT_SEARCH_RESULT"
 
-        const val SEARCH_EXTRAS = "SEARCH_EXTRAS"
-
-        fun start(context: Context) {
+        fun start(context: Context, searchExtras: LMChatSearchExtras? = null) {
             val intent = Intent(context, LMChatSearchActivity::class.java)
+            if (searchExtras != null) {
+                val bundle = Bundle()
+                bundle.putParcelable(LM_CHAT_SEARCH_EXTRAS, searchExtras)
+                intent.putExtra("bundle", bundle)
+            }
             context.startActivity(intent)
         }
 
-        fun getIntent(context: Context, searchExtras: LMChatSearchExtras): Intent {
+        fun getIntent(context: Context, searchExtras: LMChatSearchExtras? = null): Intent {
             val intent = Intent(context, LMChatSearchActivity::class.java)
-            val bundle = Bundle()
-            bundle.putParcelable(SEARCH_EXTRAS, searchExtras)
-            intent.putExtra("bundle", bundle)
+            if (searchExtras != null) {
+                val bundle = Bundle()
+                bundle.putParcelable(LM_CHAT_SEARCH_EXTRAS, searchExtras)
+                intent.putExtra("bundle", bundle)
+            }
             return intent
         }
     }
@@ -56,12 +63,12 @@ class LMChatSearchActivity : BaseAppCompatActivity() {
         if (bundle != null) {
             searchExtras = ExtrasUtil.getParcelable(
                 bundle,
-                SEARCH_EXTRAS,
+                LM_CHAT_SEARCH_EXTRAS,
                 LMChatSearchExtras::class.java
             )
 
             val args = Bundle().apply {
-                putParcelable(SEARCH_EXTRAS, searchExtras)
+                putParcelable(LM_CHAT_SEARCH_EXTRAS, searchExtras)
             }
 
             //Navigation

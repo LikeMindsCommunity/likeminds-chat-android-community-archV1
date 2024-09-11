@@ -13,7 +13,7 @@ import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.search.model.*
 import com.likeminds.chatmm.search.util.LMChatCustomSearchBar
 import com.likeminds.chatmm.search.util.SearchScrollListener
-import com.likeminds.chatmm.search.view.LMChatSearchActivity.Companion.SEARCH_EXTRAS
+import com.likeminds.chatmm.search.view.LMChatSearchActivity.Companion.LM_CHAT_SEARCH_EXTRAS
 import com.likeminds.chatmm.search.view.adapter.SearchAdapter
 import com.likeminds.chatmm.search.view.adapter.SearchAdapterListener
 import com.likeminds.chatmm.search.viewmodel.SearchViewModel
@@ -56,14 +56,14 @@ class LMChatSearchFragment : BaseFragment<LmChatFragmentSearchBinding, SearchVie
     @RequiresApi(Build.VERSION_CODES.N)
     override fun receiveExtras() {
         super.receiveExtras()
-        if (arguments == null || arguments?.containsKey(SEARCH_EXTRAS) == false) {
+        if (arguments == null || arguments?.containsKey(LM_CHAT_SEARCH_EXTRAS) == false) {
             requireActivity().supportFragmentManager.popBackStack()
             return
         }
 
         searchExtras = ExtrasUtil.getParcelable(
             requireArguments(),
-            SEARCH_EXTRAS,
+            LM_CHAT_SEARCH_EXTRAS,
             LMChatSearchExtras::class.java
         ) ?: return
     }
@@ -129,6 +129,13 @@ class LMChatSearchFragment : BaseFragment<LmChatFragmentSearchBinding, SearchVie
                         showNoResultsView()
                     }
                 }
+            }
+        }
+
+        viewModel.chatroomConversationsSearchFinished.observe(viewLifecycleOwner) {
+            removeShimmer()
+            if (mAdapter.itemCount == 0) {
+                showNoResultsView()
             }
         }
     }

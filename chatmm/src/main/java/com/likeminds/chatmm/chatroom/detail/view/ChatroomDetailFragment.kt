@@ -79,7 +79,9 @@ import com.likeminds.chatmm.report.model.*
 import com.likeminds.chatmm.report.view.ReportActivity
 import com.likeminds.chatmm.report.view.ReportSuccessDialog
 import com.likeminds.chatmm.search.model.LMChatSearchExtras
+import com.likeminds.chatmm.search.model.LMChatSearchResult
 import com.likeminds.chatmm.search.view.LMChatSearchActivity
+import com.likeminds.chatmm.search.view.LMChatSearchActivity.Companion.LM_CHAT_SEARCH_RESULT
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEditTextListener
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEmojiEditText
 import com.likeminds.chatmm.theme.model.LMTheme
@@ -5952,17 +5954,30 @@ class ChatroomDetailFragment :
     private val searchConversationsLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                // todo: scroll to that conversation
+                val extras = result.data?.extras
+                val resultExtras = ExtrasUtil.getParcelable(
+                    extras,
+                    LM_CHAT_SEARCH_RESULT,
+                    LMChatSearchResult::class.java
+                ) ?: return@registerForActivityResult
+
+                val searchConversationId = resultExtras.conversationId;
+                if (!searchConversationId.isNullOrEmpty()) {
+                    scrolledConversationPosition =
+                        getIndexOfConversation(searchConversationId)
+                    scrollToPositionWithOffset(scrolledConversationPosition)
+                }
             }
         }
 
     private fun searchConversations() {
+        Log.d(LOG_TAG, "chatroom detail search started")
+
         val extras = LMChatSearchExtras.Builder()
             .chatroomId(chatroomId)
             .build()
 
         searchConversationsLauncher.launch(LMChatSearchActivity.getIntent(requireContext(), extras))
-        Log.d(LOG_TAG, "chatroom detail search started")
     }
 
     private fun openViewParticipantsActivity() {

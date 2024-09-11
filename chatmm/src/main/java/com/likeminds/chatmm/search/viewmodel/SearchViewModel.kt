@@ -45,6 +45,10 @@ class SearchViewModel @Inject constructor() : ViewModel() {
     private val _keywordSearched = MutableLiveData<String>()
     val keywordSearched: LiveData<String> = _keywordSearched
 
+    private val _chatroomConversationsSearchFinished by lazy { MutableLiveData<Boolean>() }
+    val chatroomConversationsSearchFinished: LiveData<Boolean> =
+        _chatroomConversationsSearchFinished
+
     fun getSingleShimmerView() = SingleShimmerViewData.Builder().build()
 
     fun getShimmerView() = HomeChatroomListShimmerViewData.Builder().build()
@@ -73,15 +77,11 @@ class SearchViewModel @Inject constructor() : ViewModel() {
                 API_SEARCH_UNFOLLOWED_HEADERS -> getUnfollowedHeaders(disablePagination)
                 API_SEARCH_FOLLOWED_TITLES -> getFollowedTitles(disablePagination)
                 API_SEARCH_UNFOLLOWED_TITLES -> getUnfollowedTitles(disablePagination)
-                API_SEARCH_FOLLOWED_CONVERSATIONS -> getFollowedConversations(
-                    disablePagination,
-                    null
-                )
-
+                API_SEARCH_FOLLOWED_CONVERSATIONS -> getFollowedConversations(disablePagination)
                 API_SEARCH_UNFOLLOWED_CONVERSATIONS -> getUnfollowedConversations(disablePagination)
             }
         } else {
-            getFollowedConversations(disablePagination, chatroomId)
+            getChatroomConversations(disablePagination, chatroomId)
         }
     }
 
@@ -144,25 +144,61 @@ class SearchViewModel @Inject constructor() : ViewModel() {
     }
 
     /**
+     * This function is used to get all the conversations of the chatroom with provided chatroomId
+     * or else
+     * inform the UI that search is completed if result size < [PAGE_SIZE]
+     */
+    private fun getChatroomConversations(disablePagination: Boolean, chatroomId: String) {
+        viewModelScope.launchIO {
+            val request = SearchConversationRequest.Builder()
+                .search(getKeyword())
+                .chatroomId(chatroomId)
+                .page(currentApiPage)
+                .pageSize(PAGE_SIZE)
+                .build()
+            val response = lmChatClient.searchConversation(request)
+
+            if (response.success) {
+                val conversations = response.data?.conversations.orEmpty()
+                _searchLiveData.postValue(
+                    SearchViewData.Builder()
+                        .disablePagination(disablePagination)
+                        .dataList(
+                            ViewDataConverter.convertSearchConversations(
+                                conversations,
+                                true,
+                                request.search
+                            )
+                        )
+                        .keyword(request.search)
+                        .checkForSeparator(true)
+                        .build()
+                )
+
+                if (conversations.isEmpty()) {
+                    _chatroomConversationsSearchFinished.postValue(true)
+                }
+            } else {
+                _chatroomConversationsSearchFinished.postValue(true)
+            }
+        }
+    }
+
+
+    /**
      * This function is used to getFollowedConversations
      * or else
      * getUnfollowedTitles if result size < [PAGE_SIZE]
      */
-    private fun getFollowedConversations(disablePagination: Boolean, chatroomId: String?) {
+    private fun getFollowedConversations(disablePagination: Boolean) {
         viewModelScope.launchIO {
-            val request = getSearchConversationRequest(true, chatroomId)
+            val request = getSearchConversationRequest(true)
             val response = lmChatClient.searchConversation(request)
 
             if (response.success) {
                 val conversations = response.data?.conversations.orEmpty()
                 if (conversations.size < PAGE_SIZE) {
-                    if (chatroomId == null) {
-                        callNextApi(API_SEARCH_UNFOLLOWED_TITLES)
-                    } else {
-                        _searchLiveData.postValue(
-                            SearchViewData.Builder().dataList(emptyList()).build()
-                        )
-                    }
+                    callNextApi(API_SEARCH_UNFOLLOWED_TITLES)
                 }
                 _searchLiveData.postValue(
                     SearchViewData.Builder()
@@ -178,7 +214,7 @@ class SearchViewModel @Inject constructor() : ViewModel() {
                         .checkForSeparator(true)
                         .build()
                 )
-            } else if (chatroomId == null) {
+            } else {
                 callNextApi(API_SEARCH_UNFOLLOWED_TITLES)
             }
         }
@@ -230,14 +266,10 @@ class SearchViewModel @Inject constructor() : ViewModel() {
             .build()
     }
 
-    private fun getSearchConversationRequest(
-        followStatus: Boolean,
-        chatroomId: String? = null
-    ): SearchConversationRequest {
+    private fun getSearchConversationRequest(followStatus: Boolean): SearchConversationRequest {
         return SearchConversationRequest.Builder()
             .search(getKeyword())
             .followStatus(followStatus)
-            .chatroomId(chatroomId)
             .page(currentApiPage)
             .pageSize(PAGE_SIZE)
             .build()
