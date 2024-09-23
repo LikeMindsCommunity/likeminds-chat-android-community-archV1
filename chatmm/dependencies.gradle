@@ -15,6 +15,7 @@ dependencies {
     implementation deps.viewPager2.main
     implementation deps.flexbox.main
 
+
     //dagger
     implementation deps.dagger.main
     kapt deps.dagger.compiler

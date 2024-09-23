@@ -14,7 +14,6 @@ class ChatMMessagingService : FirebaseMessagingService() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.d(LOG_TAG, "service created")
 
         val launcherIntent = Intent(this, AfterLoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

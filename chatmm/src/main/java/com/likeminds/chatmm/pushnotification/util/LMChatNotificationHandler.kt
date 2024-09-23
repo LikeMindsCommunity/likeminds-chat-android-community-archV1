@@ -51,7 +51,6 @@ class LMChatNotificationHandler {
 
     companion object {
         private var notificationHandler: LMChatNotificationHandler? = null
-
         private var launcherIntent: Intent? = null
 
         const val GENERAL_CHANNEL_ID = "notification_general"
