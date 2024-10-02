@@ -576,6 +576,8 @@ class ChatroomDetailFragment :
                 ) {
                     if (viewModel.isDmChatroom()) {
                         val chatRequestState = viewModel.getChatroomViewData()?.chatRequestState
+
+                        //in request as no attachment is not allowed
                         if (chatRequestState == ChatRequestState.ACCEPTED) {
                             fabSend.hide()
                             fabMic.show()
@@ -1597,6 +1599,7 @@ class ChatroomDetailFragment :
                     ) {
                         if (viewModel.isDmChatroom()) {
                             val chatRequestState = viewModel.getChatroomViewData()?.chatRequestState
+                            //in request as no attachment is not allowed
                             if (chatRequestState == ChatRequestState.ACCEPTED) {
                                 fabSend.hide()
                                 fabMic.show()
