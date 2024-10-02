@@ -13,7 +13,7 @@ import com.likeminds.chatmm.member.model.*
 import com.likeminds.chatmm.member.util.MemberImageUtil
 import com.likeminds.chatmm.polls.model.PollInfoData
 import com.likeminds.chatmm.polls.model.PollViewData
-import com.likeminds.chatmm.pushnotification.model.ChatroomNotificationViewData
+import com.likeminds.chatmm.pushnotification.model.*
 import com.likeminds.chatmm.reactions.model.ReactionViewData
 import com.likeminds.chatmm.report.model.ReportTagViewData
 import com.likeminds.chatmm.search.model.*
@@ -28,7 +28,7 @@ import com.likeminds.likemindschat.dm.model.CheckDMLimitResponse
 import com.likeminds.likemindschat.dm.model.CheckDMTabResponse
 import com.likeminds.likemindschat.helper.model.GroupTag
 import com.likeminds.likemindschat.moderation.model.ReportTag
-import com.likeminds.likemindschat.notification.model.ChatroomNotificationData
+import com.likeminds.likemindschat.notification.model.*
 import com.likeminds.likemindschat.poll.model.Poll
 import com.likeminds.likemindschat.search.model.SearchChatroom
 import com.likeminds.likemindschat.search.model.SearchConversation
@@ -772,6 +772,104 @@ object ViewDataConverter {
             .percentage(pollViewData.percentage)
             .text(pollViewData.text)
             .build()
+    }
+
+    // creates [GetUnreadChatroomsRequest] from [ChatroomNotificationViewData]
+    fun createGetUnreadChatroomsRequest(
+        chatroomNotificationViewData: ChatroomNotificationViewData
+    ): GetUnreadChatroomsRequest {
+
+        chatroomNotificationViewData.apply {
+            return GetUnreadChatroomsRequest.Builder()
+                .chatroom(
+                    Chatroom.Builder()
+                        .id(chatroomId)
+                        .title(chatroomTitle)
+                        .header(chatroomName)
+                        .communityName(communityName)
+                        .communityId(communityId.toString())
+                        .member(createMember(chatroomNotificationViewData.chatroomCreator))
+                        .build()
+                )
+                .chatroomLastConversation(
+                    Conversation.Builder()
+                        .id(chatroomLastConversationId)
+                        .answer(chatroomLastConversation ?: "")
+                        .createdEpoch(chatroomLastConversationTimestamp)
+                        .chatroomId(chatroomId)
+                        .communityId(communityId.toString())
+                        .attachments(createAttachmentsFromNotification(attachments))
+                        .member(createMember(chatroomNotificationViewData.chatroomLastConversationCreator))
+                        .build()
+                )
+                .build()
+        }
+    }
+
+    // creates list of [Attachment] from list of attachments received in notification
+    private fun createAttachmentsFromNotification(attachments: List<AttachmentViewData>?): List<Attachment>? {
+        return attachments?.map { notificationAttachment ->
+            createAttachmentFromNotification(notificationAttachment)
+        }
+    }
+
+    // creates [Attachment] from the attachment received in notification
+    private fun createAttachmentFromNotification(attachment: AttachmentViewData): Attachment {
+        return Attachment.Builder()
+            //todo:
+            .id("-${System.currentTimeMillis()}")
+            .type(attachment.type)
+            .url(attachment.url ?: "")
+            .height(attachment.height)
+            .width(attachment.width)
+            .name(attachment.name)
+            .meta(createAttachmentMetaFromNotification(attachment.meta))
+            .build()
+    }
+
+    // creates [Attachment] from the attachment meta received in notification
+    private fun createAttachmentMetaFromNotification(attachmentMetaData: AttachmentMetaViewData?): AttachmentMeta? {
+        if (attachmentMetaData == null) {
+            return null
+        }
+
+        return AttachmentMeta.Builder()
+            .duration(attachmentMetaData.duration)
+            .size(attachmentMetaData.size)
+            .numberOfPage(attachmentMetaData.numberOfPage)
+            .build()
+    }
+
+    // creates [Member] from the member object received in notification
+    private fun createMember(memberViewData: MemberViewData?): Member? {
+        if (memberViewData == null) {
+            return null
+        }
+
+        return Member.Builder()
+            .id(memberViewData.id ?: "")
+            .imageUrl(memberViewData.imageUrl ?: "")
+            .isGuest(memberViewData.isGuest ?: false)
+            .name(memberViewData.name ?: "")
+            .updatedAt(memberViewData.updatedAt)
+            .userUniqueId(memberViewData.userUniqueId ?: "")
+            .uuid(memberViewData.uuid)
+            .sdkClientInfo(createSDKClientInfo(memberViewData.sdkClientInfo))
+            .build()
+    }
+
+    // creates [SDKClientInfo] from the sdk client info object received in notification
+    private fun createSDKClientInfo(sdkClientInfoViewData: SDKClientInfoViewData?): SDKClientInfo? {
+        if (sdkClientInfoViewData == null) {
+            return null
+        }
+
+        return SDKClientInfo(
+            sdkClientInfoViewData.communityId,
+            sdkClientInfoViewData.user,
+            sdkClientInfoViewData.userUniqueId,
+            sdkClientInfoViewData.uuid,
+        )
     }
 
     fun convertSearchChatroomHeaders(

@@ -1,6 +1,7 @@
 package com.likeminds.chatmm.utils.user
 
 import android.content.Context
+import android.provider.Settings
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import com.likeminds.chatmm.SDKApplication
@@ -132,7 +133,7 @@ class LMChatUserMetaData {
                     }
 
                     val token = task.result.toString()
-                    registerDevice(token)
+                    registerDevice(token, deviceId ?: "")
                 }
             } catch (e: Exception) {
                 Log.w(
@@ -144,11 +145,11 @@ class LMChatUserMetaData {
     }
 
     //call register device api
-    private fun registerDevice(token: String) {
+    private fun registerDevice(token: String, id: String) {
         CoroutineScope(Dispatchers.IO).launch {
             //create request
             val request = RegisterDeviceRequest.Builder()
-                .deviceId(deviceId ?: "")
+                .deviceId(id)
                 .token(token)
                 .build()
 

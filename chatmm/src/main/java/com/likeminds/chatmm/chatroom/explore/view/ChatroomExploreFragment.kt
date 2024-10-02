@@ -344,6 +344,7 @@ class ChatroomExploreFragment :
             requireContext(), ChatroomDetailExtras.Builder()
                 .chatroomId(chatroomViewData.id)
                 .communityId(chatroomViewData.communityId)
+                .communityName(chatroomViewData.communityName)
                 .source(COMMUNITY_FEED)
                 .build()
         )

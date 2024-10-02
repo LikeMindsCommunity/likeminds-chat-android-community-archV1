@@ -298,6 +298,7 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
                 ChatroomDetailExtras.Builder()
                     .chatroomId(homeFeedItemViewData.chatroom.id)
                     .communityId(homeFeedItemViewData.chatroom.communityId)
+                    .communityName(homeFeedItemViewData.chatroom.communityName)
                     .source(LMAnalytics.Source.DIRECT_MESSAGES_SCREEN)
                     .build()
             )

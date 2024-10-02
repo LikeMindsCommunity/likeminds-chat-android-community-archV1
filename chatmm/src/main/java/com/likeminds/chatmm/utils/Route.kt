@@ -31,6 +31,7 @@ object Route {
 
     const val PARAM_CHATROOM_ID = "chatroom_id"
     const val PARAM_COMMUNITY_ID = "community_id"
+    const val PARAM_COMMUNITY_NAME = "community_name"
     private const val PARAM_COHORT_ID = "cohort_id"
 
     fun getQueryParam(route: String?, param: String?): String? {
@@ -199,6 +200,7 @@ object Route {
         val chatroomId = route.getQueryParameter("collabcard_id")
         val sourceChatroomId = route.getQueryParameter(PARAM_CHATROOM_ID)
         val sourceCommunityId = route.getQueryParameter(PARAM_COMMUNITY_ID)
+        val communityName = route.getQueryParameter(PARAM_COMMUNITY_NAME)
         val cohortId = route.getQueryParameter(PARAM_COHORT_ID)
 
         val builder = ChatroomDetailExtras.Builder()
@@ -206,6 +208,7 @@ object Route {
             .source(source)
             .sourceChatroomId(sourceChatroomId)
             .sourceCommunityId(sourceCommunityId)
+            .communityName(communityName)
             .cohortId(cohortId)
 
         when (source) {
@@ -315,11 +318,13 @@ object Route {
     private fun getRouteToDirectMessage(context: Context, route: Uri): Intent? {
         val chatroomId = route.getQueryParameter("chatroom_id") ?: return null
         val communityId = route.getQueryParameter("community_id")
+        val communityName = route.getQueryParameter(PARAM_COMMUNITY_NAME)
         return ChatroomDetailActivity.getIntent(
             context,
             ChatroomDetailExtras.Builder()
                 .chatroomId(chatroomId)
                 .communityId(communityId)
+                .communityName(communityName)
                 .build()
         )
     }

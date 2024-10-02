@@ -8,6 +8,7 @@ class ChatroomDetailExtras private constructor(
     val chatroomId: String,
     val fromNotification: Boolean,
     val communityId: String?,
+    val communityName: String?,
     val source: String?,
     val reportedConversationId: String?,
     val conversationId: String?,
@@ -27,6 +28,7 @@ class ChatroomDetailExtras private constructor(
         private var chatroomId: String = ""
         private var fromNotification: Boolean = false
         private var communityId: String? = null
+        private var communityName: String? = null
         private var source: String? = null
         private var reportedConversationId: String? = null
         private var conversationId: String? = null
@@ -47,6 +49,7 @@ class ChatroomDetailExtras private constructor(
             apply { this.fromNotification = fromNotification }
 
         fun communityId(communityId: String?) = apply { this.communityId = communityId }
+        fun communityName(communityName: String?) = apply { this.communityName = communityName }
 
         fun source(source: String?) = apply { this.source = source }
         fun reportedConversationId(reportedConversationId: String?) =
@@ -88,6 +91,7 @@ class ChatroomDetailExtras private constructor(
             chatroomId,
             fromNotification,
             communityId,
+            communityName,
             source,
             reportedConversationId,
             conversationId,
@@ -109,6 +113,7 @@ class ChatroomDetailExtras private constructor(
         return Builder().chatroomId(chatroomId)
             .fromNotification(fromNotification)
             .communityId(communityId)
+            .communityName(communityName)
             .source(source)
             .reportedConversationId(reportedConversationId)
             .conversationId(conversationId)

@@ -501,8 +501,16 @@ class ChatroomDetailFragment :
      * Dismiss the active notifications of this current chatroom if it is showing
      */
     private fun dismissChatRoomNotification() {
+        var communityName = viewModel.getChatroomViewData()?.communityName
+
+        if (communityName.isNullOrEmpty()) {
+            communityName = chatroomDetailExtras.communityName
+        }
+
         NotificationUtils.removeConversationNotification(
             requireContext(),
+            communityId,
+            communityName,
             chatroomId
         )
     }
@@ -696,7 +704,7 @@ class ChatroomDetailFragment :
             requireContext(),
             String(Base64.decode(InternalKeys.GIPHY_SDK, Base64.DEFAULT))
         )
-        val settings = GPHSettings(GridType.waterfall,GPHTheme.Light)
+        val settings = GPHSettings(GridType.waterfall, GPHTheme.Light)
         settings.mediaTypeConfig = arrayOf(GPHContentType.recents, GPHContentType.gif)
         settings.selectedContentType = GPHContentType.gif
         val giphyDialog = GiphyDialogFragment.newInstance(settings)
@@ -2993,7 +3001,7 @@ class ChatroomDetailFragment :
                         }
 
                         // adds the date view only if the [lastInsertedDate] is different from the current conversation date and updates [lastInsertedDate]
-                        if (lastInsertedDate != response.conversation.date) {
+                        if (!lastInsertedDate.equals(response.conversation.date)) {
                             lastInsertedDate = response.conversation.date
                             chatroomDetailAdapter.add(viewModel.getDateView(response.conversation.date))
                         }
