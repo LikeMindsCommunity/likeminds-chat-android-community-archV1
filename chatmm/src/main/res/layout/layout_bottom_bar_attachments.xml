@@ -16,159 +16,26 @@
             android:id="@+id/cl_child_bottom_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
+            android:layout_gravity="center"
             android:layout_marginBottom="8dp"
             android:background="@drawable/lm_chat_background_white_10_black16_1"
             android:paddingBottom="23dp"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:layout_editor_absoluteX="60dp">
 
-            <ImageView
-                android:id="@+id/iv_camera"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_attachments"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:layout_constraintEnd_toStartOf="@+id/iv_gallery"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/lm_chat_ic_create_camera"
-                tools:ignore="ContentDescription" />
-
-            <com.likeminds.chatmm.theme.customview.LikeMindsTextView
-                android:id="@+id/tv_camera_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/lm_chat_camera"
-                android:textColor="@color/lm_chat_brown_grey"
-                android:textSize="13sp"
-                app:fontType="regular"
-                app:layout_constraintEnd_toEndOf="@+id/iv_camera"
-                app:layout_constraintStart_toStartOf="@+id/iv_camera"
-                app:layout_constraintTop_toBottomOf="@+id/iv_camera" />
-
-            <ImageView
-                android:id="@+id/iv_gallery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="12dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/lm_chat_ic_create_gallery"
-                tools:ignore="ContentDescription" />
-
-            <com.likeminds.chatmm.theme.customview.LikeMindsTextView
-                android:id="@+id/tv_gallery_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/lm_chat_gallery"
-                android:textColor="@color/lm_chat_brown_grey"
-                android:textSize="13sp"
-                app:fontType="regular"
-                app:layout_constraintEnd_toEndOf="@+id/iv_gallery"
-                app:layout_constraintStart_toStartOf="@+id/iv_gallery"
-                app:layout_constraintTop_toBottomOf="@+id/iv_gallery" />
-
-            <ImageView
-                android:id="@+id/iv_document"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/iv_gallery"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/lm_chat_ic_document_new"
-                tools:ignore="ContentDescription" />
-
-            <com.likeminds.chatmm.theme.customview.LikeMindsTextView
-                android:id="@+id/tv_document_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/lm_chat_document"
-                android:textColor="@color/lm_chat_brown_grey"
-                android:textSize="13sp"
-                app:fontType="regular"
-                app:layout_constraintEnd_toEndOf="@+id/iv_document"
-                app:layout_constraintStart_toStartOf="@+id/iv_document"
-                app:layout_constraintTop_toBottomOf="@+id/iv_document" />
-
-            <ImageView
-                android:id="@+id/iv_poll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:layout_constraintEnd_toEndOf="@id/tv_gallery_title"
-                app:layout_constraintStart_toStartOf="@id/tv_gallery_title"
-                app:layout_constraintTop_toBottomOf="@id/tv_camera_title"
-                app:srcCompat="@drawable/lm_chat_ic_poll_create_message_selector"
-                tools:ignore="ContentDescription" />
-
-            <com.likeminds.chatmm.theme.customview.LikeMindsTextView
-                android:id="@+id/tv_poll_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/lm_chat_poll"
-                android:textColor="@color/lm_chat_brown_grey"
-                android:textSize="13sp"
-                app:fontType="regular"
-                app:layout_constraintEnd_toEndOf="@+id/iv_poll"
-                app:layout_constraintStart_toStartOf="@+id/iv_poll"
-                app:layout_constraintTop_toBottomOf="@+id/iv_poll" />
-
-            <ImageView
-                android:id="@+id/iv_audio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:layout_constraintEnd_toEndOf="@+id/tv_camera_title"
-                app:layout_constraintStart_toStartOf="@+id/tv_camera_title"
-                app:layout_constraintTop_toBottomOf="@id/tv_camera_title"
-                app:srcCompat="@drawable/lm_chat_ic_create_music"
-                tools:ignore="ContentDescription" />
-
-            <com.likeminds.chatmm.theme.customview.LikeMindsTextView
-                android:id="@+id/tv_audio_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/lm_chat_audio"
-                android:textColor="@color/lm_chat_brown_grey"
-                android:textSize="13sp"
-                app:fontType="regular"
-                app:layout_constraintEnd_toEndOf="@+id/iv_audio"
-                app:layout_constraintStart_toStartOf="@+id/iv_audio"
-                app:layout_constraintTop_toBottomOf="@+id/iv_audio" />
-
-            <!-- Update the icon of custom widget A here -->
-            <ImageView
-                android:id="@+id/iv_custom_widget_a"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:layout_constraintEnd_toEndOf="@+id/tv_document_title"
-                app:layout_constraintStart_toStartOf="@+id/tv_document_title"
-                app:layout_constraintTop_toBottomOf="@id/tv_document_title"
-                app:srcCompat="@drawable/ic_create_custom_widget_a"
-                tools:ignore="ContentDescription" />
-
-            <!-- Update the title of custom widget A here -->
-            <com.likeminds.chatmm.theme.customview.LikeMindsTextView
-                android:id="@+id/tv_custom_widget_a_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/lm_chat_custom_widget_a"
-                android:textColor="@color/lm_chat_brown_grey"
-                android:textSize="13sp"
-                app:fontType="regular"
-                app:layout_constraintEnd_toEndOf="@+id/iv_custom_widget_a"
-                app:layout_constraintStart_toStartOf="@+id/iv_custom_widget_a"
-                app:layout_constraintTop_toBottomOf="@+id/iv_custom_widget_a" />
-
+                app:spanCount="3"
+                tools:itemCount="6"
+                tools:listitem="@layout/lm_chat_item_picker_attachment" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

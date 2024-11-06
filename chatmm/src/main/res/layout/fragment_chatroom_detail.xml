@@ -92,21 +92,23 @@
                     app:textType="title"
                     tools:text="Community Name" />
 
-                <ImageView
-                    android:id="@+id/tv_secret_chatroom"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_marginHorizontal="4dp"
-                    android:src="@drawable/lm_chat_ic_secret_lock"
-                    android:tint="@{toolbarColor}"
+                <com.likeminds.chatmm.theme.customview.LikeMindsTextView
+                    android:id="@+id/tv_ai_bot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@color/lm_chat_colorPrimary"
+                    android:paddingHorizontal="4dp"
+                    android:paddingVertical="2dp"
+                    android:singleLine="true"
+                    android:text="@string/lm_chat_ai_bot"
+                    android:textColor="@color/lm_chat_white"
+                    android:textSize="12sp"
                     android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_toolbar_title"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toEndOf="@+id/tv_toolbar_title"
-                    app:layout_constraintTop_toTopOf="@+id/tv_toolbar_title"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    tools:ignore="ContentDescription,UseAppTint"
+                    app:fontType="medium"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_toolbar_title"
+                    app:layout_constraintStart_toEndOf="@id/tv_toolbar_title"
+                    app:layout_constraintTop_toTopOf="@id/tv_toolbar_title"
                     tools:visibility="visible" />
 
                 <com.likeminds.chatmm.theme.customview.LikeMindsTextView
@@ -433,6 +435,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             tools:visibility="visible" />
+
 
         <com.likeminds.chatmm.theme.customview.LikeMindsFAB
             android:id="@+id/fab_send"

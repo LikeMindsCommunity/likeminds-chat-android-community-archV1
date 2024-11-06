@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="attachmentData"
+            type="com.likeminds.chatmm.chatroom.detail.model.LMChatAttachmentPickerItemViewData" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        style="@style/ClickableView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/iv_attachment_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"
+            tools:srcCompat="@drawable/lm_chat_ic_create_camera" />
+
+        <com.likeminds.chatmm.theme.customview.LikeMindsTextView
+            android:id="@+id/tv_attachment_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp"
+            app:fontType="regular"
+            app:layout_constraintEnd_toEndOf="@id/iv_attachment_icon"
+            app:layout_constraintStart_toStartOf="@id/iv_attachment_icon"
+            app:layout_constraintTop_toBottomOf="@id/iv_attachment_icon"
+            tools:text="Document" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

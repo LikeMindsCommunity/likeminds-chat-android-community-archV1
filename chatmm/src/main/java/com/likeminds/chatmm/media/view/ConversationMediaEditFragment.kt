@@ -15,19 +15,14 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.likeminds.chatmm.utils.membertagging.model.MemberTaggingExtras
 import com.likeminds.chatmm.SDKApplication
-import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEditTextListener
-import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.chatroom.create.view.adapter.ImageAdapter
 import com.likeminds.chatmm.chatroom.create.view.adapter.ImageAdapterListener
 import com.likeminds.chatmm.chatroom.detail.viewmodel.HelperViewModel
 import com.likeminds.chatmm.databinding.FragmentConversationMediaEditBinding
 import com.likeminds.chatmm.media.customviews.ColorSeekBar
 import com.likeminds.chatmm.media.customviews.MediaEditMode
-import com.likeminds.chatmm.media.customviews.MediaEditMode.DRAW
-import com.likeminds.chatmm.media.customviews.MediaEditMode.TEXT
-import com.likeminds.chatmm.media.customviews.MediaEditMode.TRIM
+import com.likeminds.chatmm.media.customviews.MediaEditMode.*
 import com.likeminds.chatmm.media.customviews.interfaces.CanvasListener
 import com.likeminds.chatmm.media.customviews.interfaces.OnTrimVideoListener
 import com.likeminds.chatmm.media.model.*
@@ -35,11 +30,14 @@ import com.likeminds.chatmm.media.util.MediaUtils
 import com.likeminds.chatmm.media.view.MediaActivity.Companion.BUNDLE_MEDIA_EXTRAS
 import com.likeminds.chatmm.media.viewmodel.MediaViewModel
 import com.likeminds.chatmm.member.util.UserPreferences
+import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEditTextListener
+import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.ValueUtils.getMediaType
 import com.likeminds.chatmm.utils.customview.BaseFragment
 import com.likeminds.chatmm.utils.file.util.FileUtil
 import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
+import com.likeminds.chatmm.utils.membertagging.model.MemberTaggingExtras
 import com.likeminds.chatmm.utils.membertagging.util.MemberTaggingUtil
 import com.likeminds.chatmm.utils.membertagging.util.MemberTaggingViewListener
 import com.likeminds.chatmm.utils.membertagging.view.MemberTaggingView
@@ -153,6 +151,10 @@ class ConversationMediaEditFragment :
             mediaExtras.text,
             LMTheme.getTextLinkColor()
         )
+
+        //hide add media button if only allowMultipleSelection is enabled.
+        val allowMultipleSelect = mediaExtras.allowMultipleSelect
+        binding.groupAllowMultipleSelection.isVisible = allowMultipleSelect
 
         binding.btnBack.setOnClickListener {
             val intent = Intent()

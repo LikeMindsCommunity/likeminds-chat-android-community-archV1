@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
 import com.likeminds.chatmm.LMAnalytics
 import com.likeminds.chatmm.SDKApplication
-import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
 import com.likeminds.chatmm.databinding.FragmentDmFeedBinding
@@ -25,6 +24,7 @@ import com.likeminds.chatmm.homefeed.model.HomeFeedItemViewData
 import com.likeminds.chatmm.member.model.*
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.member.view.LMChatCommunityMembersActivity
+import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
@@ -37,7 +37,7 @@ import javax.inject.Inject
 class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
     DMAdapterListener {
 
-    private lateinit var dmMetaExtras: CheckDMTabViewData
+    private var dmMetaExtras: CheckDMTabViewData? = null
     private var showList: Int = CommunityMembersFilter.ALL_MEMBERS.value
 
     @Inject
@@ -80,7 +80,7 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
             arguments,
             DM_META_EXTRAS,
             CheckDMTabViewData::class.java
-        ) ?: throw ErrorUtil.emptyExtrasException(TAG)
+        )
     }
 
     override fun attachDagger() {
@@ -221,14 +221,14 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
     //if dm is not enabled, perform the following
     private fun checkForHideDMTab() {
         binding.apply {
-            if (dmMetaExtras.hideDMTab) {
+            if (dmMetaExtras?.hideDMTab == true) {
                 layoutDmDisabled.root.show()
                 rvDmChatrooms.hide()
             } else {
                 layoutDmDisabled.root.hide()
                 rvDmChatrooms.show()
 
-                val hideDMText = dmMetaExtras.hideDMText
+                val hideDMText = dmMetaExtras?.hideDMText
                 if (!hideDMText.isNullOrEmpty()) {
                     ViewUtils.showShortToast(requireContext(), hideDMText)
                 }
@@ -298,6 +298,7 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
                 ChatroomDetailExtras.Builder()
                     .chatroomId(homeFeedItemViewData.chatroom.id)
                     .communityId(homeFeedItemViewData.chatroom.communityId)
+                    .communityName(homeFeedItemViewData.chatroom.communityName)
                     .source(LMAnalytics.Source.DIRECT_MESSAGES_SCREEN)
                     .build()
             )

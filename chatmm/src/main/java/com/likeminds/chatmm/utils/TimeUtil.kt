@@ -22,7 +22,7 @@ object TimeUtil {
 
     private val DATE_SDF_1 = object : ThreadLocal<SimpleDateFormat>() {
         override fun initialValue(): SimpleDateFormat {
-            return SimpleDateFormat("dd MMM yyyy")
+            return SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
         }
     }
 

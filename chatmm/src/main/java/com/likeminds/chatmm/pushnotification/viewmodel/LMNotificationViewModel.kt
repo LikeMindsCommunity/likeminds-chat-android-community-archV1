@@ -21,17 +21,17 @@ class LMNotificationViewModel @Inject constructor(
 
     private val lmChatClient = LMChatClient.getInstance()
 
-    fun fetchUnreadConversations(cb: (List<ChatroomNotificationViewData>?) -> Unit) {
+    // fetches the list of unread conversations to show in notification stack
+    fun fetchUnreadConversations(
+        unreadFollowNotification: ChatroomNotificationViewData,
+        cb: (List<ChatroomNotificationViewData>?) -> Unit
+    ) {
         viewModelScope.launchIO {
-            Log.d(
-                LOG_TAG,
-                "API Call to fetch unread conversations timestamp:${System.currentTimeMillis()}"
-            )
+            // creates request to fetch unread conversations for notification stack
+            val request =
+                ViewDataConverter.createGetUnreadChatroomsRequest(unreadFollowNotification)
 
-            val response = lmChatClient.getUnreadConversationNotification()
-
-            Log.d(LOG_TAG, "API Call response received timestamp:${System.currentTimeMillis()}")
-
+            val response = lmChatClient.getUnreadChatrooms(request)
             if (response.success) {
                 Log.d(
                     LOG_TAG,

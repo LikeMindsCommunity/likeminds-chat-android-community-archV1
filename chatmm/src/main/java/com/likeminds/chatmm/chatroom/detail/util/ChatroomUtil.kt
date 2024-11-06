@@ -149,6 +149,7 @@ object ChatroomUtil {
                             val decodeString = MemberTaggingDecoder.decode(conversation?.answer)
                             spannableStringBuilder.append(decodeString)
                         }
+
                         firstMediaType == IMAGE -> spannableStringBuilder.append("Photos")
                         firstMediaType == VIDEO -> spannableStringBuilder.append("Videos")
                         firstMediaType == GIF -> spannableStringBuilder.append("GIFs")
@@ -157,6 +158,7 @@ object ChatroomUtil {
                         hasLink -> {
                             spannableStringBuilder.append(conversation?.answer)
                         }
+
                         hasPDFs == true -> {
                             spannableStringBuilder.append("Documents")
                         }
@@ -167,6 +169,7 @@ object ChatroomUtil {
                             val decodeString = MemberTaggingDecoder.decode(conversation?.answer)
                             spannableStringBuilder.append(decodeString)
                         }
+
                         firstMediaType == IMAGE -> spannableStringBuilder.append("Photo")
                         firstMediaType == VIDEO -> spannableStringBuilder.append("Video")
                         firstMediaType == GIF -> spannableStringBuilder.append("GIF")
@@ -175,6 +178,7 @@ object ChatroomUtil {
                         hasLink -> {
                             spannableStringBuilder.append(conversation?.answer)
                         }
+
                         hasPDFs == true -> {
                             spannableStringBuilder.append("Document")
                         }
@@ -192,29 +196,37 @@ object ChatroomUtil {
         val audiosCount = conversation?.attachments?.filter { it.type == AUDIO }?.size ?: 0
         val voiceNoteCount =
             conversation?.attachments?.filter { it.type == VOICE_NOTE }?.size ?: 0
+
         return when {
             imagesCount > 0 -> {
                 Pair(R.drawable.lm_chat_ic_photo_header, imagesCount)
             }
+
             gifsCount > 0 -> {
                 Pair(R.drawable.lm_chat_ic_gif_header, gifsCount)
             }
+
             pdfsCount > 0 -> {
                 Pair(R.drawable.lm_chat_ic_document_header, pdfsCount)
             }
+
             audiosCount > 0 -> {
                 Pair(R.drawable.lm_chat_ic_audio_header_grey, audiosCount)
             }
+
             voiceNoteCount > 0 -> {
                 Pair(R.drawable.lm_chat_ic_voice_note_header_grey, voiceNoteCount)
             }
+
             conversation?.ogTags != null || conversation?.answer
                 .containsUrl() -> {
                 Pair(R.drawable.lm_chat_ic_link_header, 1)
             }
+
             conversation?.state == STATE_POLL -> {
                 Pair(R.drawable.lm_chat_ic_micro_poll, 1)
             }
+
             else -> null
         }
     }
@@ -272,6 +284,7 @@ object ChatroomUtil {
             TYPE_ANNOUNCEMENT -> {
                 R.drawable.lm_chat_ic_announcement_room
             }
+
             else -> {
                 return null
             }
@@ -316,21 +329,27 @@ object ChatroomUtil {
                 imagesCount > 0 && videoCount > 0 -> {
                     lastConversationAnswer = ""
                 }
+
                 firstMediaType == IMAGE -> {
                     lastConversationAnswer = if (imagesCount > 1) "Photos" else "Photo"
                 }
+
                 firstMediaType == GIF -> {
                     lastConversationAnswer = if (gifsCount > 1) "Gifs" else "GIF"
                 }
+
                 firstMediaType == VIDEO -> {
                     lastConversationAnswer = if (videoCount > 1) "Videos" else "Video"
                 }
+
                 firstMediaType == PDF -> {
                     lastConversationAnswer = if (pdfCount > 1) "Documents" else "Document"
                 }
+
                 firstMediaType == AUDIO -> {
                     lastConversationAnswer = if (audioCount > 1) "Audios" else "Audio"
                 }
+
                 firstMediaType == VOICE_NOTE -> {
                     lastConversationAnswer = if (voiceNoteCount > 1) "Voice Notes" else "Voice Note"
                 }

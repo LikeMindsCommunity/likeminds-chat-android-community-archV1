@@ -7,11 +7,11 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.likeminds.chatmm.utils.membertagging.model.MemberTaggingExtras
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.databinding.LayoutMemberTaggingBinding
 import com.likeminds.chatmm.utils.EndlessRecyclerScrollListener
 import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
+import com.likeminds.chatmm.utils.membertagging.model.MemberTaggingExtras
 import com.likeminds.chatmm.utils.membertagging.model.TagViewData
 import com.likeminds.chatmm.utils.membertagging.util.*
 import com.likeminds.chatmm.utils.membertagging.view.adapter.MemberAdapter
@@ -277,6 +277,8 @@ class MemberTaggingView(
     fun getTaggedMemberCount() = selectedMembers.size
 
     fun getTaggedMembers() = selectedMembers.toList()
+
+    fun clearTaggedMembers() = selectedMembers.clear()
 
     fun isMembersListEmpty() = communityMembersAndGroups.isEmpty()
 }

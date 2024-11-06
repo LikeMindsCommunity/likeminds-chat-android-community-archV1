@@ -54,6 +54,7 @@
                 android:background="@drawable/lm_chat_chat_bubble_other"
                 android:padding="4dp"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_goneMarginStart="8dp"
                 tools:layout_constraintLeft_toRightOf="@+id/member_image">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -241,14 +242,14 @@
                     android:textAllCaps="false"
                     android:textColor="@color/lm_chat_black"
                     android:textSize="14sp"
+                    app:button_type="normal"
                     app:cornerRadius="8dp"
                     app:font_type="regular"
-                    app:button_type="normal"
-                    app:text_type="normal"
                     app:layout_constraintEnd_toEndOf="@+id/tv_conversation"
                     app:layout_constraintStart_toStartOf="@+id/tv_conversation"
                     app:layout_constraintTop_toBottomOf="@+id/poll_view"
-                    app:strokeColor="@{buttonColor}" />
+                    app:strokeColor="@{buttonColor}"
+                    app:text_type="normal" />
 
                 <com.likeminds.chatmm.theme.customview.LikeMindsTextView
                     android:id="@+id/tv_answer_text"
@@ -278,12 +279,12 @@
                     android:paddingBottom="10dp"
                     android:text="@string/lm_chat_submit_vote"
                     android:textSize="12sp"
+                    app:button_type="normal"
                     app:cornerRadius="48dp"
                     app:font_type="medium"
                     app:icon="@drawable/lm_chat_ic_vote"
                     app:iconPadding="12dp"
                     app:iconTint="@{buttonColor}"
-                    app:button_type="normal"
                     app:layout_constraintStart_toStartOf="@+id/tv_conversation"
                     app:layout_constraintTop_toBottomOf="@+id/tv_answer_text"
                     app:strokeColor="@{buttonColor}"

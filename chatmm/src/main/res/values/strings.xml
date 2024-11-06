@@ -304,4 +304,6 @@
     <string name="lm_chat_confirm">Confirm</string>
     <string name="lm_chat_joined_the_group">Joined the group</string>
     <string name="lm_chat_invitation_rejected">Invitation Rejected</string>
+    <string name="lm_chat_ai_bot">AI Bot</string>
+    <string name="lm_chat_vote">Vote</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.likeminds.chatmm.chatroom.detail.view
 
 import android.app.Activity
+import android.app.NotificationManager
 import android.content.*
 import android.os.Bundle
 import androidx.navigation.NavController
@@ -79,6 +80,8 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
                 putParcelable(CHATROOM_DETAIL_EXTRAS, chatroomDetailExtras)
             }
 
+            cancelNotification(chatroomDetailExtras.notificationId)
+
             //Navigation
             navHostFragment =
                 supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -86,6 +89,14 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
             navController.setGraph(R.navigation.lm_chat_nav_graph_chatroom_detail, args)
         } else {
             redirectActivity(true)
+        }
+    }
+
+    // cancels the notification if screen is opened from notification
+    private fun cancelNotification(notificationId: Int?) {
+        if (notificationId != null) {
+            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            manager.cancel(notificationId)
         }
     }
 

@@ -45,6 +45,10 @@ class SearchViewModel @Inject constructor() : ViewModel() {
     private val _keywordSearched = MutableLiveData<String>()
     val keywordSearched: LiveData<String> = _keywordSearched
 
+    private val _chatroomConversationsSearchFinished by lazy { MutableLiveData<Boolean>() }
+    val chatroomConversationsSearchFinished: LiveData<Boolean> =
+        _chatroomConversationsSearchFinished
+
     fun getSingleShimmerView() = SingleShimmerViewData.Builder().build()
 
     fun getShimmerView() = HomeChatroomListShimmerViewData.Builder().build()
@@ -62,17 +66,22 @@ class SearchViewModel @Inject constructor() : ViewModel() {
     /**
      * This function is used to call next page in case of various APIs
      * @param disablePagination is used to check if the API is already fetching data,
+     * @param chatroomId is used to search conversations inside a chatroom
      * so not to fetch data using scroll listener
      */
-    fun fetchNextPage(disablePagination: Boolean) {
+    fun fetchNextPage(disablePagination: Boolean, chatroomId: String?) {
         currentApiPage++
-        when (currentApi) {
-            API_SEARCH_FOLLOWED_HEADERS -> getFollowedHeaders(disablePagination)
-            API_SEARCH_UNFOLLOWED_HEADERS -> getUnfollowedHeaders(disablePagination)
-            API_SEARCH_FOLLOWED_TITLES -> getFollowedTitles(disablePagination)
-            API_SEARCH_UNFOLLOWED_TITLES -> getUnfollowedTitles(disablePagination)
-            API_SEARCH_FOLLOWED_CONVERSATIONS -> getFollowedConversations(disablePagination)
-            API_SEARCH_UNFOLLOWED_CONVERSATIONS -> getUnfollowedConversations(disablePagination)
+        if (chatroomId == null) {
+            when (currentApi) {
+                API_SEARCH_FOLLOWED_HEADERS -> getFollowedHeaders(disablePagination)
+                API_SEARCH_UNFOLLOWED_HEADERS -> getUnfollowedHeaders(disablePagination)
+                API_SEARCH_FOLLOWED_TITLES -> getFollowedTitles(disablePagination)
+                API_SEARCH_UNFOLLOWED_TITLES -> getUnfollowedTitles(disablePagination)
+                API_SEARCH_FOLLOWED_CONVERSATIONS -> getFollowedConversations(disablePagination)
+                API_SEARCH_UNFOLLOWED_CONVERSATIONS -> getUnfollowedConversations(disablePagination)
+            }
+        } else {
+            getChatroomConversations(disablePagination, chatroomId)
         }
     }
 
@@ -133,6 +142,52 @@ class SearchViewModel @Inject constructor() : ViewModel() {
             disablePagination
         )
     }
+
+    /**
+     * This function is used to get all the conversations of the chatroom with provided chatroomId
+     * or else
+     * inform the UI that search is completed if result size < [PAGE_SIZE]
+     */
+    private fun getChatroomConversations(disablePagination: Boolean, chatroomId: String) {
+        viewModelScope.launchIO {
+            val request = SearchConversationRequest.Builder()
+                .search(getKeyword())
+                .chatroomId(chatroomId)
+                .page(currentApiPage)
+                .pageSize(PAGE_SIZE)
+                .build()
+            val response = lmChatClient.searchConversation(request)
+
+            if (response.success) {
+                val conversations = response.data?.conversations.orEmpty()
+                if (conversations.isEmpty()) {
+                    _chatroomConversationsSearchFinished.postValue(true)
+                } else {
+                    _searchLiveData.postValue(
+                        SearchViewData.Builder()
+                            .disablePagination(disablePagination)
+                            .dataList(
+                                ViewDataConverter.convertSearchConversations(
+                                    conversations,
+                                    true,
+                                    request.search
+                                )
+                            )
+                            .keyword(request.search)
+                            .checkForSeparator(true)
+                            .build()
+                    )
+
+                    if (conversations.size < PAGE_SIZE) {
+                        _chatroomConversationsSearchFinished.postValue(true)
+                    }
+                }
+            } else {
+                _chatroomConversationsSearchFinished.postValue(true)
+            }
+        }
+    }
+
 
     /**
      * This function is used to getFollowedConversations
@@ -215,9 +270,7 @@ class SearchViewModel @Inject constructor() : ViewModel() {
             .build()
     }
 
-    private fun getSearchConversationRequest(
-        followStatus: Boolean,
-    ): SearchConversationRequest {
+    private fun getSearchConversationRequest(followStatus: Boolean): SearchConversationRequest {
         return SearchConversationRequest.Builder()
             .search(getKeyword())
             .followStatus(followStatus)
@@ -295,7 +348,7 @@ class SearchViewModel @Inject constructor() : ViewModel() {
     private fun callNextApi(nextApi: String) {
         currentApiPage = 0
         currentApi = nextApi
-        fetchNextPage(true)
+        fetchNextPage(true, null)
     }
 
     /**

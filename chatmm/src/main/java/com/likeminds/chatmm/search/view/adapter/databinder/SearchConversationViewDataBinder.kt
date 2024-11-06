@@ -41,6 +41,8 @@ class SearchConversationViewDataBinder(
         position: Int
     ) {
         binding.apply {
+            val context = root.context
+
             searchedConversationViewData = data
             hideBottomLine = data.isLast
             hideNotFollowed = data.followStatus == true
@@ -54,7 +56,7 @@ class SearchConversationViewDataBinder(
                         SearchUtils.getHighlightedText(
                             it,
                             data.keywordMatchedInChatroomName,
-                            ContextCompat.getColor(root.context, R.color.lm_chat_black)
+                            ContextCompat.getColor(context, R.color.lm_chat_black)
                         )
                     }
                 } else {
@@ -62,14 +64,13 @@ class SearchConversationViewDataBinder(
                 }
 
             val chatTypeDrawable =
-                ChatroomUtil.getTypeDrawable(root.context, chatroomViewData?.type)
+                ChatroomUtil.getTypeDrawable(context, chatroomViewData?.type)
             if (chatTypeDrawable == null) {
                 ivChatroomType.hide()
             } else {
                 ivChatroomType.show()
                 ivChatroomType.setImageDrawable(chatTypeDrawable)
             }
-
 
             val updatedAnswer = data.answer.replace("\n", " ")
 
@@ -83,13 +84,20 @@ class SearchConversationViewDataBinder(
 
             val tvConversationText = SpannableStringBuilder("$senderName ")
 
+            tvConversationText.append(
+                ChatroomUtil.getHomeScreenAttachmentData(
+                    context,
+                    data.chatroomAnswer
+                ).first
+            )
+
             //trimming of the text to  be shown
             if ((data.keywordMatchedInMessageText?.size ?: 0) > 0) {
                 tvConversationText.append(data.keywordMatchedInMessageText?.let {
                     SearchUtils.getTrimmedText(
                         answerWithNonHighlightedTags,
                         it,
-                        ContextCompat.getColor(binding.root.context, R.color.lm_chat_black)
+                        ContextCompat.getColor(context, R.color.lm_chat_black)
                     )
                 })
             } else {

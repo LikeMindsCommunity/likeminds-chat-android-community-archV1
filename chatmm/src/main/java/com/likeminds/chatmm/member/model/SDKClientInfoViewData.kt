@@ -1,13 +1,18 @@
 package com.likeminds.chatmm.member.model
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class SDKClientInfoViewData private constructor(
+    @SerializedName("community")
     val communityId: Int,
+    @SerializedName("user")
     val user: String,
+    @SerializedName("user_unique_id")
     val userUniqueId: String,
+    @SerializedName("uuid")
     val uuid: String
 ) : Parcelable {
     class Builder {

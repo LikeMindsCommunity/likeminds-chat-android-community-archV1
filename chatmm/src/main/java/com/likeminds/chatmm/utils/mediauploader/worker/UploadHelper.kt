@@ -32,14 +32,17 @@ object UploadHelper {
         return awsFileResponses.filter { it.uuid == uuid }
     }
 
-    fun getConversationAttachmentFilePath(
+    /**
+     * return the attachment file path on AWS S3
+     */
+    fun getAttachmentFilePath(
         chatroomId: String?,
-        conversationId: String?,
+        loggedInUserUUID: String,
         attachmentType: String,
         file: File,
         isThumbnail: Boolean = false
     ): String {
-        return "$FOLDER_COLLABCARD/$chatroomId/$FOLDER_CONVERSATION/$conversationId/${
+        return "$FOLDER_COLLABCARD/$chatroomId/$FOLDER_CONVERSATION/$loggedInUserUUID/${
             InternalMediaType.getMediaFileInitial(attachmentType, isThumbnail)
         }${System.currentTimeMillis()}.${
             InternalMediaType.getMediaFileExtension(attachmentType, file, isThumbnail)

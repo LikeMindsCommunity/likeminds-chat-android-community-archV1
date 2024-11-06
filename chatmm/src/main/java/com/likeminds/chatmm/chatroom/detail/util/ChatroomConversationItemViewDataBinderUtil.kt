@@ -3,6 +3,7 @@ package com.likeminds.chatmm.chatroom.detail.util
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Typeface
 import android.text.*
 import android.text.style.*
 import android.text.util.Linkify
@@ -21,7 +22,6 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.android.material.button.MaterialButton
 import com.likeminds.chatmm.*
-import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomViewData
 import com.likeminds.chatmm.chatroom.detail.model.TYPE_DIRECT_MESSAGE
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ChatroomDetailAdapterListener
@@ -35,6 +35,7 @@ import com.likeminds.chatmm.member.util.MemberImageUtil
 import com.likeminds.chatmm.polls.model.*
 import com.likeminds.chatmm.polls.view.PollViewListener
 import com.likeminds.chatmm.reactions.model.ReactionsGridViewData
+import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.ValueUtils.getValidTextForLinkify
 import com.likeminds.chatmm.utils.ValueUtils.isValidYoutubeLink
@@ -46,7 +47,7 @@ import com.likeminds.chatmm.utils.link.LMLinkMovementMethod
 import com.likeminds.chatmm.utils.mediauploader.worker.UploadHelper
 import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
 import com.likeminds.chatmm.utils.model.*
-import java.util.*
+import java.util.UUID
 
 object ChatroomConversationItemViewDataBinderUtil {
 
@@ -242,9 +243,11 @@ object ChatroomConversationItemViewDataBinderUtil {
                                     conversationViewData, itemPosition,
                                     LMAnalytics.Source.MESSAGE_REACTIONS_FROM_LONG_PRESS
                                 )
+
                             chatRoom != null -> {
                                 chatroomAdapter.onLongPressChatRoom(chatRoom, itemPosition)
                             }
+
                             else -> {
                                 chatroomAdapter.showMemberProfile(memberViewData)
                                 chatroomAdapter.onScreenChanged()
@@ -336,11 +339,16 @@ object ChatroomConversationItemViewDataBinderUtil {
             trimmedText,
             true,
             LMTheme.getTextLinkColor()
-        ) { it ->
+        ) {
             adapterListener?.onMemberTagClicked(it)
         }
 
-        val readMoreColor = ContextCompat.getColor(tvConversation.context, R.color.lm_chat_caribbean_green)
+        decodeBoldText(
+            tvConversation
+        )
+
+        val readMoreColor =
+            ContextCompat.getColor(tvConversation.context, R.color.lm_chat_caribbean_green)
         val readMore = SpannableStringBuilder(" Read More")
         readMore.setSpan(
             ForegroundColorSpan(readMoreColor),
@@ -373,7 +381,8 @@ object ChatroomConversationItemViewDataBinderUtil {
             )
         }
 
-        val viewLessColor = ContextCompat.getColor(tvConversation.context, R.color.lm_chat_caribbean_green)
+        val viewLessColor =
+            ContextCompat.getColor(tvConversation.context, R.color.lm_chat_caribbean_green)
         val viewLess = SpannableStringBuilder(" View Less")
         viewLess.setSpan(
             ForegroundColorSpan(viewLessColor),
@@ -504,7 +513,11 @@ object ChatroomConversationItemViewDataBinderUtil {
             val current = MediaUtils.getFileSizeText(progress.first)
             val total = MediaUtils.getFileSizeText(progress.second)
             textView.apply {
-                text = context.getString(R.string.lm_chat_uploading_progress_placeholder, current, total)
+                text = context.getString(
+                    R.string.lm_chat_uploading_progress_placeholder,
+                    current,
+                    total
+                )
             }
         }
     }
@@ -522,7 +535,6 @@ object ChatroomConversationItemViewDataBinderUtil {
         val attachmentCount = conversation?.attachmentCount ?: 0
         val uploadWorkerUUID = conversation?.uploadWorkerUUID
         val transferUtility by lazy { SDKApplication.getInstance().transferUtility }
-
         var uuid: UUID? = null
         var isInProgress = false
         var mediaActionsVisible = false
@@ -561,11 +573,13 @@ object ChatroomConversationItemViewDataBinderUtil {
                             tvRetry.visibility = View.GONE
                             mediaActionsVisible = true
                         }
+
                         WorkInfo.State.SUCCEEDED -> {
                             groupMediaUploading.visibility = View.GONE
                             tvRetry.visibility = View.GONE
                             mediaActionsVisible = false
                         }
+
                         else -> {
                             tvRetry.visibility = View.VISIBLE
                             groupMediaUploading.visibility = View.GONE
@@ -573,19 +587,23 @@ object ChatroomConversationItemViewDataBinderUtil {
                         }
                     }
                 }
+
                 conversation?.isFailed() == true -> {
                     workerState = "failed"
                     groupMediaUploading.visibility = View.GONE
                 }
+
                 conversation?.isSending() == true -> {
                     workerState = "sending"
                     groupMediaUploading.visibility = View.VISIBLE
                     tvRetry.visibility = View.GONE
                 }
+
                 (conversation?.isTemporaryConversation() == false && conversation.isSending()) -> {
                     tvRetry.visibility = View.VISIBLE
                     groupMediaUploading.visibility = View.GONE
                 }
+
                 else -> {
                     groupMediaUploading.visibility = View.GONE
                     tvRetry.visibility = View.GONE
@@ -638,6 +656,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                     bufferProgressBar.hide()
                 }
             }
+
             MEDIA_ACTION_PLAY -> {
                 binding.voiceNoteView.apply {
                     ivPlayPause.apply {
@@ -653,6 +672,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                     }
                 }
             }
+
             MEDIA_ACTION_PAUSE -> {
                 binding.voiceNoteView.apply {
                     ivPlayPause.apply {
@@ -770,22 +790,36 @@ object ChatroomConversationItemViewDataBinderUtil {
                 imageViewStatus?.visibility = View.GONE
                 val statusDrawable = when {
                     conversation.isSending() -> {
-                        ViewUtils.getDrawable(context, R.drawable.lm_chat_ic_sending, 12, R.color.lm_chat_white)
+                        ViewUtils.getDrawable(
+                            context,
+                            R.drawable.lm_chat_ic_sending,
+                            12,
+                            R.color.lm_chat_white
+                        )
                     }
+
                     conversation.isSent() -> {
-                        ViewUtils.getDrawable(context, R.drawable.lm_chat_ic_sent, 12, R.color.lm_chat_white)
+                        ViewUtils.getDrawable(
+                            context,
+                            R.drawable.lm_chat_ic_sent,
+                            12,
+                            R.color.lm_chat_white
+                        )
                     }
+
                     else -> return
                 } ?: return
                 tvTime.compoundDrawablePadding = ViewUtils.dpToPx(4)
                 tvTime.setCompoundDrawables(null, null, statusDrawable, null)
             }
+
             else -> {
                 when {
                     conversation.isSending() -> {
                         imageViewStatus?.visibility = View.VISIBLE
                         imageViewStatus?.setImageResource(R.drawable.lm_chat_ic_sending)
                     }
+
                     conversation.isSent() -> {
                         imageViewStatus?.visibility = View.VISIBLE
                         imageViewStatus?.setImageResource(R.drawable.lm_chat_ic_sent)
@@ -826,6 +860,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                             root.context
                         )
                     }
+
                     replyChatRoom != null -> {
                         ChatReplyUtil.getChatRoomReplyData(
                             replyChatRoom,
@@ -833,6 +868,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                             root.context
                         )
                     }
+
                     else -> null
                 }
                 if (replyData != null) {
@@ -859,6 +895,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                         replyData.isMessageDeleted -> {
                             tvConversation.text = replyData.deleteMessage
                         }
+
                         else -> {
                             MemberTaggingDecoder.decode(
                                 tvConversation,
@@ -945,6 +982,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                     progressBarBuffer.hide()
                     waveAnim.hide()
                 }
+
                 MEDIA_ACTION_PLAY -> {
                     ivPlayPause.setImageResource(R.drawable.lm_chat_ic_pause_grey)
                     ivPlayPause.isClickable = true
@@ -960,6 +998,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                         waveAnim.playAnimation()
                     }
                 }
+
                 MEDIA_ACTION_PAUSE -> {
                     ivPlayPause.setImageResource(R.drawable.lm_chat_ic_play_grey)
                     ivPlayPause.isClickable = true
@@ -1065,6 +1104,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                     .reportedMemberId(data.memberViewData.sdkClientInfo.uuid)
                     .build()
             }
+
             is ChatroomViewData -> {
                 reportLinkExtras = ReportLinkExtras.Builder()
                     .chatroomId(data.id)
@@ -1131,6 +1171,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                             }
                         }
             }
+
             attachmentLeft > 1 -> {
                 attachmentViewDataList =
                     attachmentViewDataList.subList(0, 4)
@@ -1159,6 +1200,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                             }
                         }
             }
+
             else -> {
                 attachmentViewDataList =
                     attachmentViewDataList.map { attachmentViewData ->
@@ -1256,18 +1298,21 @@ object ChatroomConversationItemViewDataBinderUtil {
                                 multiSelectNum.toString()
                             )
                         }
+
                         POLL_MULTIPLE_STATE_MAX -> {
                             context.getString(
                                 R.string.lm_chat_select_at_most_text,
                                 multiSelectNum.toString()
                             )
                         }
+
                         POLL_MULTIPLE_STATE_LEAST -> {
                             context.getString(
                                 R.string.lm_chat_select_at_least_text,
                                 multiSelectNum.toString()
                             )
                         }
+
                         else -> ""
                     }
                 visibility = View.VISIBLE
@@ -1315,12 +1360,15 @@ object ChatroomConversationItemViewDataBinderUtil {
                 POLL_MULTIPLE_STATE_EXACTLY -> {
                     count == (pollInfoData.multipleSelectNum ?: 0)
                 }
+
                 POLL_MULTIPLE_STATE_MAX -> {
                     count > 0
                 }
+
                 POLL_MULTIPLE_STATE_LEAST -> {
                     count >= (pollInfoData.multipleSelectNum ?: 0)
                 }
+
                 else -> false
             }
             if (enableButton) {
@@ -1900,5 +1948,49 @@ object ChatroomConversationItemViewDataBinderUtil {
                 ivReaction.show()
             }
         }
+    }
+
+    /***
+     * This function helps to finds the text between **<text>** to make it as bold using [SpannableString]
+     */
+    private fun decodeBoldText(tvConversation: TextView) {
+        val text = tvConversation.text
+        val spannableStringBuilder = SpannableStringBuilder()
+        val regex =
+            "\\*\\*(.*?)\\*\\*".toRegex() // Regular expression to find text between double asterisks
+
+        var lastIndex = 0
+        val matches = regex.findAll(text)
+
+        for (match in matches) {
+            val matchStart = match.range.first
+            val matchEnd = match.range.last
+
+            // Append the text before the match
+            spannableStringBuilder.append(text.subSequence(lastIndex, matchStart))
+
+            // Get the bold text without the asterisks
+            val boldText = match.groupValues[1]
+
+            // Create a SpannableStringBuilder for the bold text
+            val boldSpannable = SpannableStringBuilder(boldText)
+            boldSpannable.setSpan(
+                StyleSpan(Typeface.BOLD),
+                0,
+                boldText.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            // Append the bold text to the final output
+            spannableStringBuilder.append(boldSpannable)
+
+            // Update the last index to after the current match
+            lastIndex = matchEnd + 1
+        }
+
+        // Append any remaining text after the last match
+        spannableStringBuilder.append(text.subSequence(lastIndex, text.length))
+
+        tvConversation.text = spannableStringBuilder
     }
 }

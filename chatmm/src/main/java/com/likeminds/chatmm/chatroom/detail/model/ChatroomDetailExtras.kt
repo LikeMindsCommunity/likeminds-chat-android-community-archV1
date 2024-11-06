@@ -8,6 +8,7 @@ class ChatroomDetailExtras private constructor(
     val chatroomId: String,
     val fromNotification: Boolean,
     val communityId: String?,
+    val communityName: String?,
     val source: String?,
     val reportedConversationId: String?,
     val conversationId: String?,
@@ -21,12 +22,14 @@ class ChatroomDetailExtras private constructor(
     val loadingAfterSync: Boolean,
     val searchKey: String?,
     val sourceLinkOrRoute: String?,
-    val cohortId: String?
+    val cohortId: String?,
+    val notificationId: Int?
 ) : Parcelable {
     class Builder {
         private var chatroomId: String = ""
         private var fromNotification: Boolean = false
         private var communityId: String? = null
+        private var communityName: String? = null
         private var source: String? = null
         private var reportedConversationId: String? = null
         private var conversationId: String? = null
@@ -41,12 +44,14 @@ class ChatroomDetailExtras private constructor(
         private var searchKey: String? = null
         private var sourceLinkOrRoute: String? = null
         private var cohortId: String? = null
+        private var notificationId: Int? = null
 
         fun chatroomId(chatroomId: String) = apply { this.chatroomId = chatroomId }
         fun fromNotification(fromNotification: Boolean) =
             apply { this.fromNotification = fromNotification }
 
         fun communityId(communityId: String?) = apply { this.communityId = communityId }
+        fun communityName(communityName: String?) = apply { this.communityName = communityName }
 
         fun source(source: String?) = apply { this.source = source }
         fun reportedConversationId(reportedConversationId: String?) =
@@ -83,11 +88,13 @@ class ChatroomDetailExtras private constructor(
             apply { this.sourceLinkOrRoute = sourceLinkOrRoute }
 
         fun cohortId(cohortId: String?) = apply { this.cohortId = cohortId }
+        fun notificationId(notificationId: Int?) = apply { this.notificationId = notificationId }
 
         fun build() = ChatroomDetailExtras(
             chatroomId,
             fromNotification,
             communityId,
+            communityName,
             source,
             reportedConversationId,
             conversationId,
@@ -101,7 +108,8 @@ class ChatroomDetailExtras private constructor(
             loadingAfterSync,
             searchKey,
             sourceLinkOrRoute,
-            cohortId
+            cohortId,
+            notificationId
         )
     }
 
@@ -109,6 +117,7 @@ class ChatroomDetailExtras private constructor(
         return Builder().chatroomId(chatroomId)
             .fromNotification(fromNotification)
             .communityId(communityId)
+            .communityName(communityName)
             .source(source)
             .reportedConversationId(reportedConversationId)
             .conversationId(conversationId)
@@ -123,5 +132,6 @@ class ChatroomDetailExtras private constructor(
             .searchKey(searchKey)
             .sourceLinkOrRoute(sourceLinkOrRoute)
             .cohortId(cohortId)
+            .notificationId(notificationId)
     }
 }

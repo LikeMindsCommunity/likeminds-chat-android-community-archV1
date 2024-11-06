@@ -1,19 +1,25 @@
 package com.likeminds.chatmm.member.model
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import com.likeminds.chatmm.utils.model.BaseViewType
 import com.likeminds.chatmm.utils.model.ITEM_MEMBER
+import com.likeminds.likemindschat.user.model.UserRole
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class MemberViewData private constructor(
+    @SerializedName("id")
     val id: String?,
+    @SerializedName("name")
     val name: String?,
+    @SerializedName("image_url")
     val imageUrl: String?,
     val dynamicViewType: Int,
     val state: Int,
     val communityId: String?,
     val communityName: String?,
+    @SerializedName("is_guest")
     val isGuest: Boolean?,
     val isOwner: Boolean?,
     val hideBottomLine: Boolean?,
@@ -23,10 +29,15 @@ class MemberViewData private constructor(
     val memberSince: String?,
     val listOfMenu: List<MemberActionViewData>?,
     val parentViewItemPosition: Int?,
+    @SerializedName("updated_at")
     val updatedAt: Long?,
+    @SerializedName("user_unique_id")
     val userUniqueId: String?,
+    @SerializedName("sdk_client_info")
     val sdkClientInfo: SDKClientInfoViewData,
-    val uuid: String
+    @SerializedName("uuid")
+    val uuid: String,
+    val roles: List<UserRole>
 ) : Parcelable, BaseViewType {
     override val viewType: Int
         get() = dynamicViewType
@@ -52,6 +63,7 @@ class MemberViewData private constructor(
         private var userUniqueId: String? = null
         private var sdkClientInfo: SDKClientInfoViewData = SDKClientInfoViewData.Builder().build()
         private var uuid: String = ""
+        private var roles: List<UserRole> = emptyList()
 
         fun id(id: String?) = apply { this.id = id }
         fun name(name: String?) = apply { this.name = name }
@@ -88,6 +100,7 @@ class MemberViewData private constructor(
             apply { this.sdkClientInfo = sdkClientInfo }
 
         fun uuid(uuid: String) = apply { this.uuid = uuid }
+        fun roles(roles: List<UserRole>) = apply { this.roles = roles }
 
         fun build() = MemberViewData(
             id,
@@ -109,7 +122,8 @@ class MemberViewData private constructor(
             updatedAt,
             userUniqueId,
             sdkClientInfo,
-            uuid
+            uuid,
+            roles
         )
     }
 
@@ -134,5 +148,6 @@ class MemberViewData private constructor(
             .userUniqueId(userUniqueId)
             .sdkClientInfo(sdkClientInfo)
             .uuid(uuid)
+            .roles(roles)
     }
 }

@@ -344,6 +344,7 @@ class HomeFeedFragment : BaseFragment<FragmentHomeFeedBinding, HomeFeedViewModel
         val extra = ChatroomDetailExtras.Builder()
             .chatroomId(chatroom.id)
             .communityId(chatroom.communityId)
+            .communityName(chatroom.communityName)
             .source(ChatroomDetailFragment.SOURCE_HOME_FEED)
             .build()
         ChatroomDetailActivity.start(requireContext(), extra)

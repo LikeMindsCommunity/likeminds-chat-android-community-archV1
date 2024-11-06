@@ -2,6 +2,7 @@ package com.likeminds.chatmm.conversation.model
 
 import android.net.Uri
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomViewData
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.utils.model.*
@@ -9,13 +10,19 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class AttachmentViewData private constructor(
+    @SerializedName("id")
     val id: String?,
+    @SerializedName("name")
     val name: String?,
+    @SerializedName("url")
     val url: String?,
     val uri: Uri,
+    @SerializedName("type")
     val type: String,
     val index: Int?,
+    @SerializedName("width")
     val width: Int?,
+    @SerializedName("height")
     val height: Int?,
     val title: String?,
     val subTitle: String?,
@@ -28,6 +35,7 @@ class AttachmentViewData private constructor(
     val thumbnail: String?,
     val thumbnailAWSFolderPath: String?,
     val thumbnailLocalFilePath: String?,
+    @SerializedName("meta")
     val meta: AttachmentMetaViewData?,
     val progress: Int?,
     val currentDuration: String,

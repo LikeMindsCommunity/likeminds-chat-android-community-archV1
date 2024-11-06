@@ -1,12 +1,16 @@
 package com.likeminds.chatmm.conversation.model
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class AttachmentMetaViewData private constructor(
+    @SerializedName("number_of_page")
     val numberOfPage: Int?,
+    @SerializedName("size")
     val size: Long?,
+    @SerializedName("duration")
     val duration: Int?,
 ) : Parcelable {
     class Builder {

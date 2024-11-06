@@ -61,6 +61,7 @@
                 android:maxWidth="260dp"
                 android:padding="4dp"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_goneMarginStart="8dp"
                 tools:layout_constraintLeft_toRightOf="@+id/member_image">
 
                 <androidx.constraintlayout.widget.ConstraintLayout

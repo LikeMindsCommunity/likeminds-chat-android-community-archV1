@@ -55,6 +55,7 @@
                 android:maxWidth="260dp"
                 android:padding="4dp"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_goneMarginStart="8dp"
                 tools:layout_constraintLeft_toRightOf="@+id/member_image">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -278,8 +279,8 @@
                 android:text="@string/lm_chat_long_press_to_react"
                 android:textColor="@color/lm_chat_brown_grey"
                 android:textSize="12sp"
-                app:fontType="regular"
                 android:visibility="gone"
+                app:fontType="regular"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@id/cl_conversation_bubble"
                 app:layout_constraintTop_toBottomOf="@id/message_reactions_grid_layout" />

@@ -442,6 +442,7 @@ class NotificationActionBroadcastReceiver : BroadcastReceiver() {
         data: NotificationExtras
     ) {
         NotificationManagerCompat.from(context).apply {
+            cancel(data.route.hashCode())
             cancel(data.route, data.chatroomId.toInt())
         }
         NotificationUtils.removeConversationGroupNotification(context)
