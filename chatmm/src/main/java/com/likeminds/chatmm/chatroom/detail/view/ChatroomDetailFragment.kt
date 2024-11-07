@@ -38,7 +38,6 @@ import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.likeminds.chatmm.*
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.chatroom.detail.model.*
 import com.likeminds.chatmm.chatroom.detail.util.*
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil.getTypeName
@@ -5369,6 +5368,7 @@ class ChatroomDetailFragment :
         val updatedConversation = conversation.toBuilder()
             .localCreatedEpoch(System.currentTimeMillis())
             .build()
+
         viewModel.resendFailedConversation(requireContext(), updatedConversation)
         chatroomDetailAdapter.update(index, updatedConversation)
     }

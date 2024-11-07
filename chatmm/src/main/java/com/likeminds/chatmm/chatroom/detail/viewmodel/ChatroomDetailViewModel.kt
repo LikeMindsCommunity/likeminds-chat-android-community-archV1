@@ -1883,6 +1883,11 @@ class ChatroomDetailViewModel @Inject constructor(
                     postConversationRequestBuilder.triggerBot(true)
                 }
 
+                val metadata = conversation.widgetViewData?.metadata
+                if (!metadata.isNullOrEmpty()) {
+                    postConversationRequestBuilder.metadata(JSONObject(metadata))
+                }
+
                 val postConversationRequest = postConversationRequestBuilder.build()
 
                 val updateTemporaryConversationRequest =

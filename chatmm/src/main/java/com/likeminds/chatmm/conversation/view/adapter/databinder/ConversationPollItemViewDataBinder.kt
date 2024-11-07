@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomConversationItemViewDataBinderUtil
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailFragment
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ChatroomDetailAdapterListener
@@ -15,13 +14,14 @@ import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.polls.view.PollViewListener
 import com.likeminds.chatmm.reactions.util.ReactionUtil
 import com.likeminds.chatmm.reactions.util.ReactionsPreferences
+import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.setVisible
 import com.likeminds.chatmm.utils.ViewUtils.show
 import com.likeminds.chatmm.utils.customview.ViewDataBinder
 import com.likeminds.chatmm.utils.model.ITEM_CONVERSATION_POLL
 
-internal class ConversationPollItemViewDataBinder constructor(
+internal class ConversationPollItemViewDataBinder(
     private val userPreferences: UserPreferences,
     private val reactionsPreferences: ReactionsPreferences,
     private val chatroomDetailAdapterListener: ChatroomDetailAdapterListener,
