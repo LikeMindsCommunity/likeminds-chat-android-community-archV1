@@ -198,7 +198,7 @@ class ChatroomDetailFragment :
     lateinit var reactionsViewModel: ReactionsViewModel
 
     lateinit var chatroomDetailAdapter: ChatroomDetailAdapter
-    lateinit var attachmentBarAdapter: LMChatAttachmentBarAdapter
+    private lateinit var attachmentBarAdapter: LMChatAttachmentBarAdapter
 
     private var messageReactionsTray: ReactionPopup? = null
     private lateinit var chatroomScrollListener: ChatroomScrollListener
