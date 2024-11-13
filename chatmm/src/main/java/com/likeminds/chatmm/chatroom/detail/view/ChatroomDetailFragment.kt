@@ -551,7 +551,6 @@ class ChatroomDetailFragment :
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             syncChatroom()
         }
-        getContentDownloadSettings()
         initMediaAudioServiceConnection()
         registerAudioCompleteBroadcast()
         registerProgressBroadcast()
@@ -1154,10 +1153,6 @@ class ChatroomDetailFragment :
                     }
                 }
             }
-    }
-
-    private fun getContentDownloadSettings() {
-        viewModel.getContentDownloadSettings()
     }
 
     private fun initMediaAudioServiceConnection() {
@@ -2824,7 +2819,6 @@ class ChatroomDetailFragment :
         observeNewOptionAddedLiveData()
         observePollResponse()
         observeTopic()
-        observeContentDownloadSettings()
         observeMemberState()
         observeMemberBlocked()
         observeErrorMessage()
@@ -3576,12 +3570,6 @@ class ChatroomDetailFragment :
     private fun getIndexOfAnyGraphicItem(): Int {
         return chatroomDetailAdapter.items().indexOfFirst {
             chatroomDetailAdapter.getGraphicViewTypes().contains(it.viewType)
-        }
-    }
-
-    private fun observeContentDownloadSettings() {
-        viewModel.contentDownloadSettingsLiveData.observe(viewLifecycleOwner) { options ->
-            handleScreenshot(options)
         }
     }
 

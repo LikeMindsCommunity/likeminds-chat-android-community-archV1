@@ -111,12 +111,6 @@ class ChatroomDetailViewModel @Inject constructor(
     private val _setTopicResponse by lazy { MutableLiveData<ConversationViewData>() }
     val setTopicResponse: LiveData<ConversationViewData> = _setTopicResponse
 
-    private val _contentDownloadSettingsLiveData: MutableLiveData<List<String>?> by lazy {
-        MutableLiveData<List<String>?>()
-    }
-
-    val contentDownloadSettingsLiveData: LiveData<List<String>?> = _contentDownloadSettingsLiveData
-
     private val _leaveSecretChatroomResponse by lazy { MutableLiveData<Boolean>() }
     val leaveSecretChatroomResponse: LiveData<Boolean> = _leaveSecretChatroomResponse
 
@@ -1152,26 +1146,6 @@ class ChatroomDetailViewModel @Inject constructor(
         return lmChatClient.getConversationsCount(getConversationsCountRequest).data?.count ?: 0
     }
 
-    fun getContentDownloadSettings() {
-        viewModelScope.launchIO {
-            val response = lmChatClient.getContentDownloadSettings()
-            if (response.success) {
-                val data = response.data ?: return@launchIO
-                val settings = data.settings
-                val optionsDownloadable = settings.filter { it.enabled }
-                val contentTypes = optionsDownloadable.map {
-                    it.downloadSettingType
-                }
-                _contentDownloadSettingsLiveData.postValue(contentTypes)
-            } else {
-                Log.e(
-                    SDKApplication.LOG_TAG,
-                    "content download setting failed: ${response.errorMessage}"
-                )
-            }
-        }
-    }
-
     fun setLastSeenTrueAndSaveDraftResponse(
         chatroomId: String,
         draftText: String?
@@ -1808,12 +1782,13 @@ class ChatroomDetailViewModel @Inject constructor(
                 )
             }
         }
+        Log.d(TAG, "postEditedChatroom: $text")
     }
 
     fun postEditedConversation(
         text: String,
         shareLink: String?,
-        conversation: ConversationViewData,
+        conversation: ConversationViewData
     ) {
         viewModelScope.launchIO {
             val request = EditConversationRequest.Builder()
@@ -1834,7 +1809,7 @@ class ChatroomDetailViewModel @Inject constructor(
 
     private fun postedEditedConversation(
         text: String,
-        conversation: ConversationViewData,
+        conversation: ConversationViewData
     ) {
         val updatedConversation = conversation.toBuilder()
             .answer(text)
