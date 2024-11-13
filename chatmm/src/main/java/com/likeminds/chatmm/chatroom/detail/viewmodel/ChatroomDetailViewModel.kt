@@ -336,7 +336,7 @@ class ChatroomDetailViewModel @Inject constructor(
 
     fun syncChatroom(
         context: Context,
-        chatroomId: String
+        chatroomId: String,
     ): Pair<MediatorLiveData<WorkInfo.State>, Boolean> {
         val getChatroomRequest = GetChatroomRequest.Builder()
             .chatroomId(chatroomId)
@@ -1523,25 +1523,7 @@ class ChatroomDetailViewModel @Inject constructor(
             sendPostedConversationsToUI(temporaryConversation, postConversationRequest.triggerBot)
 
             if (updatedFileUris.isNullOrEmpty()) { // no attachments
-                //call API
-                val response = lmChatClient.postConversation(postConversationRequest)
-
-                if (response.success) { //on success
-                    sendLinkPreview = true
-                    val data = response.data
-
-                    //post action on success
-                    onConversationPosted(
-                        data,
-                        temporaryConversation,
-                        taggedUsers,
-                        replyChatData,
-                        replyConversationId,
-                        replyChatRoomId
-                    )
-                } else { //on failure
-                    errorEventChannel.send(ErrorMessageEvent.PostConversation(response.errorMessage))
-                }
+                lmChatClient.createConversation(context, postConversationRequest)
             } else { // with attachments
                 //create upload worker
                 val uploadData = getUploadWorker(context, temporaryId, taggedUsers.map { it.name })
@@ -1899,20 +1881,7 @@ class ChatroomDetailViewModel @Inject constructor(
                         .build()
                 lmChatClient.updateTemporaryConversation(updateTemporaryConversationRequest)
 
-
-                val response = lmChatClient.postConversation(postConversationRequest)
-                if (response.success) {
-                    onConversationPosted(
-                        response.data,
-                        conversation,
-                        emptyList(),
-                        null,
-                        null,
-                        null
-                    )
-                } else {
-                    errorEventChannel.send(ErrorMessageEvent.PostConversation(response.errorMessage))
-                }
+                lmChatClient.createConversation(context, postConversationRequest)
             } else {
                 //create upload worker
                 val uploadData = getUploadWorker(context, conversation.id, emptyList())

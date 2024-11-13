@@ -936,7 +936,15 @@ class ChatroomDetailFragment :
     }
 
     //on click function when custom widget A is clicked
-    private fun onCustomWidgetAAttachmentClicked() {}
+    private fun onCustomWidgetAAttachmentClicked() {
+        postConversation(
+            conversation = "CW!",
+            metadata = JSONObject().apply {
+                val sec = System.currentTimeMillis() / 1000
+                put("time", sec)
+            }
+        )
+    }
 
     private fun disableAnswerPosting() {
         editAnswerEnableState(false)
