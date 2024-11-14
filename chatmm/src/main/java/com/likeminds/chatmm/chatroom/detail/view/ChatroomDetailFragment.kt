@@ -3229,12 +3229,6 @@ class ChatroomDetailFragment :
                 }
             }
         }.observeInLifecycle(viewLifecycleOwner)
-
-        viewModel.conversationPosted.observe(viewLifecycleOwner) { success ->
-            if (success) {
-
-            }
-        }
     }
 
     //filter conversation with widgets and return to customer
