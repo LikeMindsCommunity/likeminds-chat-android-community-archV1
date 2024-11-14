@@ -6,7 +6,6 @@ import android.os.Looper
 import android.view.*
 import android.widget.SeekBar
 import com.likeminds.chatmm.LMAnalytics
-import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomConversationItemViewDataBinderUtil
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ChatroomDetailAdapterListener
 import com.likeminds.chatmm.conversation.model.AttachmentViewData
@@ -15,6 +14,7 @@ import com.likeminds.chatmm.databinding.ItemConversationVoiceNoteBinding
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.reactions.util.ReactionUtil
 import com.likeminds.chatmm.reactions.util.ReactionsPreferences
+import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.utils.DateUtil
 import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.ViewUtils.hide
@@ -23,7 +23,7 @@ import com.likeminds.chatmm.utils.customview.ViewDataBinder
 import com.likeminds.chatmm.utils.model.BaseViewType
 import com.likeminds.chatmm.utils.model.ITEM_CONVERSATION_VOICE_NOTE
 
-internal class ConversationVoiceNoteItemViewDataBinder constructor(
+internal class ConversationVoiceNoteItemViewDataBinder(
     private val userPreferences: UserPreferences,
     private val reactionsPreferences: ReactionsPreferences,
     private val adapterListener: ChatroomDetailAdapterListener,

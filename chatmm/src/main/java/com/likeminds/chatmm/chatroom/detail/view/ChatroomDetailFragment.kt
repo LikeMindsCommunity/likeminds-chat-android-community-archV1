@@ -38,7 +38,6 @@ import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.likeminds.chatmm.*
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.chatroom.detail.model.*
 import com.likeminds.chatmm.chatroom.detail.util.*
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil.getTypeName
@@ -121,6 +120,7 @@ import com.likeminds.chatmm.utils.recyclerview.LMSwipeController
 import com.likeminds.chatmm.utils.recyclerview.SwipeControllerActions
 import com.likeminds.chatmm.widget.model.WidgetViewData
 import com.likeminds.likemindschat.chatroom.model.ChatRequestState
+import com.likeminds.likemindschat.conversation.worker.CreateConversationWorker
 import com.likeminds.likemindschat.user.model.MemberBlockState
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.coroutines.flow.onEach
@@ -199,7 +199,7 @@ class ChatroomDetailFragment :
     lateinit var reactionsViewModel: ReactionsViewModel
 
     lateinit var chatroomDetailAdapter: ChatroomDetailAdapter
-    lateinit var attachmentBarAdapter: LMChatAttachmentBarAdapter
+    private lateinit var attachmentBarAdapter: LMChatAttachmentBarAdapter
 
     private var messageReactionsTray: ReactionPopup? = null
     private lateinit var chatroomScrollListener: ChatroomScrollListener
@@ -552,7 +552,6 @@ class ChatroomDetailFragment :
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             syncChatroom()
         }
-        getContentDownloadSettings()
         initMediaAudioServiceConnection()
         registerAudioCompleteBroadcast()
         registerProgressBroadcast()
@@ -1147,10 +1146,6 @@ class ChatroomDetailFragment :
                     }
                 }
             }
-    }
-
-    private fun getContentDownloadSettings() {
-        viewModel.getContentDownloadSettings()
     }
 
     private fun initMediaAudioServiceConnection() {
@@ -2108,7 +2103,7 @@ class ChatroomDetailFragment :
                     replyChatData = inputBox.viewReply.chatReplyData
                 }
 
-                viewModel.postConversation(
+                val uuidString = viewModel.postConversation(
                     requireContext(),
                     updatedConversation,
                     fileUris,
@@ -2119,6 +2114,16 @@ class ChatroomDetailFragment :
                     replyChatData,
                     metadata
                 )
+
+                uuidString?.let { uuid ->
+                    observeCreateConversationWorker(
+                        uuid,
+                        replyChatData,
+                        replyConversationId,
+                        replyChatRoomId
+                    )
+                }
+
                 clearEditTextAnswer()
                 updateDmMessaged()
                 if (isLinkViewVisible() || isReplyViewVisible()) {
@@ -2130,6 +2135,83 @@ class ChatroomDetailFragment :
                     getString(R.string.lm_chat_please_enter_your_response)
                 )
             }
+        }
+    }
+
+    //observes workinfo and related to create conversation worker
+    private fun observeCreateConversationWorker(
+        uuid: String,
+        replyChatData: ChatReplyViewData?,
+        replyConversationId: String?,
+        replyChatRoomId: String?
+    ) {
+        val workerUUID = UUID.fromString(uuid) ?: return
+        if (!workersMap.contains(workerUUID)) {
+            workersMap.add(workerUUID)
+
+            //get worker info
+            WorkManager.getInstance(requireContext())
+                .getWorkInfoByIdLiveData(workerUUID)
+                .observe(viewLifecycleOwner) { workInfo ->
+                    when (workInfo.state) {
+                        WorkInfo.State.SUCCEEDED -> {
+                            //get output data
+                            val successResponseString =
+                                workInfo.outputData.getString(CreateConversationWorker.OUTPUT_POST_CONVERSATION_RESPONSE)
+
+                            successResponseString?.let {
+                                //convert to LMResponse
+                                val successResponse =
+                                    viewModel.parseCreateConversationResponse(it)
+
+                                //get data 
+                                val data = successResponse?.data
+                                if (data != null) {
+                                    //get conversation
+                                    val createdConversation = data.conversation
+
+                                    //send analytics
+                                    viewModel.sendCreateConversationAnalytics(
+                                        createdConversation,
+                                        memberTagging.getTaggedMembers(),
+                                        replyChatData,
+                                        replyConversationId,
+                                        replyChatRoomId
+                                    )
+
+                                    //clear old values
+                                    memberTagging.clearTaggedMembers()
+                                    binding.inputBox.viewReply.chatReplyData = null
+                                }
+                            }
+                        }
+
+                        WorkInfo.State.FAILED -> {
+                            //get output data
+                            val errorResponseString =
+                                workInfo.outputData.getString(CreateConversationWorker.OUTPUT_POST_CONVERSATION_RESPONSE)
+
+                            errorResponseString?.let {
+                                // convert to LMResponse
+                                val errorResponse =
+                                    viewModel.parseCreateConversationResponse(it)
+
+                                //show error toast
+                                ViewUtils.showErrorMessageToast(
+                                    requireContext(),
+                                    errorResponse?.errorMessage
+                                )
+                            }
+                        }
+
+                        else -> {
+                            Log.i(
+                                TAG,
+                                "create conversation worker - state - ${workInfo.state}"
+                            )
+                        }
+                    }
+                }
         }
     }
 
@@ -2817,7 +2899,6 @@ class ChatroomDetailFragment :
         observeNewOptionAddedLiveData()
         observePollResponse()
         observeTopic()
-        observeContentDownloadSettings()
         observeMemberState()
         observeMemberBlocked()
         observeErrorMessage()
@@ -3148,13 +3229,6 @@ class ChatroomDetailFragment :
                 }
             }
         }.observeInLifecycle(viewLifecycleOwner)
-
-        viewModel.conversationPosted.observe(viewLifecycleOwner) { success ->
-            if (success) {
-                memberTagging.clearTaggedMembers()
-                binding.inputBox.viewReply.chatReplyData = null
-            }
-        }
     }
 
     //filter conversation with widgets and return to customer
@@ -3569,12 +3643,6 @@ class ChatroomDetailFragment :
     private fun getIndexOfAnyGraphicItem(): Int {
         return chatroomDetailAdapter.items().indexOfFirst {
             chatroomDetailAdapter.getGraphicViewTypes().contains(it.viewType)
-        }
-    }
-
-    private fun observeContentDownloadSettings() {
-        viewModel.contentDownloadSettingsLiveData.observe(viewLifecycleOwner) { options ->
-            handleScreenshot(options)
         }
     }
 
@@ -5369,7 +5437,21 @@ class ChatroomDetailFragment :
         val updatedConversation = conversation.toBuilder()
             .localCreatedEpoch(System.currentTimeMillis())
             .build()
-        viewModel.resendFailedConversation(requireContext(), updatedConversation)
+
+        val workerUUID = viewModel.postFailedConversation(requireContext(), updatedConversation)
+        workerUUID?.let { uuid ->
+            val chatReplyViewData = ChatReplyUtil.getConversationReplyData(
+                conversation,
+                userPreferences.getUUID(),
+                requireContext()
+            )
+            observeCreateConversationWorker(
+                uuid,
+                chatReplyViewData,
+                conversation.replyConversation?.id,
+                conversation.replyChatroomId
+            )
+        }
         chatroomDetailAdapter.update(index, updatedConversation)
     }
 

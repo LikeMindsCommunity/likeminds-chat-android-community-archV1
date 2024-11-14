@@ -38,6 +38,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+    lintOptions {
+        disable 'TimberArgCount', 'TimberArgTypes', 'TimberTagLength', 'BinaryOperationInTimber',
+                'LogNotTimber', 'StringFormatInTimber', 'ThrowableNotAtBeginning'
+    }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17
         freeCompilerArgs = ["-Xstring-concat=inline"]
