@@ -1637,7 +1637,7 @@ class ChatroomDetailViewModel @Inject constructor(
      * @param replyConversationId [String?] -> reply conversation id
      * @param replyChatRoomId [String?] -> reply chat room id
      */
-    @Deprecated("This method is not used, as we migrated from API to WorkManager")
+    @Deprecated("This method is not used, as we migrated from API to WorkManma")
     private fun onConversationPosted(
         response: PostConversationResponse?,
         tempConversation: ConversationViewData?,
@@ -1786,7 +1786,6 @@ class ChatroomDetailViewModel @Inject constructor(
                 )
             }
         }
-        Log.d(TAG, "postEditedChatroom: $text")
     }
 
     fun postEditedConversation(
