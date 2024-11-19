@@ -73,7 +73,8 @@ class ConversationWidgetItemViewDataBinder(
                     tvConversation,
                     tvDeleteMessage,
                     userPreferences.getUUID(),
-                    conversationViewData = data
+                    conversationViewData = data,
+                    viewReply
                 )
                 ivAddReaction.hide()
             } else {

@@ -343,9 +343,7 @@ object ChatroomConversationItemViewDataBinderUtil {
             adapterListener?.onMemberTagClicked(it)
         }
 
-        decodeBoldText(
-            tvConversation
-        )
+        decodeBoldText(tvConversation)
 
         val readMoreColor =
             ContextCompat.getColor(tvConversation.context, R.color.lm_chat_caribbean_green)

@@ -125,7 +125,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/name_layout" />
 
-                <!-- Add Custom View-->
+                <!-- Add Custom View after expanding the tags-->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_widget"
                     android:layout_width="230dp"
@@ -133,18 +133,7 @@
                     android:layout_marginTop="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/view_reply">
-
-                    <TextView
-                        android:id="@+id/tv_cw_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/lm_chat_black"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    app:layout_constraintTop_toBottomOf="@+id/view_reply" />
 
                 <com.likeminds.chatmm.theme.customview.LikeMindsTextView
                     android:id="@+id/tv_conversation"
