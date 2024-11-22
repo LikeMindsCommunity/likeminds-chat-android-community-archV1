@@ -79,12 +79,12 @@ class ChatroomDetailViewModel @Inject constructor(
 
     private val managementRights: ArrayList<ManagementRightPermissionViewData> by lazy { ArrayList() }
 
-    //default value is set to true, so that initially member can message,
+    //default value is set to null, so that initially member can message,
     //but after api response check for the right to respond
-    private val _canMemberRespond: MutableLiveData<Boolean> by lazy { MutableLiveData() }
+    private val _canMemberRespond: MutableLiveData<Boolean> by lazy { MutableLiveData(null) }
     val canMemberRespond: LiveData<Boolean> = _canMemberRespond
 
-    private val _canMemberCreatePoll: MutableLiveData<Boolean> by lazy { MutableLiveData(true) }
+    private val _canMemberCreatePoll: MutableLiveData<Boolean> by lazy { MutableLiveData(null) }
     val canMemberCreatePoll: LiveData<Boolean> = _canMemberCreatePoll
 
     private val _linkOgTags: MutableLiveData<LinkOGTagsViewData?> by lazy { MutableLiveData() }
@@ -230,11 +230,19 @@ class ChatroomDetailViewModel @Inject constructor(
     }
 
     fun isAnnouncementChatroom(): Boolean {
-        return ChatroomType.isAnnouncementRoom(chatroomDetail.chatroom?.type)
+        return if (!::chatroomDetail.isInitialized) {
+            false
+        } else {
+            ChatroomType.isAnnouncementRoom(chatroomDetail.chatroom?.type)
+        }
     }
 
     fun canMembersCanMessage(): Boolean? {
-        return chatroomDetail.chatroom?.memberCanMessage
+        return if (!::chatroomDetail.isInitialized) {
+            null
+        } else {
+            chatroomDetail.chatroom?.memberCanMessage
+        }
     }
 
     private fun hasCreatePollRights(): Boolean {
@@ -249,7 +257,7 @@ class ChatroomDetailViewModel @Inject constructor(
     }
 
     fun hasMemberRespondRight(): Boolean {
-        return _canMemberRespond.value == true
+        return _canMemberRespond.value != false
     }
 
     fun hasDeleteChatRoomRight(): Boolean {
