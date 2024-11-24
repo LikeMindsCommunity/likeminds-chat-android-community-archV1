@@ -256,6 +256,11 @@ class ChatroomDetailViewModel @Inject constructor(
         return MemberState.isAdmin(currentMemberDataFromMemberState?.state)
     }
 
+    /**
+     * _canMemberRespond == true -> that means member can respond, hence return true
+     * _canMemberRespond == false -> that means member cannot respond, hence return false
+     * _canMemberRespond == null -> that means member can respond (as this is the default value), hence return true
+     */
     fun hasMemberRespondRight(): Boolean {
         return _canMemberRespond.value != false
     }
