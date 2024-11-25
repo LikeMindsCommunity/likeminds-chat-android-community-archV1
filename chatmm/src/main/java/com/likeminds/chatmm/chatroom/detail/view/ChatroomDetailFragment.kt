@@ -545,7 +545,6 @@ class ChatroomDetailFragment :
         initGiphy()
         initEnterClick()
         initAttachmentClick()
-        initAttachmentsPickerBarView()
         disableAnswerPosting()
         initReplyView()
         initDMRequestClickListeners()
@@ -3666,11 +3665,16 @@ class ChatroomDetailFragment :
     }
 
     private fun observeMemberState() {
-        viewModel.canMemberRespond.observe(viewLifecycleOwner) {
+        viewModel.canMemberRespond.observe(viewLifecycleOwner) { canMemberRespond ->
+            if (canMemberRespond != null) {
+                initAttachmentsPickerBarView()
+            }
             setChatInputBoxViewType(CHAT_BOX_NORMAL)
         }
-        viewModel.canMemberCreatePoll.observe(viewLifecycleOwner) {
-            initAttachmentsPickerBarView()
+        viewModel.canMemberCreatePoll.observe(viewLifecycleOwner) { canMemberCreatePoll ->
+            if (canMemberCreatePoll != null) {
+                initAttachmentsPickerBarView()
+            }
         }
     }
 
