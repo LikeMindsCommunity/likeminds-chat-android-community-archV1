@@ -217,9 +217,7 @@ class LMChatNotificationHandler {
                 )
             }
 
-            return
-
-            if (intent != null) {
+            return if (intent != null) {
                 PendingIntent.getActivities(
                     context,
                     notificationId,
