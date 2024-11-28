@@ -1,6 +1,7 @@
 package com.likeminds.chatmm.conversation.model
 
 import android.os.Parcelable
+import android.util.Log
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.member.model.MemberViewData
@@ -31,7 +32,7 @@ class ConversationViewData private constructor(
     val deletedBy: String?,
     val attachmentCount: Int,
     val attachmentsUploaded: Boolean?,
-    val uploadWorkerUUID: String?,
+    val workerUUID: String?,
     val temporaryId: String?,
     val createdEpoch: Long,
     val localCreatedEpoch: Long?,
@@ -43,7 +44,8 @@ class ConversationViewData private constructor(
     val deletedByMember: MemberViewData?,
     val showTapToUndo: Boolean,
     val widgetId: String?,
-    val widgetViewData: WidgetViewData?
+    val widgetViewData: WidgetViewData?,
+    val attachmentsUploadedEpoch: Long?
 ) : BaseViewType, Parcelable {
     override val viewType: Int
         get() = when (state) {
@@ -141,24 +143,42 @@ class ConversationViewData private constructor(
         if (!isTemporaryConversation()) {
             return false
         }
-        return if (localCreatedEpoch != null) {
-            currentTimeMillis > localCreatedEpoch + 30 * 1000
-        } else false
+
+        Log.d(
+            "PUI", """
+            isFailed
+            id: $id
+            localCreatedEpoch: $localCreatedEpoch
+            currentTimeMillis: $currentTimeMillis
+            workeruuid: $workerUUID
+        """.trimIndent()
+        )
+
+        return when {
+            (localCreatedEpoch != null && attachments.isNullOrEmpty()) -> {
+                currentTimeMillis > localCreatedEpoch + (30 * 1000)
+            }
+
+            (localCreatedEpoch != null && (currentTimeMillis < localCreatedEpoch + (30 * 1000))) -> {
+                false
+            }
+
+            (attachmentsUploadedEpoch != null && !attachments.isNullOrEmpty() && attachmentsUploaded == true) -> {
+                currentTimeMillis > attachmentsUploadedEpoch + (30 * 1000)
+            }
+
+            else -> {
+                false
+            }
+        }
     }
 
-    fun isTemporaryConversation(): Boolean {
+    private fun isTemporaryConversation(): Boolean {
         return id.startsWith("-")
     }
 
     fun isSending(): Boolean {
-        if (isTemporaryConversation()) {
-            return true
-        }
-        return if (attachmentCount > 0) {
-            attachmentsUploaded == null || !attachmentsUploaded
-        } else {
-            false
-        }
+        return isTemporaryConversation()
     }
 
     fun isSent(): Boolean {
@@ -204,7 +224,7 @@ class ConversationViewData private constructor(
         private var deletedBy: String? = null
         private var attachmentCount: Int = 0
         private var attachmentsUploaded: Boolean? = null
-        private var uploadWorkerUUID: String? = null
+        private var workerUUID: String? = null
         private var temporaryId: String? = null
         private var createdEpoch: Long = 0
         private var localCreatedEpoch: Long? = null
@@ -217,61 +237,139 @@ class ConversationViewData private constructor(
         private var showTapToUndo: Boolean = false
         private var widgetId: String? = null
         private var widgetViewData: WidgetViewData? = null
+        private var attachmentsUploadedEpoch: Long? = null
 
-        fun id(id: String) = apply { this.id = id }
-        fun memberViewData(memberViewData: MemberViewData) =
-            apply { this.memberViewData = memberViewData }
+        fun id(id: String) = apply {
+            this.id = id
+        }
 
-        fun answer(answer: String) = apply { this.answer = answer }
-        fun shortAnswer(shortAnswer: String?) = apply { this.shortAnswer = shortAnswer }
-        fun alreadySeenFullConversation(alreadySeenFullConversation: Boolean?) =
-            apply { this.alreadySeenFullConversation = alreadySeenFullConversation }
+        fun memberViewData(memberViewData: MemberViewData) = apply {
+            this.memberViewData = memberViewData
+        }
 
-        fun createdAt(createdAt: String?) = apply { this.createdAt = createdAt }
-        fun chatroomId(chatroomId: String?) = apply { this.chatroomId = chatroomId }
-        fun communityId(communityId: String?) = apply { this.communityId = communityId }
-        fun state(state: Int) = apply { this.state = state }
-        fun attachments(attachments: ArrayList<AttachmentViewData>?) =
-            apply { this.attachments = attachments }
+        fun answer(answer: String) = apply {
+            this.answer = answer
+        }
 
-        fun attachmentUploadProgress(attachmentUploadProgress: Pair<Long, Long>?) =
-            apply { this.attachmentUploadProgress = attachmentUploadProgress }
+        fun shortAnswer(shortAnswer: String?) = apply {
+            this.shortAnswer = shortAnswer
+        }
 
-        fun lastSeen(lastSeen: Boolean?) = apply { this.lastSeen = lastSeen }
-        fun ogTags(ogTags: LinkOGTagsViewData?) = apply { this.ogTags = ogTags }
-        fun date(date: String?) = apply { this.date = date }
-        fun replyConversation(replyConversation: ConversationViewData?) =
-            apply { this.replyConversation = replyConversation }
+        fun alreadySeenFullConversation(alreadySeenFullConversation: Boolean?) = apply {
+            this.alreadySeenFullConversation = alreadySeenFullConversation
+        }
 
-        fun isEdited(isEdited: Boolean?) = apply { this.isEdited = isEdited }
-        fun deletedBy(deletedBy: String?) = apply { this.deletedBy = deletedBy }
-        fun attachmentCount(attachmentCount: Int) =
-            apply { this.attachmentCount = attachmentCount }
+        fun createdAt(createdAt: String?) = apply {
+            this.createdAt = createdAt
+        }
 
-        fun attachmentsUploaded(attachmentsUploaded: Boolean?) =
-            apply { this.attachmentsUploaded = attachmentsUploaded }
+        fun chatroomId(chatroomId: String?) = apply {
+            this.chatroomId = chatroomId
+        }
 
-        fun uploadWorkerUUID(uploadWorkerUUID: String?) =
-            apply { this.uploadWorkerUUID = uploadWorkerUUID }
+        fun communityId(communityId: String?) = apply {
+            this.communityId = communityId
+        }
 
-        fun temporaryId(temporaryId: String?) = apply { this.temporaryId = temporaryId }
-        fun createdEpoch(createdEpoch: Long) = apply { this.createdEpoch = createdEpoch }
-        fun localCreatedEpoch(localCreatedEpoch: Long?) =
-            apply { this.localCreatedEpoch = localCreatedEpoch }
+        fun state(state: Int) = apply {
+            this.state = state
+        }
 
-        fun reactions(reactions: List<ReactionViewData>?) = apply { this.reactions = reactions }
-        fun replyChatroomId(replyChatroomId: String?) =
-            apply { this.replyChatroomId = replyChatroomId }
+        fun attachments(attachments: ArrayList<AttachmentViewData>?) = apply {
+            this.attachments = attachments
+        }
 
-        fun isLastItem(isLastItem: Boolean?) = apply { this.isLastItem = isLastItem }
-        fun pollInfoData(pollInfoData: PollInfoData?) = apply { this.pollInfoData = pollInfoData }
-        fun isExpanded(isExpanded: Boolean) = apply { this.isExpanded = isExpanded }
-        fun deletedByMember(deletedByMember: MemberViewData?) =
-            apply { this.deletedByMember = deletedByMember }
+        fun attachmentUploadProgress(attachmentUploadProgress: Pair<Long, Long>?) = apply {
+            this.attachmentUploadProgress = attachmentUploadProgress
+        }
 
-        fun showTapToUndo(showTapToUndo: Boolean) = apply { this.showTapToUndo = showTapToUndo }
-        fun widgetId(widgetId: String?) = apply { this.widgetId = widgetId }
-        fun widget(widgetViewData: WidgetViewData?) = apply { this.widgetViewData = widgetViewData }
+        fun lastSeen(lastSeen: Boolean?) = apply {
+            this.lastSeen = lastSeen
+        }
+
+        fun ogTags(ogTags: LinkOGTagsViewData?) = apply {
+            this.ogTags = ogTags
+        }
+
+        fun date(date: String?) = apply {
+            this.date = date
+        }
+
+        fun replyConversation(replyConversation: ConversationViewData?) = apply {
+            this.replyConversation = replyConversation
+        }
+
+        fun isEdited(isEdited: Boolean?) = apply {
+            this.isEdited = isEdited
+        }
+
+        fun deletedBy(deletedBy: String?) = apply {
+            this.deletedBy = deletedBy
+        }
+
+        fun attachmentCount(attachmentCount: Int) = apply {
+            this.attachmentCount = attachmentCount
+        }
+
+        fun attachmentsUploaded(attachmentsUploaded: Boolean?) = apply {
+            this.attachmentsUploaded = attachmentsUploaded
+        }
+
+        fun workerUUID(workerUUID: String?) = apply {
+            this.workerUUID = workerUUID
+        }
+
+        fun temporaryId(temporaryId: String?) = apply {
+            this.temporaryId = temporaryId
+        }
+
+        fun createdEpoch(createdEpoch: Long) = apply {
+            this.createdEpoch = createdEpoch
+        }
+
+        fun localCreatedEpoch(localCreatedEpoch: Long?) = apply {
+            this.localCreatedEpoch = localCreatedEpoch
+        }
+
+        fun reactions(reactions: List<ReactionViewData>?) = apply {
+            this.reactions = reactions
+        }
+
+        fun replyChatroomId(replyChatroomId: String?) = apply {
+            this.replyChatroomId = replyChatroomId
+        }
+
+        fun isLastItem(isLastItem: Boolean?) = apply {
+            this.isLastItem = isLastItem
+        }
+
+        fun pollInfoData(pollInfoData: PollInfoData?) = apply {
+            this.pollInfoData = pollInfoData
+        }
+
+        fun isExpanded(isExpanded: Boolean) = apply {
+            this.isExpanded = isExpanded
+        }
+
+        fun deletedByMember(deletedByMember: MemberViewData?) = apply {
+            this.deletedByMember = deletedByMember
+        }
+
+        fun showTapToUndo(showTapToUndo: Boolean) = apply {
+            this.showTapToUndo = showTapToUndo
+        }
+
+        fun widgetId(widgetId: String?) = apply {
+            this.widgetId = widgetId
+        }
+
+        fun widget(widgetViewData: WidgetViewData?) = apply {
+            this.widgetViewData = widgetViewData
+        }
+
+        fun attachmentsUploadedEpoch(attachmentsUploadedEpoch: Long?) = apply {
+            this.attachmentsUploadedEpoch = attachmentsUploadedEpoch
+        }
 
         fun build() = ConversationViewData(
             id,
@@ -293,7 +391,7 @@ class ConversationViewData private constructor(
             deletedBy,
             attachmentCount,
             attachmentsUploaded,
-            uploadWorkerUUID,
+            workerUUID,
             temporaryId,
             createdEpoch,
             localCreatedEpoch,
@@ -305,7 +403,8 @@ class ConversationViewData private constructor(
             deletedByMember,
             showTapToUndo,
             widgetId,
-            widgetViewData
+            widgetViewData,
+            attachmentsUploadedEpoch
         )
     }
 
@@ -329,7 +428,7 @@ class ConversationViewData private constructor(
             .deletedBy(deletedBy)
             .attachmentCount(attachmentCount)
             .attachmentsUploaded(attachmentsUploaded)
-            .uploadWorkerUUID(uploadWorkerUUID)
+            .workerUUID(workerUUID)
             .temporaryId(temporaryId)
             .createdEpoch(createdEpoch)
             .localCreatedEpoch(localCreatedEpoch)
@@ -342,5 +441,6 @@ class ConversationViewData private constructor(
             .showTapToUndo(showTapToUndo)
             .widgetId(widgetId)
             .widget(widgetViewData)
+            .attachmentsUploadedEpoch(attachmentsUploadedEpoch)
     }
 }

@@ -217,12 +217,6 @@ internal class ConversationSingleGifItemViewDataBinder(
                     } else {
                         viewGif.visibility = View.VISIBLE
                     }
-
-                    if (uploadData.first != null) {
-                        adapterListener.observeMediaUpload(
-                            uploadData.first!!, conversation
-                        )
-                    }
                 } else {
                     ivSingleImage.visibility = View.GONE
                     ProgressHelper.showProgress(progressBar, false)

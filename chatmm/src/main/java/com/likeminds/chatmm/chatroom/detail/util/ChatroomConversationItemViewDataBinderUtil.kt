@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import android.text.*
 import android.text.style.*
 import android.text.util.Linkify
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -129,6 +130,7 @@ object ChatroomConversationItemViewDataBinderUtil {
         imageViewStatus: ImageView? = null,
         imageViewFailed: ImageView? = null,
     ) {
+        val context = clRoot.context
         val set = ConstraintSet()
         set.clone(clRoot)
         set.clear(clConversationBubble.id, ConstraintSet.RIGHT)
@@ -152,9 +154,15 @@ object ChatroomConversationItemViewDataBinderUtil {
             }
             set.applyTo(clRoot)
 
+            Log.d("PUI", "initConversationBubbleView1 $itemPosition")
+
             if (conversationViewData?.isFailed() == true) {
                 imageViewStatus?.visibility = View.GONE
                 imageViewFailed?.visibility = View.VISIBLE
+                conversationViewData.workerUUID?.let { workerUUID ->
+                    Log.d("PUI", "initConversationBubbleView: $workerUUID")
+                    WorkManager.getInstance(context).cancelWorkById(UUID.fromString(workerUUID))
+                }
             } else {
                 imageViewFailed?.visibility = View.GONE
             }
@@ -526,22 +534,21 @@ object ChatroomConversationItemViewDataBinderUtil {
         conversation: ConversationViewData? = null,
         chatroom: ChatroomViewData? = null,
         listener: ChatroomDetailAdapterListener? = null,
-    ): Triple<UUID?, Boolean, String?> {
+    ): Pair<UUID?, Boolean> {
         if (chatroom == null && conversation == null) {
-            return Triple(null, false, null)
+            return Pair(null, false)
         }
         val attachmentCount = conversation?.attachmentCount ?: 0
-        val uploadWorkerUUID = conversation?.uploadWorkerUUID
+        val workerUUID = conversation?.workerUUID
         val transferUtility by lazy { SDKApplication.getInstance().transferUtility }
         var uuid: UUID? = null
         var isInProgress = false
         var mediaActionsVisible = false
-        var workerState = ""
 
         binding.apply {
             ivCancel.setOnClickListener {
                 uuid?.let {
-                    UploadHelper.getAWSFileResponses(uploadWorkerUUID).forEach { response ->
+                    UploadHelper.getAWSFileResponses(workerUUID).forEach { response ->
                         transferUtility.pause(response.transferObserver?.id ?: 0)
                     }
                     WorkManager.getInstance(root.context).cancelWorkById(it)
@@ -555,14 +562,13 @@ object ChatroomConversationItemViewDataBinderUtil {
             }
 
             when {
-                //When worker is present for this media action
-                !uploadWorkerUUID.isNullOrEmpty() -> {
-                    uuid = UUID.fromString(uploadWorkerUUID)
+                //When attachments are not uploaded for this conversation
+                (!workerUUID.isNullOrEmpty() && conversation.attachmentsUploaded != true) -> {
+                    uuid = UUID.fromString(workerUUID)
                     val workInfo = WorkManager.getInstance(root.context)
-                        .getWorkInfoById(uuid!!).get() ?: return Triple(
+                        .getWorkInfoById(uuid!!).get() ?: return Pair(
                         null,
-                        mediaActionsVisible,
-                        null
+                        mediaActionsVisible
                     )
                     when (workInfo.state) {
                         WorkInfo.State.ENQUEUED, WorkInfo.State.BLOCKED, WorkInfo.State.RUNNING -> {
@@ -586,22 +592,6 @@ object ChatroomConversationItemViewDataBinderUtil {
                     }
                 }
 
-                conversation?.isFailed() == true -> {
-                    workerState = "failed"
-                    groupMediaUploading.visibility = View.GONE
-                }
-
-                conversation?.isSending() == true -> {
-                    workerState = "sending"
-                    groupMediaUploading.visibility = View.VISIBLE
-                    tvRetry.visibility = View.GONE
-                }
-
-                (conversation?.isTemporaryConversation() == false && conversation.isSending()) -> {
-                    tvRetry.visibility = View.VISIBLE
-                    groupMediaUploading.visibility = View.GONE
-                }
-
                 else -> {
                     groupMediaUploading.visibility = View.GONE
                     tvRetry.visibility = View.GONE
@@ -612,9 +602,9 @@ object ChatroomConversationItemViewDataBinderUtil {
         }
 
         return if (isInProgress) {
-            Triple(uuid, mediaActionsVisible, workerState)
+            Pair(uuid, mediaActionsVisible)
         } else {
-            Triple(null, mediaActionsVisible, workerState)
+            Pair(null, mediaActionsVisible)
         }
     }
 
@@ -633,7 +623,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                     if (attachment.meta != null) {
                         tvDuration.apply {
                             show()
-                            text = if (!attachment.currentDuration.equals("00:00")) {
+                            text = if (attachment.currentDuration != "00:00") {
                                 attachment.currentDuration
                             } else if (attachment.meta.duration == 0) {
                                 DateUtil.formatSeconds(
@@ -1174,9 +1164,9 @@ object ChatroomConversationItemViewDataBinderUtil {
                 attachmentViewDataList =
                     attachmentViewDataList.subList(0, 4)
                         .mapIndexed { index, attachmentViewData ->
-                            val viewType = when {
-                                attachmentViewData.type == VIDEO -> ITEM_VIDEO
-                                attachmentViewData.type == PDF -> ITEM_PDF
+                            val viewType = when (attachmentViewData.type) {
+                                VIDEO -> ITEM_VIDEO
+                                PDF -> ITEM_PDF
                                 else -> ITEM_IMAGE
                             }
                             if (index == 3) {
@@ -1202,9 +1192,9 @@ object ChatroomConversationItemViewDataBinderUtil {
             else -> {
                 attachmentViewDataList =
                     attachmentViewDataList.map { attachmentViewData ->
-                        val viewType = when {
-                            attachmentViewData.type == VIDEO -> ITEM_VIDEO
-                            attachmentViewData.type == PDF -> ITEM_PDF
+                        val viewType = when (attachmentViewData.type) {
+                            VIDEO -> ITEM_VIDEO
+                            PDF -> ITEM_PDF
                             else -> ITEM_IMAGE
                         }
                         return@map attachmentViewData.toBuilder()

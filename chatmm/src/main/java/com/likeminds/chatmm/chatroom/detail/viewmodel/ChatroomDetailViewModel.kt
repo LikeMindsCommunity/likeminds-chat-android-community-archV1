@@ -21,7 +21,8 @@ import com.likeminds.chatmm.media.MediaRepository
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.member.model.*
 import com.likeminds.chatmm.member.util.UserPreferences
-import com.likeminds.chatmm.polls.model.*
+import com.likeminds.chatmm.polls.model.PollInfoData
+import com.likeminds.chatmm.polls.model.PollViewData
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.ValueUtils.getEmailIfExist
 import com.likeminds.chatmm.utils.ValueUtils.getUrlIfExist
@@ -35,9 +36,10 @@ import com.likeminds.likemindschat.LMResponse
 import com.likeminds.likemindschat.chatroom.model.*
 import com.likeminds.likemindschat.community.model.GetMemberRequest
 import com.likeminds.likemindschat.conversation.model.*
-import com.likeminds.likemindschat.conversation.util.*
+import com.likeminds.likemindschat.conversation.util.ConversationChangeListener
 import com.likeminds.likemindschat.dm.model.*
-import com.likeminds.likemindschat.helper.model.*
+import com.likeminds.likemindschat.helper.model.DecodeUrlRequest
+import com.likeminds.likemindschat.helper.model.DecodeUrlResponse
 import com.likeminds.likemindschat.poll.model.*
 import com.likeminds.likemindschat.user.model.*
 import io.reactivex.disposables.CompositeDisposable
@@ -45,7 +47,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import org.json.JSONObject
-import java.util.*
 import javax.inject.Inject
 
 class ChatroomDetailViewModel @Inject constructor(
@@ -391,7 +392,6 @@ class ChatroomDetailViewModel @Inject constructor(
 
     /**
      * Fetches the initial data for the current chatroom and pass it to fragment using live data
-     * @param context context from where funciton is called
      * @param chatroomDetailExtras Chatroom Intent Extras
      *
      * 1st case ->
@@ -1443,17 +1443,15 @@ class ChatroomDetailViewModel @Inject constructor(
     fun postConversation(
         context: Context,
         text: String,
+        conversationCreatedEpoch: Long,
         fileUris: List<SingleUriData>?,
         shareLink: String?,
         replyConversationId: String?,
         replyChatRoomId: String?,
-        taggedUsers: List<TagViewData>,
-        replyChatData: ChatReplyViewData?,
         metadata: JSONObject? = null
     ): String? {
         val chatroomId = chatroomDetail.chatroom?.id ?: return null
         val communityId = chatroomDetail.chatroom?.communityId
-        val conversationCreatedEpoch = System.currentTimeMillis()
         val temporaryId = "-$conversationCreatedEpoch"
         val updatedFileUris = includeAttachmentMetaData(context, fileUris)
         var postConversationRequestBuilder = PostConversationRequest.Builder()
@@ -1508,26 +1506,20 @@ class ChatroomDetailViewModel @Inject constructor(
         )
         sendPostedConversationsToUI(temporaryConversation, postConversationRequest.triggerBot)
 
-        if (updatedFileUris.isNullOrEmpty()) { // no attachments
-            val workerUUID = lmChatClient.createConversation(context, postConversationRequest).data
-            return workerUUID
-        } else { // with attachments
-            //create upload worker
-            val uploadData = getUploadWorker(context, temporaryId, taggedUsers.map { it.name })
+        //create upload worker
+        val uploadData = getUploadWorker(context, temporaryId)
 
-            //update worker id local db
-            val updateWorkerUUIDRequest = UpdateConversationUploadWorkerUUIDRequest.Builder()
-                .uuid(uploadData.second)
-                .conversationId(temporaryId)
-                .build()
+        //update worker id local db
+        val updateWorkerUUIDRequest = UpdateConversationWorkerUUIDRequest.Builder()
+            .uuid(uploadData.second)
+            .conversationId(temporaryId)
+            .build()
 
-            lmChatClient.updateConversationUploadWorkerUUID(updateWorkerUUIDRequest)
+        lmChatClient.updateConversationWorkerUUID(updateWorkerUUIDRequest)
 
-            //enqueue worker
-            uploadData.first.enqueue()
-
-            return null
-        }
+        //enqueue worker
+        uploadData.first.enqueue()
+        return uploadData.second
     }
 
     /**
@@ -1650,7 +1642,7 @@ class ChatroomDetailViewModel @Inject constructor(
      * @param replyConversationId [String?] -> reply conversation id
      * @param replyChatRoomId [String?] -> reply chat room id
      */
-    @Deprecated("This method is not used, as we migrated from API to WorkManma")
+    @Deprecated("This method is not used, as we migrated from API to WorkManager")
     private fun onConversationPosted(
         response: PostConversationResponse?,
         tempConversation: ConversationViewData?,
@@ -1693,13 +1685,12 @@ class ChatroomDetailViewModel @Inject constructor(
     }
 
     fun sendCreateConversationAnalytics(
-        conversation: Conversation,
+        conversationViewData: ConversationViewData,
         taggedUsers: List<TagViewData>,
         replyChatData: ChatReplyViewData? = null,
         replyConversationId: String? = null,
         replyChatRoomId: String? = null
     ) {
-        val conversationViewData = ViewDataConverter.convertConversation(conversation)
         postedConversation(
             taggedUsers,
             conversationViewData,
@@ -1739,27 +1730,25 @@ class ChatroomDetailViewModel @Inject constructor(
         if (conversationId.isEmpty() || attachmentCount <= 0) {
             return
         }
-        val uploadData = getUploadWorker(context, conversationId, emptyList())
+        val uploadData = getUploadWorker(context, conversationId)
         val updateConversationUploadWorkerUUIDRequest =
-            UpdateConversationUploadWorkerUUIDRequest.Builder()
+            UpdateConversationWorkerUUIDRequest.Builder()
                 .conversationId(conversationId)
                 .uuid(uploadData.second)
                 .build()
-        lmChatClient.updateConversationUploadWorkerUUID(updateConversationUploadWorkerUUIDRequest)
+        lmChatClient.updateConversationWorkerUUID(updateConversationUploadWorkerUUIDRequest)
         uploadData.first.enqueue()
     }
 
     @SuppressLint("EnqueueWork")
     private fun getUploadWorker(
         context: Context,
-        temporaryId: String,
-        listOfTaggedUsers: List<String>
+        temporaryId: String
     ): Pair<WorkContinuation, String> {
         val oneTimeWorkRequest =
             ConversationMediaUploadWorker.getInstance(
                 temporaryId,
-                isOtherUserAIBot(),
-                listOfTaggedUsers
+                isOtherUserAIBot()
             )
         val workContinuation = WorkManager.getInstance(context).beginWith(oneTimeWorkRequest)
         return Pair(workContinuation, oneTimeWorkRequest.id.toString())
@@ -1835,58 +1824,29 @@ class ChatroomDetailViewModel @Inject constructor(
     }
 
 
-    fun postFailedConversation(context: Context, conversation: ConversationViewData): String? {
-        return if (conversation.attachments.isNullOrEmpty()) {
-            val chatroomId = chatroomDetail.chatroom?.id ?: return null
-            val postConversationRequestBuilder = PostConversationRequest.Builder()
-                .chatroomId(chatroomId)
-                .text(conversation.answer)
-                .shareLink(conversation.ogTags?.url)
-                .ogTags(ViewDataConverter.convertLinkOGTags(conversation.ogTags))
-                .repliedConversationId(conversation.replyConversation?.id)
-                .repliedChatroomId(conversation.replyChatroomId)
-                .temporaryId(conversation.temporaryId)
+    fun postFailedConversation(context: Context, conversation: ConversationViewData): String {
+        //TODO: check if the conversations are already uploaded then don't upload attachments
 
-            if (isOtherUserAIBot()) {
-                postConversationRequestBuilder.triggerBot(true)
-            }
 
-            val metadata = conversation.widgetViewData?.metadata
-            if (!metadata.isNullOrEmpty()) {
-                postConversationRequestBuilder.metadata(JSONObject(metadata))
-            }
+        //create upload worker
+        val uploadData = getUploadWorker(context, conversation.id)
 
-            val postConversationRequest = postConversationRequestBuilder.build()
+        // get the updated conversation
+        val updatedConversation = conversation.toBuilder()
+            .workerUUID(uploadData.second)
+            .build()
 
-            val updateTemporaryConversationRequest =
-                UpdateTemporaryConversationRequest.Builder()
-                    .conversationId(conversation.id)
-                    .localSavedEpoch(
-                        conversation.localCreatedEpoch ?: System.currentTimeMillis()
-                    )
-                    .build()
-            lmChatClient.updateTemporaryConversation(updateTemporaryConversationRequest)
+        val updateConversationRequest = UpdateConversationRequest.Builder()
+            .conversation(ViewDataConverter.convertConversation(updatedConversation))
+            .build()
 
-            lmChatClient.createConversation(context, postConversationRequest).data
-        } else {
-            //create upload worker
-            val uploadData = getUploadWorker(context, conversation.id, emptyList())
+        lmChatClient.updateConversation(updateConversationRequest)
 
-            //update worker id local db
-            val updateWorkerUUIDRequest = UpdateConversationUploadWorkerUUIDRequest.Builder()
-                .uuid(uploadData.second)
-                .conversationId(conversation.id)
-                .build()
+        //enqueue worker
+        uploadData.first.enqueue()
 
-            lmChatClient.updateConversationUploadWorkerUUID(updateWorkerUUIDRequest)
-
-            //enqueue worker
-            uploadData.first.enqueue()
-
-            return null
-        }
+        return uploadData.second
     }
-
 
     fun deleteFailedConversation(conversationId: String) {
         val deleteConversationPermanentlyRequest = DeleteConversationPermanentlyRequest.Builder()
@@ -2138,7 +2098,7 @@ class ChatroomDetailViewModel @Inject constructor(
         _updatedChatRequestState.postValue(chatRequestState)
     }
 
-    fun parseCreateConversationResponse(responseString: String): LMResponse<PostConversationResponse>? {
+    fun parseCreateConversationResponse(responseString: String): LMResponse<PostConversationResponse> {
         val type = object : TypeToken<LMResponse<PostConversationResponse>>() {}.type
         val lmResponse: LMResponse<PostConversationResponse> = Gson().fromJson(responseString, type)
         return lmResponse
