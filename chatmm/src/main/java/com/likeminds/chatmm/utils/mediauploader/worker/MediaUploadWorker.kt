@@ -81,12 +81,13 @@ abstract class MediaUploadWorker(
                         .repliedConversationId(conversation.replyConversation?.id)
                         .repliedChatroomId(conversation.replyChatroomId)
                         .attachments(ViewDataConverter.convertAttachmentViewDataList(conversation.attachments))
+                        .metadata(JSONObject(json))
 
-                    val widget = conversation.widgetViewData
-
-                    if (widget?.metadata != null) {
-                        postConversationRequestBuilder.metadata(JSONObject(widget.metadata.toString()))
-                    }
+//                    val widget = conversation.widgetViewData
+//
+//                    if (widget?.metadata != null) {
+//                        postConversationRequestBuilder.metadata(JSONObject(widget.metadata.toString()))
+//                    }
 
                     if (isOtherUserAI) {
                         postConversationRequestBuilder.triggerBot(true)
