@@ -45,11 +45,6 @@ class ConversationWidgetItemViewDataBinder(
             viewReply.buttonColor = LMTheme.getButtonsColor()
             conversation = data
 
-            val context = root.context
-
-            //Custom Widget Data
-            val metadata = JSONObject(data.widgetViewData?.metadata.toString())
-
             ChatroomConversationItemViewDataBinderUtil.initConversationBubbleView(
                 clConversationRoot,
                 clConversationBubble,
