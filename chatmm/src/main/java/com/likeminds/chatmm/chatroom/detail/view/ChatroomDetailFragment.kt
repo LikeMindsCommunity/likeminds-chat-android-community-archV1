@@ -3076,7 +3076,6 @@ class ChatroomDetailFragment :
 
                 is ChatroomDetailViewModel.ConversationEvent.NewConversation -> {
                     //Observe for any new conversations triggered by the database callback
-                    val isAddedBelow: Boolean
                     val conversations =
                         getNonPresentConversations(response.conversations).toMutableList()
 
@@ -4931,7 +4930,7 @@ class ChatroomDetailFragment :
         val map = conversations.map { it.id }.toMutableList()
         var i = 0
         val max = conversations.size - 1
-        for (item in chatroomDetailAdapter.items().reversed()) {
+        for (item in chatroomDetailAdapter.items().asReversed()) {
             if (i > max) {
                 break
             }
