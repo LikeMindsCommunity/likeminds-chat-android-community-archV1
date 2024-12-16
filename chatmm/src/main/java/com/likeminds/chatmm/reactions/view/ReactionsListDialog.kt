@@ -142,14 +142,14 @@ class ReactionsListDialog :
                 } else {
                     reactionsViewPager.setCurrentItem(0, true)
                 }
-                TabLayoutMediator(reactionTabs, reactionsViewPager) { tab, pos ->
-                    if (pos == 0) {
+                TabLayoutMediator(reactionTabs, reactionsViewPager) { tab, index ->
+                    if (index == 0) {
                         tab.text = "All (${allReactions.size})"
                     } else {
                         val listOfReactions = reactionsHashmap.keys.toList()
-                        val reaction = listOfReactions[pos - 1]
+                        val reaction = listOfReactions[index - 1]
                         tab.text =
-                            "$reaction ${reactionsHashmap[listOfReactions[pos - 1]]?.size}"
+                            "$reaction ${reactionsHashmap[listOfReactions[index - 1]]?.size}"
                     }
                 }.attach()
             }
