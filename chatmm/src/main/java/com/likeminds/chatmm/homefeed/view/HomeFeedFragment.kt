@@ -112,6 +112,13 @@ class HomeFeedFragment : BaseFragment<FragmentHomeFeedBinding, HomeFeedViewModel
     override fun setUpViews() {
         super.setUpViews()
         checkForNotificationPermission()
+
+        Log.d(
+            "PUI", """
+            home feed preferences
+            SHOW_HOME_FEED_SHIMMER:${homeFeedPreferences.getShowHomeFeedShimmer()}
+        """.trimIndent()
+        )
         setTheme()
         initData()
         initRecyclerView()

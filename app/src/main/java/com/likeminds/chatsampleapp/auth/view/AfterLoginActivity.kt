@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.utils.ExtrasUtil
 import com.likeminds.chatsampleapp.ChatMMApplication
@@ -13,7 +14,6 @@ import com.likeminds.chatsampleapp.auth.model.LoginExtras
 import com.likeminds.chatsampleapp.auth.util.AuthPreferences
 import com.likeminds.chatsampleapp.databinding.ActivityAfterLoginBinding
 import com.likeminds.chatsampleapp.likemindschat.LikeMindsChatActivity
-import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.user.model.LogoutRequest
 import kotlinx.coroutines.*
 
@@ -49,8 +49,8 @@ class AfterLoginActivity : AppCompatActivity() {
 
     private fun logout() {
         CoroutineScope(Dispatchers.IO).launch {
-            val client = LMChatClient.getInstance()
-            val logoutResponse = client.logout(
+            val logoutResponse = LMChatCore.logoutUser(
+                this@AfterLoginActivity,
                 LogoutRequest.Builder()
                     .deviceId(deviceId())
                     .build()
