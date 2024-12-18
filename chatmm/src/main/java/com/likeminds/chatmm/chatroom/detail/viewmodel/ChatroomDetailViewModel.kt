@@ -120,8 +120,6 @@ class ChatroomDetailViewModel @Inject constructor(
     private val _showDM: MutableLiveData<Boolean> by lazy { MutableLiveData() }
     val showDM: LiveData<Boolean> by lazy { _showDM }
 
-    var dmRequestText: String = ""
-
     private val _updatedChatRequestState: MutableLiveData<ChatRequestState> by lazy { MutableLiveData() }
     val updatedChatRequestState: LiveData<ChatRequestState> by lazy { _updatedChatRequestState }
 
@@ -2105,12 +2103,13 @@ class ChatroomDetailViewModel @Inject constructor(
     fun sendDMRequest(
         chatroomId: String,
         chatRequestState: ChatRequestState,
-        isM2CM: Boolean = false
+        isM2CM: Boolean = false,
+        requestText: String? = null
     ) {
         viewModelScope.launchIO {
             val request = SendDMRequest.Builder()
                 .chatroomId(chatroomId)
-                .text(dmRequestText)
+                .text(requestText)
                 .chatRequestState(chatRequestState)
                 .build()
 

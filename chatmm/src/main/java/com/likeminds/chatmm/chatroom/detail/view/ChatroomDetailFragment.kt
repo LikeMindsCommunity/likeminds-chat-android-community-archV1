@@ -2014,7 +2014,6 @@ class ChatroomDetailFragment :
                         viewModel.isDmChatroom()
                         && (viewModel.getChatroomViewData()?.chatRequestState == ChatRequestState.NOTHING)
                     ) {
-                        viewModel.dmRequestText = inputText
                         if (inputText.length >= DM_SEND_REQUEST_TEXT_LIMIT) {
                             ViewUtils.showShortToast(
                                 requireContext(),
@@ -2028,7 +2027,7 @@ class ChatroomDetailFragment :
 
                         // if the DM is M2M then show dialog otherwise send dm request directly
                         if (viewModel.getChatroomViewData()?.isPrivateMember == true) {
-                            SendDMRequestDialogFragment.showDialog(childFragmentManager)
+                            SendDMRequestDialogFragment.showDialog(childFragmentManager, inputText)
                             setChatInputBoxViewType(
                                 CHAT_BOX_NORMAL,
                                 viewModel.showDM.value
@@ -2037,7 +2036,8 @@ class ChatroomDetailFragment :
                             viewModel.sendDMRequest(
                                 viewModel.getChatroomViewData()?.id.toString(),
                                 ChatRequestState.ACCEPTED,
-                                true
+                                true,
+                                inputText
                             )
                         }
                         clearEditTextAnswer()
@@ -5950,8 +5950,8 @@ class ChatroomDetailFragment :
     }
 
     // sends dm request when the user clicks on confirm
-    override fun sendDMRequest() {
-        viewModel.sendDMRequest(chatroomId, ChatRequestState.INITIATED)
+    override fun sendDMRequest(requestText: String) {
+        viewModel.sendDMRequest(chatroomId, ChatRequestState.INITIATED, requestText = requestText)
         clearEditTextAnswer()
     }
 

@@ -216,11 +216,11 @@ class DMFeedViewModel @Inject constructor(
     }
 
     fun observeLiveHomeFeed(context: Context) {
-        lmChatClient.observeLiveHomeFeed(context)
+        lmChatClient.observeLiveDMChatroom(context)
     }
 
     fun removeLiveHomeFeedListener() {
-        lmChatClient.removeLiveHomeFeedListener()
+        lmChatClient.removeLiveDMChatroomListener()
     }
 
     override fun onCleared() {

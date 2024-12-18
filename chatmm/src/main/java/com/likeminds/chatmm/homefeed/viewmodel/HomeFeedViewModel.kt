@@ -249,11 +249,11 @@ class HomeFeedViewModel @Inject constructor(
     }
 
     fun observeLiveHomeFeed(context: Context) {
-        lmChatClient.observeLiveHomeFeed(context)
+        lmChatClient.observeLiveGroupChatroom(context)
     }
 
     fun removeLiveHomeFeedListener() {
-        lmChatClient.removeLiveHomeFeedListener()
+        lmChatClient.removeLiveGroupChatroomListener()
     }
 
     fun getExploreTabCount() {
