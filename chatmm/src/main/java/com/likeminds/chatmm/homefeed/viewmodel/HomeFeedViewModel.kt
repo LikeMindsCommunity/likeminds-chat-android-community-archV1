@@ -245,7 +245,7 @@ class HomeFeedViewModel @Inject constructor(
     }
 
     fun syncChatrooms(context: Context): Pair<LiveData<MutableList<WorkInfo>>?, LiveData<MutableList<WorkInfo>>?>? {
-        return lmChatClient.syncChatrooms(context)
+        return lmChatClient.loadGroupChatrooms(context)
     }
 
     fun observeLiveHomeFeed(context: Context) {
