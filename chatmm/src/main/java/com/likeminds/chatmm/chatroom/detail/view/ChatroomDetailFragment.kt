@@ -1094,9 +1094,19 @@ class ChatroomDetailFragment :
         val pair = viewModel.syncChatroom(requireContext(), chatroomId)
         val worker = pair.first
         val isFirstTime = pair.second
+
+        Log.d(
+            "PUI", """
+            syncChatroom called
+            worker - $worker
+            isFirstTime - $isFirstTime
+        """.trimIndent()
+        )
+
         worker.observe(viewLifecycleOwner) { state ->
             when (state) {
                 WorkInfo.State.SUCCEEDED -> {
+                    Log.i(TAG, "blocker syncChatroom state - $state")
                     //If shimmer is showing that means chatroom is not present. So after syncing fetch again.
                     if (isShimmerShowing()) {
                         /* Adding a flag to extras that we are trying to fetch the data again after syncing. Still if
@@ -1115,11 +1125,11 @@ class ChatroomDetailFragment :
                 }
 
                 WorkInfo.State.CANCELLED -> {
-                    Log.i(TAG, "syncChatroom got cancelled")
+                    Log.i(TAG, "blocker syncChatroom got cancelled")
                 }
 
                 else -> {
-                    Log.i(TAG, "syncChatroom state - $state")
+                    Log.i(TAG, "blocker syncChatroom state - $state")
                 }
             }
         }
@@ -1129,7 +1139,11 @@ class ChatroomDetailFragment :
      * Is shimmer showing on the screen
      */
     private fun isShimmerShowing(): Boolean {
-        return viewModel.isShimmerPresent(chatroomDetailAdapter.items())
+        val value = viewModel.isShimmerPresent(chatroomDetailAdapter.items())
+
+        Log.d("PUI", "isShimmerShowing -> $value")
+
+        return value
     }
 
     private fun startBackgroundSync() {
@@ -1137,6 +1151,12 @@ class ChatroomDetailFragment :
             .observe(viewLifecycleOwner) { state ->
                 when (state) {
                     WorkInfo.State.SUCCEEDED -> {
+                        Log.i(TAG, "background syncChatroom state - $state")
+                        if (isShimmerShowing()) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                fetchInitialData()
+                            }
+                        }
                         viewModel.setIsFirstTimeSync(false)
                     }
 

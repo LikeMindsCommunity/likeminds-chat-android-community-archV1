@@ -423,6 +423,17 @@ class ChatroomDetailViewModel @Inject constructor(
                 GetChatroomRequest.Builder().chatroomId(chatroomDetailExtras.chatroomId).build()
             val getChatroomResponse = lmChatClient.getChatroom(request)
             val chatroom = getChatroomResponse.data?.chatroom
+
+            Log.d(
+                "PUI", """
+                getInitialData called
+                chatroomId: ${chatroom?.id}
+                chatroomHeader: ${chatroom?.header}
+                chatroomTitle: ${chatroom?.title}
+                chatroom.isConversationStored: ${chatroom?.isConversationStored}
+            """.trimIndent()
+            )
+
             val dataList = mutableListOf<BaseViewType>()
             //1st case -> chatroom is not present, if yes return
             if (chatroom == null) {
