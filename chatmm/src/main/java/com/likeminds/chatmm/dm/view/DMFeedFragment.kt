@@ -147,7 +147,7 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
     }
 
     private fun startSync() {
-        val pairOfObservers = viewModel.syncChatrooms(requireContext())
+        val pairOfObservers = viewModel.syncDMChatrooms(requireContext())
 
         val firstTimeObserver = pairOfObservers?.first
         val appConfigObserver = pairOfObservers?.second
