@@ -211,7 +211,7 @@
                     android:id="@+id/tv_reject_dm_request"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="26dp"
+                    android:layout_marginBottom="10dp"
                     android:drawablePadding="28dp"
                     android:foreground="?selectableItemBackground"
                     android:lineHeight="20sp"
@@ -220,6 +220,7 @@
                     android:textSize="14sp"
                     app:drawableLeftCompat="@drawable/lm_chat_ic_block"
                     app:drawableType="special"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_approve_dm_request"
                     app:textType="special"
                     tools:ignore="UnusedAttribute" />
