@@ -160,6 +160,11 @@ object LMChatCore {
         sdk.setupTheme(lmChatTheme)
     }
 
+    /**
+     * Call this function to logout user
+     * @param context: context of client's app
+     * @return LMResponse<Nothing>: response whether logout is successful or not
+     */
     suspend fun logoutUser(context: Context, logoutRequest: LogoutRequest): LMResponse<Nothing> {
         val lmChatClient = LMChatClient.getInstance()
         val response = lmChatClient.logout(logoutRequest)

@@ -1097,7 +1097,7 @@ class ChatroomDetailFragment :
         worker.observe(viewLifecycleOwner) { state ->
             when (state) {
                 WorkInfo.State.SUCCEEDED -> {
-                    Log.i(TAG, "blocker syncChatroom state - $state")
+                    Log.i(TAG, "blocker syncChatroom state - SUCCEEDED")
                     //If shimmer is showing that means chatroom is not present. So after syncing fetch again.
                     if (isShimmerShowing()) {
                         /* Adding a flag to extras that we are trying to fetch the data again after syncing. Still if

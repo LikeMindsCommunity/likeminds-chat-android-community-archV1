@@ -24,11 +24,11 @@ class HomeFeedPreferences @Inject constructor(
         return getPreference(SHOW_HOME_FEED_SHIMMER, false)
     }
 
-    fun setShowDMFeedShimmer(setDMFeedShimmer: Boolean) {
+    fun setIsDMFeedShimmerShown(setDMFeedShimmer: Boolean) {
         putPreference(SHOW_DM_FEED_SHIMMER, setDMFeedShimmer)
     }
 
-    fun getShowDMFeedShimmer(): Boolean {
+    fun getIsDMFeedShimmerShown(): Boolean {
         return getPreference(SHOW_DM_FEED_SHIMMER, false)
     }
 }

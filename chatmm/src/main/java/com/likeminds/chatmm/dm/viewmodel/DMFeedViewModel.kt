@@ -66,12 +66,12 @@ class DMFeedViewModel @Inject constructor(
         return (lmChatClient.getDBEmpty().data?.isDBEmpty ?: false)
     }
 
-    fun syncChatrooms(context: Context): Pair<LiveData<MutableList<WorkInfo>>?, LiveData<MutableList<WorkInfo>>?>? {
+    fun syncDMChatrooms(context: Context): Pair<LiveData<MutableList<WorkInfo>>?, LiveData<MutableList<WorkInfo>>?>? {
         return lmChatClient.loadDMChatrooms(context)
     }
 
     fun setWasChatroomFetched(value: Boolean) {
-        homeFeedPreferences.setShowDMFeedShimmer(value)
+        homeFeedPreferences.setIsDMFeedShimmerShown(value)
     }
 
     private val chatroomListener = object : HomeChatroomListener() {
@@ -157,7 +157,7 @@ class DMFeedViewModel @Inject constructor(
     fun fetchDMChatrooms(): List<BaseViewType> {
         val dataList = mutableListOf<BaseViewType>()
 
-        val wasDMChatroomsFetched = homeFeedPreferences.getShowDMFeedShimmer()
+        val wasDMChatroomsFetched = homeFeedPreferences.getIsDMFeedShimmerShown()
         when {
             !wasDMChatroomsFetched -> {
                 dataList.add(chatRoomListShimmerView)
