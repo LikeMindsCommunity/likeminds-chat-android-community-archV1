@@ -1094,15 +1094,6 @@ class ChatroomDetailFragment :
         val pair = viewModel.syncChatroom(requireContext(), chatroomId)
         val worker = pair.first
         val isFirstTime = pair.second
-
-        Log.d(
-            "PUI", """
-            syncChatroom called
-            worker - $worker
-            isFirstTime - $isFirstTime
-        """.trimIndent()
-        )
-
         worker.observe(viewLifecycleOwner) { state ->
             when (state) {
                 WorkInfo.State.SUCCEEDED -> {
@@ -1139,11 +1130,7 @@ class ChatroomDetailFragment :
      * Is shimmer showing on the screen
      */
     private fun isShimmerShowing(): Boolean {
-        val value = viewModel.isShimmerPresent(chatroomDetailAdapter.items())
-
-        Log.d("PUI", "isShimmerShowing -> $value")
-
-        return value
+        return viewModel.isShimmerPresent(chatroomDetailAdapter.items())
     }
 
     private fun startBackgroundSync() {
