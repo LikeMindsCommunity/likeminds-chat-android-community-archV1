@@ -2131,7 +2131,6 @@ class ChatroomDetailFragment :
                 }
 
                 clearEditTextAnswer()
-                updateDmMessaged()
                 if (isLinkViewVisible() || isReplyViewVisible()) {
                     setChatInputBoxViewType(CHAT_BOX_NORMAL)
                 }
@@ -2268,7 +2267,6 @@ class ChatroomDetailFragment :
                     }
                 }
                 clearEditTextAnswer()
-                updateDmMessaged()
                 if (isReplyViewVisible()) {
                     setChatInputBoxViewType(CHAT_BOX_NORMAL)
                 }
@@ -2279,10 +2277,6 @@ class ChatroomDetailFragment :
                 )
             }
         }
-    }
-
-    private fun updateDmMessaged() {
-        // todo:
     }
 
     /**
@@ -3181,7 +3175,7 @@ class ChatroomDetailFragment :
                         }
 
                         // adds the date view only if the [lastInsertedDate] is different from the current conversation date and updates [lastInsertedDate]
-                        if (!lastInsertedDate.equals(response.conversation.date)) {
+                        if (lastInsertedDate?.trim() != response.conversation.date?.trim()) {
                             lastInsertedDate = response.conversation.date
                             chatroomDetailAdapter.add(viewModel.getDateView(response.conversation.date))
                         }
