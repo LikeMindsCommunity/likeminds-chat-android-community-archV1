@@ -58,8 +58,8 @@ class LMChatPermission private constructor(
             return LMChatPermission(
                 RECORD_AUDIO,
                 REQUEST_RECORD_AUDIO,
-                "To record a Voice Message, allow CommunityHood access to your microphone.",
-                "To record a Voice Message, allow CommunityHood access to your microphone. Tap Settings > Permissions, and turn Microphone on.",
+                "To record a Voice Message in a chatroom, allow access to your microphone",
+                "To record a Voice Message in a chatroom, access to your microphone. Tap Settings > Permissions, and turn Microphone on.",
                 R.drawable.lm_chat_ic_mic
             )
         }
