@@ -1105,6 +1105,7 @@ class ChatroomDetailFragment :
         worker.observe(viewLifecycleOwner) { state ->
             when (state) {
                 WorkInfo.State.SUCCEEDED -> {
+                    Log.i(TAG, "blocker syncChatroom state - SUCCEEDED")
                     //If shimmer is showing that means chatroom is not present. So after syncing fetch again.
                     if (isShimmerShowing()) {
                         /* Adding a flag to extras that we are trying to fetch the data again after syncing. Still if
@@ -1123,11 +1124,11 @@ class ChatroomDetailFragment :
                 }
 
                 WorkInfo.State.CANCELLED -> {
-                    Log.i(TAG, "syncChatroom got cancelled")
+                    Log.i(TAG, "blocker syncChatroom got cancelled")
                 }
 
                 else -> {
-                    Log.i(TAG, "syncChatroom state - $state")
+                    Log.i(TAG, "blocker syncChatroom state - $state")
                 }
             }
         }
@@ -1145,6 +1146,12 @@ class ChatroomDetailFragment :
             .observe(viewLifecycleOwner) { state ->
                 when (state) {
                     WorkInfo.State.SUCCEEDED -> {
+                        Log.i(TAG, "background syncChatroom state - $state")
+                        if (isShimmerShowing()) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                fetchInitialData()
+                            }
+                        }
                         viewModel.setIsFirstTimeSync(false)
                     }
 
@@ -2022,7 +2029,6 @@ class ChatroomDetailFragment :
                         viewModel.isDmChatroom()
                         && (viewModel.getChatroomViewData()?.chatRequestState == ChatRequestState.NOTHING)
                     ) {
-                        viewModel.dmRequestText = inputText
                         if (inputText.length >= DM_SEND_REQUEST_TEXT_LIMIT) {
                             ViewUtils.showShortToast(
                                 requireContext(),
@@ -2036,7 +2042,7 @@ class ChatroomDetailFragment :
 
                         // if the DM is M2M then show dialog otherwise send dm request directly
                         if (viewModel.getChatroomViewData()?.isPrivateMember == true) {
-                            SendDMRequestDialogFragment.showDialog(childFragmentManager)
+                            SendDMRequestDialogFragment.showDialog(childFragmentManager, inputText)
                             setChatInputBoxViewType(
                                 CHAT_BOX_NORMAL,
                                 viewModel.showDM.value
@@ -2045,7 +2051,8 @@ class ChatroomDetailFragment :
                             viewModel.sendDMRequest(
                                 viewModel.getChatroomViewData()?.id.toString(),
                                 ChatRequestState.ACCEPTED,
-                                true
+                                true,
+                                inputText
                             )
                         }
                         clearEditTextAnswer()
@@ -5958,8 +5965,8 @@ class ChatroomDetailFragment :
     }
 
     // sends dm request when the user clicks on confirm
-    override fun sendDMRequest() {
-        viewModel.sendDMRequest(chatroomId, ChatRequestState.INITIATED)
+    override fun sendDMRequest(requestText: String) {
+        viewModel.sendDMRequest(chatroomId, ChatRequestState.INITIATED, requestText = requestText)
         clearEditTextAnswer()
     }
 

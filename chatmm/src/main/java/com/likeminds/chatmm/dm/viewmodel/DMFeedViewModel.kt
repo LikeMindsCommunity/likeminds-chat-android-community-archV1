@@ -5,7 +5,9 @@ import android.util.Log
 import androidx.lifecycle.*
 import androidx.work.WorkInfo
 import com.likeminds.chatmm.dm.model.DMFeedEmptyViewData
+import com.likeminds.chatmm.homefeed.model.HomeChatroomListShimmerViewData
 import com.likeminds.chatmm.homefeed.model.HomeFeedItemViewData
+import com.likeminds.chatmm.homefeed.util.HomeFeedPreferences
 import com.likeminds.chatmm.homefeed.util.HomeFeedUtil
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.utils.coroutine.launchIO
@@ -23,7 +25,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DMFeedViewModel @Inject constructor(
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    private val homeFeedPreferences: HomeFeedPreferences
 ) : ViewModel() {
 
     companion object {
@@ -55,12 +58,20 @@ class DMFeedViewModel @Inject constructor(
         data class CheckDMStatus(val errorMessage: String?) : ErrorMessageEvent()
     }
 
+    private val chatRoomListShimmerView by lazy {
+        HomeChatroomListShimmerViewData.Builder().build()
+    }
+
     fun isDBEmpty(): Boolean {
         return (lmChatClient.getDBEmpty().data?.isDBEmpty ?: false)
     }
 
-    fun syncChatrooms(context: Context): Pair<LiveData<MutableList<WorkInfo>>?, LiveData<MutableList<WorkInfo>>?>? {
-        return lmChatClient.syncChatrooms(context)
+    fun syncDMChatrooms(context: Context): Pair<LiveData<MutableList<WorkInfo>>?, LiveData<MutableList<WorkInfo>>?>? {
+        return lmChatClient.loadDMChatrooms(context)
+    }
+
+    fun setWasChatroomFetched(value: Boolean) {
+        homeFeedPreferences.setIsDMFeedShimmerShown(value)
     }
 
     private val chatroomListener = object : HomeChatroomListener() {
@@ -145,7 +156,13 @@ class DMFeedViewModel @Inject constructor(
     //returns the list of dm chatrooms based on conditions
     fun fetchDMChatrooms(): List<BaseViewType> {
         val dataList = mutableListOf<BaseViewType>()
+
+        val wasDMChatroomsFetched = homeFeedPreferences.getIsDMFeedShimmerShown()
         when {
+            !wasDMChatroomsFetched -> {
+                dataList.add(chatRoomListShimmerView)
+            }
+
             allChatRoomsData.isNotEmpty() -> {
                 dataList.addAll(allChatRoomsData)
             }
@@ -199,11 +216,11 @@ class DMFeedViewModel @Inject constructor(
     }
 
     fun observeLiveHomeFeed(context: Context) {
-        lmChatClient.observeLiveHomeFeed(context)
+        lmChatClient.observeLiveDMChatroom(context)
     }
 
     fun removeLiveHomeFeedListener() {
-        lmChatClient.removeLiveHomeFeedListener()
+        lmChatClient.removeLiveDMChatroomListener()
     }
 
     override fun onCleared() {
