@@ -2957,8 +2957,18 @@ class ChatroomDetailFragment :
      */
     private fun observePaginatedData() {
         viewModel.paginatedData.observe(viewLifecycleOwner) { data ->
+            Log.d("PUI", "observePaginatedData: ${data.scrollState}")
             when (data.scrollState) {
                 SCROLL_UP -> {
+                    data.data.forEach {
+                        if (it is ConversationViewData) {
+                            Log.d(
+                                "PUI",
+                                "observePaginatedData conversations: ${it.id}:::${it.answer}"
+                            )
+                        }
+                    }
+
                     chatroomDetailAdapter.addAll(0, data.data)
                     binding.rvChatroom.post {
                         chatroomScrollListener.topLoadingDone()
@@ -2999,7 +3009,12 @@ class ChatroomDetailFragment :
      */
     private fun observeScrolledData() {
         viewModel.scrolledData.observe(viewLifecycleOwner) { data ->
+            Log.d("PUI", "observeScrolledData: ${data.scrollState}")
             val conversations = maintainAudioState(data.data)
+            conversations.forEach {
+                if (it is ConversationViewData)
+                    Log.d("PUI", "setting via diff utils: ${it.id}:::${it.answer}")
+            }
             chatroomDetailAdapter.setItemsViaDiffUtilForChatroomDetail(conversations)
             when (data.scrollState) {
                 SCROLL_UP -> {
@@ -4275,7 +4290,6 @@ class ChatroomDetailFragment :
     ) {
         if (!highlightConversation(repliedConversationId)) {
             viewModel.fetchRepliedConversationOnClick(
-                conversation,
                 repliedConversationId,
                 chatroomDetailAdapter.items()
             )
@@ -4996,6 +5010,9 @@ class ChatroomDetailFragment :
      */
     private fun getIndexOfConversation(id: String): Int {
         return chatroomDetailAdapter.items().indexOfFirst {
+            if (it is ConversationViewData) {
+                Log.d("PUI", "getIndexOfConversation: ${it.id}::::${it.answer}")
+            }
             it is ConversationViewData && it.id == id
         }
     }
@@ -5446,8 +5463,7 @@ class ChatroomDetailFragment :
         workerUUID?.let { uuid ->
             val chatReplyViewData = ChatReplyUtil.getConversationReplyData(
                 conversation,
-                userPreferences.getUUID(),
-                requireContext()
+                userPreferences.getUUID()
             )
             observeCreateConversationWorker(
                 uuid,
@@ -5475,7 +5491,6 @@ class ChatroomDetailFragment :
             val replyData = ChatReplyUtil.getConversationReplyData(
                 conversation,
                 userPreferences.getUUID(),
-                requireContext(),
                 type = type
             )
             setReplyViewData(replyData)
@@ -5493,7 +5508,6 @@ class ChatroomDetailFragment :
             val replyData = ChatReplyUtil.getChatRoomReplyData(
                 chatRoom,
                 userPreferences.getUUID(),
-                requireContext(),
                 type = type
             )
             setReplyViewData(replyData)
