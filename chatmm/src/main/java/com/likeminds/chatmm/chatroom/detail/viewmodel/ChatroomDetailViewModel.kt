@@ -905,6 +905,7 @@ class ChatroomDetailViewModel @Inject constructor(
         @ScrollState extremeScrollTo: Int? = null,
         repliedConversationId: String? = null,
         repliedChatRoomId: String? = null,
+        fromWhere: String = "Somewhere else"
     ): PaginatedViewData? {
         val chatroom = getChatroom() ?: return null
         val chatroomId = chatroom.id
@@ -938,6 +939,23 @@ class ChatroomDetailViewModel @Inject constructor(
             val oldConversationsCount = getConversationsCount(oldConversations)
             val totalConversationsCount = oldConversationsCount + conversationsViewData.size
             val totalAllResponseCount = chatroom.totalAllResponseCount
+            for (oc in oldConversations) {
+                for (nc in conversationsViewData) {
+                    if (oc is ConversationViewData && oc.id == nc.id) {
+                        Log.d("PUI", "fetchPaginatedData: same conv again!!!")
+                    }
+                }
+            }
+            Log.d(
+                "PUI", """
+                    Response
+                    where: $fromWhere
+                    totalConversationsCount: $totalConversationsCount
+                    totalAllResponseCount: $totalAllResponseCount
+                    originalId: $repliedConversationId
+                    scrollState: $scrollState
+                """.trimIndent()
+            )
             return if (
                 scrollState == SCROLL_UP &&
                 totalConversationsCount == totalAllResponseCount
@@ -950,12 +968,19 @@ class ChatroomDetailViewModel @Inject constructor(
                     dataList.add(0, header)
                     conversationsViewData = conversationsViewData.drop(1)
                 }
+                val dates = addDateViewToList(
+                    conversationsViewData,
+                    chatroomDetail.chatroom,
+                    null
+                )
+
+                dates.forEach {
+                    if (it is ChatroomDateViewData) {
+                        Log.d("PUI", "Dates: ${it.date}")
+                    }
+                }
                 dataList.addAll(
-                    addDateViewToList(
-                        conversationsViewData,
-                        chatroomDetail.chatroom,
-                        null
-                    )
+                    dates
                 )
                 PaginatedViewData.Builder()
                     .scrollState(scrollState)
@@ -965,14 +990,20 @@ class ChatroomDetailViewModel @Inject constructor(
                     .repliedConversationId(repliedConversationId)
                     .build()
             } else {
+                val dates = addDateViewToList(
+                    conversationsViewData,
+                    chatroomDetail.chatroom,
+                    oldConversations.lastOrNull()
+                )
+                dates.forEach {
+                    if (it is ChatroomDateViewData) {
+                        Log.d("PUI", "Else =Dates: ${it.date}")
+                    }
+                }
                 PaginatedViewData.Builder()
                     .scrollState(scrollState)
                     .data(
-                        addDateViewToList(
-                            conversationsViewData,
-                            chatroomDetail.chatroom,
-                            oldConversations.lastOrNull()
-                        )
+                        dates
                     )
                     .extremeScrollTo(extremeScrollTo)
                     .repliedChatRoomId(repliedChatRoomId)
@@ -1765,19 +1796,45 @@ class ChatroomDetailViewModel @Inject constructor(
     }
 
     fun fetchRepliedConversationOnClick(
-        conversation: ConversationViewData,
         repliedConversationId: String,
         oldConversations: List<BaseViewType>,
     ) {
-        val data = fetchPaginatedData(
-            SCROLL_UP,
-            conversation,
-            oldConversations,
-            repliedConversationId = repliedConversationId
-        )
-        if (data != null) {
+        val conversationKey =
+            oldConversations.firstOrNull { it is ConversationViewData } as? ConversationViewData?
+                ?: return
+
+        val conversationWithinLimitRequest = ConversationWithinLimitRequest.Builder()
+            .chatroomId(conversationKey.chatroomId ?: "")
+            .conversationKey(ViewDataConverter.convertConversation(conversationKey))
+            .targetConversationId(repliedConversationId)
+            .limit(CONVERSATIONS_LIMIT)
+            .build()
+        val isPresent = lmChatClient.isConversationWithinLimit(conversationWithinLimitRequest)
+
+        if (isPresent) {
+            val data = fetchPaginatedData(
+                SCROLL_UP,
+                conversationKey,
+                oldConversations,
+                repliedConversationId = repliedConversationId,
+                fromWhere = "fetchRepliedConversationOnClick"
+            )
+            if (data != null) {
+                viewModelScope.launchMain {
+                    _paginatedData.value = data
+                }
+            }
+        } else {
+            val conversations = fetchIntermediateConversations(
+                getChatroomViewData()!!,
+                medianConversationId = repliedConversationId
+            )
             viewModelScope.launchMain {
-                _paginatedData.value = data
+                _scrolledData.value = PaginatedViewData.Builder()
+                    .scrollState(SCROLL_UP)
+                    .data(conversations)
+                    .repliedConversationId(repliedConversationId)
+                    .build()
             }
         }
     }
