@@ -23,7 +23,7 @@ import com.likeminds.chatmm.utils.model.BaseViewType
 import com.likeminds.chatmm.utils.model.ITEM_CONVERSATION_ACTION
 import com.likeminds.likemindschat.user.model.MemberBlockState
 
-class ConversationActionItemViewDataBinder constructor(
+class ConversationActionItemViewDataBinder(
     private val userPreferences: UserPreferences,
     private val chatroomDetailAdapterListener: ChatroomDetailAdapterListener?,
 ) : ViewDataBinder<ItemConversationActionBinding, BaseViewType>() {

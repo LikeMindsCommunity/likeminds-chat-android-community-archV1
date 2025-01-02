@@ -147,24 +147,21 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
     }
 
     private fun startSync() {
-        val pairOfObservers = viewModel.syncChatrooms(requireContext())
+        val pairOfObservers = viewModel.syncDMChatrooms(requireContext())
 
         val firstTimeObserver = pairOfObservers?.first
         val appConfigObserver = pairOfObservers?.second
         lifecycleScope.launch(Dispatchers.Main) {
             when {
                 firstTimeObserver != null -> {
-                    val syncStartedAt = System.currentTimeMillis()
                     firstTimeObserver.observe(this@DMFeedFragment, Observer { workInfoList ->
                         workInfoList.forEach { workInfo ->
                             if (workInfo.state != WorkInfo.State.SUCCEEDED) {
                                 return@Observer
                             }
                         }
-                        val timeTaken = (System.currentTimeMillis() - syncStartedAt) / 1000f
-//                        viewModel.setWasChatroomFetched(true)
+                        viewModel.setWasChatroomFetched(true)
                         viewModel.refetchDMChatrooms()
-//                        viewModel.sendSyncCompleteEvent(timeTaken)
                     })
                 }
 

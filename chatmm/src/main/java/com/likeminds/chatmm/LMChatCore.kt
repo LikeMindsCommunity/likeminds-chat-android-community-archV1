@@ -6,10 +6,11 @@ import android.util.Log
 import com.likeminds.chatmm.member.model.UserResponse
 import com.likeminds.chatmm.member.util.UserResponseConvertor
 import com.likeminds.chatmm.theme.model.LMChatTheme
+import com.likeminds.chatmm.utils.sharedpreferences.LMChatMasterPrefUtils
 import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.likemindschat.LMChatClient
-import com.likeminds.likemindschat.user.model.InitiateUserRequest
-import com.likeminds.likemindschat.user.model.ValidateUserRequest
+import com.likeminds.likemindschat.LMResponse
+import com.likeminds.likemindschat.user.model.*
 import kotlinx.coroutines.*
 
 object LMChatCore {
@@ -71,7 +72,7 @@ object LMChatCore {
             val deviceId = lmChatUserMeta.deviceId
 
 
-            if (tokens?.first.isNullOrEmpty()|| tokens?.second.isNullOrEmpty()) {
+            if (tokens?.first.isNullOrEmpty() || tokens?.second.isNullOrEmpty()) {
                 val initiateUserRequest = InitiateUserRequest.Builder()
                     .apiKey(apiKey)
                     .userName(userName)
@@ -157,5 +158,21 @@ object LMChatCore {
     fun setTheme(lmChatTheme: LMChatTheme) {
         val sdk = SDKApplication.getInstance()
         sdk.setupTheme(lmChatTheme)
+    }
+
+    /**
+     * Call this function to logout user
+     * @param context: context of client's app
+     * @return LMResponse<Nothing>: response whether logout is successful or not
+     */
+    suspend fun logoutUser(context: Context, logoutRequest: LogoutRequest): LMResponse<Nothing> {
+        val lmChatClient = LMChatClient.getInstance()
+        val response = lmChatClient.logout(logoutRequest)
+        return if (response.success) {
+            LMChatMasterPrefUtils.clearAllPrefs(context)
+            response
+        } else {
+            response
+        }
     }
 }

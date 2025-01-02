@@ -29,7 +29,7 @@ internal class LikeMindsTextView : AppCompatTextView {
     private fun initiate(attrs: AttributeSet?) {
         // fonts
         val array = context.obtainStyledAttributes(attrs, R.styleable.LikeMindsTextView)
-        val drawableType = array.getString(R.styleable.LikeMindsButton_drawable_type)
+        val drawableType = array.getString(R.styleable.LikeMindsTextView_drawableType)
 
         typeface = ThemeUtil.getTypeFace(
             context,

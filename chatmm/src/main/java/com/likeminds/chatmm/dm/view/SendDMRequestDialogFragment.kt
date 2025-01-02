@@ -12,11 +12,14 @@ class SendDMRequestDialogFragment :
 
     companion object {
         private const val TAG = "SendDMRequestDialogFragment"
+        private var inputText: String = ""
 
         @JvmStatic
         fun showDialog(
-            supportFragmentManager: FragmentManager
+            supportFragmentManager: FragmentManager,
+            inputText: String
         ) {
+            this.inputText = inputText
             SendDMRequestDialogFragment().show(supportFragmentManager, TAG)
         }
     }
@@ -46,7 +49,7 @@ class SendDMRequestDialogFragment :
             }
 
             tvConfirm.setOnClickListener {
-                sendDMRequestDialogListener.sendDMRequest()
+                sendDMRequestDialogListener.sendDMRequest(inputText)
                 this@SendDMRequestDialogFragment.dismiss()
             }
         }
@@ -54,5 +57,5 @@ class SendDMRequestDialogFragment :
 }
 
 interface SendDMRequestDialogListener {
-    fun sendDMRequest()
+    fun sendDMRequest(requestText: String)
 }

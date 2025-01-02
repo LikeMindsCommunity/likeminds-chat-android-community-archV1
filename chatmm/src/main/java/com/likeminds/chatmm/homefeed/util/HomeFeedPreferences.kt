@@ -12,10 +12,8 @@ class HomeFeedPreferences @Inject constructor(
     companion object {
         const val HOME_FEED_PREFS = "home_feed_prefs"
 
-        private const val API_KEY = "API_KEY"
-        private const val IS_GUEST = "IS_GUEST"
-        private const val HIDE_SECRET_CHATROOM_LOCK_ICON = "HIDE_SECRET_CHATROOM_LOCK_ICON"
         private const val SHOW_HOME_FEED_SHIMMER = "SHOW_HOME_FEED_SHIMMER"
+        private const val SHOW_DM_FEED_SHIMMER = "SHOW_DM_FEED_SHIMMER"
     }
 
     fun setShowHomeFeedShimmer(setHomeFeedShimmer: Boolean) {
@@ -24,5 +22,13 @@ class HomeFeedPreferences @Inject constructor(
 
     fun getShowHomeFeedShimmer(): Boolean {
         return getPreference(SHOW_HOME_FEED_SHIMMER, false)
+    }
+
+    fun setIsDMFeedShimmerShown(setDMFeedShimmer: Boolean) {
+        putPreference(SHOW_DM_FEED_SHIMMER, setDMFeedShimmer)
+    }
+
+    fun getIsDMFeedShimmerShown(): Boolean {
+        return getPreference(SHOW_DM_FEED_SHIMMER, false)
     }
 }

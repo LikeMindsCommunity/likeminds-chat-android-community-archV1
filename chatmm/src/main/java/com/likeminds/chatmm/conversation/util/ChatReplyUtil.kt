@@ -1,13 +1,21 @@
 package com.likeminds.chatmm.conversation.util
 
-import android.content.Context
 import androidx.annotation.DrawableRes
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.chatroom.detail.model.ChatReplyViewData
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomViewData
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil
-import com.likeminds.chatmm.conversation.model.*
-import com.likeminds.chatmm.media.model.*
+import com.likeminds.chatmm.conversation.model.AttachmentViewData
+import com.likeminds.chatmm.conversation.model.ConversationState
+import com.likeminds.chatmm.conversation.model.ConversationViewData
+import com.likeminds.chatmm.conversation.model.LinkOGTagsViewData
+import com.likeminds.chatmm.conversation.model.STATE_POLL
+import com.likeminds.chatmm.media.model.AUDIO
+import com.likeminds.chatmm.media.model.GIF
+import com.likeminds.chatmm.media.model.IMAGE
+import com.likeminds.chatmm.media.model.PDF
+import com.likeminds.chatmm.media.model.VIDEO
+import com.likeminds.chatmm.media.model.VOICE_NOTE
 import com.likeminds.chatmm.member.model.MemberState
 import com.likeminds.chatmm.member.model.MemberViewData
 import com.likeminds.chatmm.member.util.MemberUtil
@@ -17,66 +25,31 @@ object ChatReplyUtil {
     fun getChatRoomReplyData(
         chatRoom: ChatroomViewData,
         currentMemberId: String,
-        context: Context,
-        checkForDeletedChatroom: Boolean = true,
         type: String? = null
     ): ChatReplyViewData {
         val memberViewData = chatRoom.memberViewData
-        return if (checkForDeletedChatroom && chatRoom.deletedBy != null) {
-            ChatReplyViewData.Builder()
-                .memberName(MemberUtil.getMemberNameForDisplay(memberViewData, currentMemberId))
-                .isMessageDeleted(true)
-                .deleteMessage(
-                    ChatroomUtil.getDeletedMessage(context, chatRoom, currentMemberId)
-                )
-                .attachmentType("")
-                .build()
-        } else {
-            getReplyData(
-                chatRoom.title,
-                memberViewData,
-                currentMemberId,
-                type = type
-            )
-        }
+        return getReplyData(
+            chatRoom.title,
+            memberViewData,
+            currentMemberId,
+            type = type
+        )
     }
 
     fun getConversationReplyData(
         conversation: ConversationViewData,
         currentMemberId: String,
-        context: Context,
-        checkForDeletedConversation: Boolean = true,
         type: String? = null
     ): ChatReplyViewData {
-        return if (checkForDeletedConversation && conversation.deletedBy != null) {
-            ChatReplyViewData.Builder()
-                .memberName(
-                    MemberUtil.getMemberNameForDisplay(
-                        conversation.memberViewData,
-                        currentMemberId
-                    )
-                )
-                .isMessageDeleted(true)
-                .deleteMessage(
-                    ChatroomUtil.getDeletedMessage(
-                        context,
-                        conversation,
-                        currentMemberId
-                    )
-                )
-                .attachmentType("")
-                .build()
-        } else {
-            getReplyData(
-                conversation.answer,
-                conversation.memberViewData,
-                currentMemberId,
-                conversation.attachments,
-                conversation.ogTags,
-                conversationState = conversation.state,
-                type = type
-            )
-        }
+        return getReplyData(
+            conversation.answer,
+            conversation.memberViewData,
+            currentMemberId,
+            conversation.attachments,
+            conversation.ogTags,
+            conversationState = conversation.state,
+            type = type
+        )
     }
 
     private fun getReplyData(
