@@ -2957,15 +2957,29 @@ class ChatroomDetailFragment :
      */
     private fun observePaginatedData() {
         viewModel.paginatedData.observe(viewLifecycleOwner) { data ->
-            Log.d("PUI", "observePaginatedData: ${data.scrollState}")
             when (data.scrollState) {
                 SCROLL_UP -> {
-                    data.data.forEach {
-                        if (it is ConversationViewData) {
-                            Log.d(
-                                "PUI",
-                                "observePaginatedData conversations: ${it.id}:::${it.answer}"
-                            )
+                    var lastDate: String? = null
+
+                    // Find the date of the last item to be added in the adapter list
+                    for (i in data.data.size - 1 downTo 0) {
+                        val viewData = data.data[i]
+                        if (viewData is ConversationViewData) {
+                            lastDate = viewData.date
+                            break
+                        }
+
+                        if (viewData is ChatroomDateViewData) {
+                            lastDate = viewData.date
+                            break
+                        }
+                    }
+
+                    if (!lastDate.isNullOrEmpty()) {
+                        // Find the index of the lastDate and remove it from the adapter if it is present, as it will be added again!
+                        val dateIndex = getIndexOfDate(lastDate)
+                        if (dateIndex != -1) {
+                            chatroomDetailAdapter.removeIndex(dateIndex)
                         }
                     }
 
@@ -3009,12 +3023,7 @@ class ChatroomDetailFragment :
      */
     private fun observeScrolledData() {
         viewModel.scrolledData.observe(viewLifecycleOwner) { data ->
-            Log.d("PUI", "observeScrolledData: ${data.scrollState}")
             val conversations = maintainAudioState(data.data)
-            conversations.forEach {
-                if (it is ConversationViewData)
-                    Log.d("PUI", "setting via diff utils: ${it.id}:::${it.answer}")
-            }
             chatroomDetailAdapter.setItemsViaDiffUtilForChatroomDetail(conversations)
             when (data.scrollState) {
                 SCROLL_UP -> {
@@ -5010,11 +5019,24 @@ class ChatroomDetailFragment :
      */
     private fun getIndexOfConversation(id: String): Int {
         return chatroomDetailAdapter.items().indexOfFirst {
-            if (it is ConversationViewData) {
-                Log.d("PUI", "getIndexOfConversation: ${it.id}::::${it.answer}")
-            }
             it is ConversationViewData && it.id == id
         }
+    }
+
+    /**
+     * Returns the current index of the date if exists from the recyclerview
+     * @param date Date string
+     */
+    private fun getIndexOfDate(date: String): Int {
+        chatroomDetailAdapter.items().forEachIndexed { index, item ->
+            if (item is ConversationViewData && item.date == date) {
+                return index
+            }
+            if (item is ChatroomDateViewData && item.date == date) {
+                return index
+            }
+        }
+        return -1
     }
 
     /**

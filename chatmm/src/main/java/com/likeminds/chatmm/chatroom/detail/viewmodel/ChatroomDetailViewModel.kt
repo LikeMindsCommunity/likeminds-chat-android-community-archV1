@@ -389,7 +389,6 @@ class ChatroomDetailViewModel @Inject constructor(
 
     /**
      * Fetches the initial data for the current chatroom and pass it to fragment using live data
-     * @param context context from where funciton is called
      * @param chatroomDetailExtras Chatroom Intent Extras
      *
      * 1st case ->
@@ -905,7 +904,6 @@ class ChatroomDetailViewModel @Inject constructor(
         @ScrollState extremeScrollTo: Int? = null,
         repliedConversationId: String? = null,
         repliedChatRoomId: String? = null,
-        fromWhere: String = "Somewhere else"
     ): PaginatedViewData? {
         val chatroom = getChatroom() ?: return null
         val chatroomId = chatroom.id
@@ -949,7 +947,6 @@ class ChatroomDetailViewModel @Inject constructor(
             Log.d(
                 "PUI", """
                     Response
-                    where: $fromWhere
                     totalConversationsCount: $totalConversationsCount
                     totalAllResponseCount: $totalAllResponseCount
                     originalId: $repliedConversationId
@@ -1816,8 +1813,7 @@ class ChatroomDetailViewModel @Inject constructor(
                 SCROLL_UP,
                 conversationKey,
                 oldConversations,
-                repliedConversationId = repliedConversationId,
-                fromWhere = "fetchRepliedConversationOnClick"
+                repliedConversationId = repliedConversationId
             )
             if (data != null) {
                 viewModelScope.launchMain {
