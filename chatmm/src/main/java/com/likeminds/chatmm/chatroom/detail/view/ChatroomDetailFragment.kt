@@ -1097,6 +1097,7 @@ class ChatroomDetailFragment :
         worker.observe(viewLifecycleOwner) { state ->
             when (state) {
                 WorkInfo.State.SUCCEEDED -> {
+                    Log.i(TAG, "blocker syncChatroom state - SUCCEEDED")
                     //If shimmer is showing that means chatroom is not present. So after syncing fetch again.
                     if (isShimmerShowing()) {
                         /* Adding a flag to extras that we are trying to fetch the data again after syncing. Still if
@@ -1115,11 +1116,11 @@ class ChatroomDetailFragment :
                 }
 
                 WorkInfo.State.CANCELLED -> {
-                    Log.i(TAG, "syncChatroom got cancelled")
+                    Log.i(TAG, "blocker syncChatroom got cancelled")
                 }
 
                 else -> {
-                    Log.i(TAG, "syncChatroom state - $state")
+                    Log.i(TAG, "blocker syncChatroom state - $state")
                 }
             }
         }
@@ -1137,6 +1138,12 @@ class ChatroomDetailFragment :
             .observe(viewLifecycleOwner) { state ->
                 when (state) {
                     WorkInfo.State.SUCCEEDED -> {
+                        Log.i(TAG, "background syncChatroom state - $state")
+                        if (isShimmerShowing()) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                fetchInitialData()
+                            }
+                        }
                         viewModel.setIsFirstTimeSync(false)
                     }
 
@@ -2014,7 +2021,6 @@ class ChatroomDetailFragment :
                         viewModel.isDmChatroom()
                         && (viewModel.getChatroomViewData()?.chatRequestState == ChatRequestState.NOTHING)
                     ) {
-                        viewModel.dmRequestText = inputText
                         if (inputText.length >= DM_SEND_REQUEST_TEXT_LIMIT) {
                             ViewUtils.showShortToast(
                                 requireContext(),
@@ -2028,7 +2034,7 @@ class ChatroomDetailFragment :
 
                         // if the DM is M2M then show dialog otherwise send dm request directly
                         if (viewModel.getChatroomViewData()?.isPrivateMember == true) {
-                            SendDMRequestDialogFragment.showDialog(childFragmentManager)
+                            SendDMRequestDialogFragment.showDialog(childFragmentManager, inputText)
                             setChatInputBoxViewType(
                                 CHAT_BOX_NORMAL,
                                 viewModel.showDM.value
@@ -2037,7 +2043,8 @@ class ChatroomDetailFragment :
                             viewModel.sendDMRequest(
                                 viewModel.getChatroomViewData()?.id.toString(),
                                 ChatRequestState.ACCEPTED,
-                                true
+                                true,
+                                inputText
                             )
                         }
                         clearEditTextAnswer()
@@ -2124,7 +2131,6 @@ class ChatroomDetailFragment :
                 }
 
                 clearEditTextAnswer()
-                updateDmMessaged()
                 if (isLinkViewVisible() || isReplyViewVisible()) {
                     setChatInputBoxViewType(CHAT_BOX_NORMAL)
                 }
@@ -2261,7 +2267,6 @@ class ChatroomDetailFragment :
                     }
                 }
                 clearEditTextAnswer()
-                updateDmMessaged()
                 if (isReplyViewVisible()) {
                     setChatInputBoxViewType(CHAT_BOX_NORMAL)
                 }
@@ -2272,10 +2277,6 @@ class ChatroomDetailFragment :
                 )
             }
         }
-    }
-
-    private fun updateDmMessaged() {
-        // todo:
     }
 
     /**
@@ -2958,6 +2959,30 @@ class ChatroomDetailFragment :
         viewModel.paginatedData.observe(viewLifecycleOwner) { data ->
             when (data.scrollState) {
                 SCROLL_UP -> {
+                    var lastDate: String? = null
+
+                    // Find the date of the last item to be added in the adapter list
+                    for (i in data.data.size - 1 downTo 0) {
+                        val viewData = data.data[i]
+                        if (viewData is ConversationViewData) {
+                            lastDate = viewData.date
+                            break
+                        }
+
+                        if (viewData is ChatroomDateViewData) {
+                            lastDate = viewData.date
+                            break
+                        }
+                    }
+
+                    if (!lastDate.isNullOrEmpty()) {
+                        // Find the index of the lastDate and remove it from the adapter if it is present, as it will be added again!
+                        val dateIndex = getIndexOfDate(lastDate)
+                        if (dateIndex != -1) {
+                            chatroomDetailAdapter.removeIndex(dateIndex)
+                        }
+                    }
+
                     chatroomDetailAdapter.addAll(0, data.data)
                     binding.rvChatroom.post {
                         chatroomScrollListener.topLoadingDone()
@@ -3076,7 +3101,6 @@ class ChatroomDetailFragment :
 
                 is ChatroomDetailViewModel.ConversationEvent.NewConversation -> {
                     //Observe for any new conversations triggered by the database callback
-                    val isAddedBelow: Boolean
                     val conversations =
                         getNonPresentConversations(response.conversations).toMutableList()
 
@@ -3175,7 +3199,7 @@ class ChatroomDetailFragment :
                         }
 
                         // adds the date view only if the [lastInsertedDate] is different from the current conversation date and updates [lastInsertedDate]
-                        if (!lastInsertedDate.equals(response.conversation.date)) {
+                        if (lastInsertedDate?.trim() != response.conversation.date?.trim()) {
                             lastInsertedDate = response.conversation.date
                             chatroomDetailAdapter.add(viewModel.getDateView(response.conversation.date))
                         }
@@ -4275,7 +4299,6 @@ class ChatroomDetailFragment :
     ) {
         if (!highlightConversation(repliedConversationId)) {
             viewModel.fetchRepliedConversationOnClick(
-                conversation,
                 repliedConversationId,
                 chatroomDetailAdapter.items()
             )
@@ -4931,7 +4954,7 @@ class ChatroomDetailFragment :
         val map = conversations.map { it.id }.toMutableList()
         var i = 0
         val max = conversations.size - 1
-        for (item in chatroomDetailAdapter.items().reversed()) {
+        for (item in chatroomDetailAdapter.items().asReversed()) {
             if (i > max) {
                 break
             }
@@ -4998,6 +5021,19 @@ class ChatroomDetailFragment :
         return chatroomDetailAdapter.items().indexOfFirst {
             it is ConversationViewData && it.id == id
         }
+    }
+
+    /**
+     * Returns the current index of the date if exists from the recyclerview
+     * @param date Date string
+     */
+    private fun getIndexOfDate(date: String): Int {
+        chatroomDetailAdapter.items().forEachIndexed { index, item ->
+            if (item is ChatroomDateViewData && item.date == date) {
+                return index
+            }
+        }
+        return -1
     }
 
     /**
@@ -5446,8 +5482,7 @@ class ChatroomDetailFragment :
         workerUUID?.let { uuid ->
             val chatReplyViewData = ChatReplyUtil.getConversationReplyData(
                 conversation,
-                userPreferences.getUUID(),
-                requireContext()
+                userPreferences.getUUID()
             )
             observeCreateConversationWorker(
                 uuid,
@@ -5475,7 +5510,6 @@ class ChatroomDetailFragment :
             val replyData = ChatReplyUtil.getConversationReplyData(
                 conversation,
                 userPreferences.getUUID(),
-                requireContext(),
                 type = type
             )
             setReplyViewData(replyData)
@@ -5493,7 +5527,6 @@ class ChatroomDetailFragment :
             val replyData = ChatReplyUtil.getChatRoomReplyData(
                 chatRoom,
                 userPreferences.getUUID(),
-                requireContext(),
                 type = type
             )
             setReplyViewData(replyData)
@@ -5950,8 +5983,8 @@ class ChatroomDetailFragment :
     }
 
     // sends dm request when the user clicks on confirm
-    override fun sendDMRequest() {
-        viewModel.sendDMRequest(chatroomId, ChatRequestState.INITIATED)
+    override fun sendDMRequest(requestText: String) {
+        viewModel.sendDMRequest(chatroomId, ChatRequestState.INITIATED, requestText = requestText)
         clearEditTextAnswer()
     }
 
