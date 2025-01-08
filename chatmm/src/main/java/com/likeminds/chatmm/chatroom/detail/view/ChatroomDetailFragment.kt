@@ -5029,9 +5029,6 @@ class ChatroomDetailFragment :
      */
     private fun getIndexOfDate(date: String): Int {
         chatroomDetailAdapter.items().forEachIndexed { index, item ->
-            if (item is ConversationViewData && item.date == date) {
-                return index
-            }
             if (item is ChatroomDateViewData && item.date == date) {
                 return index
             }

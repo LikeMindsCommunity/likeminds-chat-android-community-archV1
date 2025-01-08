@@ -937,22 +937,6 @@ class ChatroomDetailViewModel @Inject constructor(
             val oldConversationsCount = getConversationsCount(oldConversations)
             val totalConversationsCount = oldConversationsCount + conversationsViewData.size
             val totalAllResponseCount = chatroom.totalAllResponseCount
-            for (oc in oldConversations) {
-                for (nc in conversationsViewData) {
-                    if (oc is ConversationViewData && oc.id == nc.id) {
-                        Log.d("PUI", "fetchPaginatedData: same conv again!!!")
-                    }
-                }
-            }
-            Log.d(
-                "PUI", """
-                    Response
-                    totalConversationsCount: $totalConversationsCount
-                    totalAllResponseCount: $totalAllResponseCount
-                    originalId: $repliedConversationId
-                    scrollState: $scrollState
-                """.trimIndent()
-            )
             return if (
                 scrollState == SCROLL_UP &&
                 totalConversationsCount == totalAllResponseCount
@@ -970,12 +954,6 @@ class ChatroomDetailViewModel @Inject constructor(
                     chatroomDetail.chatroom,
                     null
                 )
-
-                dates.forEach {
-                    if (it is ChatroomDateViewData) {
-                        Log.d("PUI", "Dates: ${it.date}")
-                    }
-                }
                 dataList.addAll(
                     dates
                 )
@@ -992,11 +970,6 @@ class ChatroomDetailViewModel @Inject constructor(
                     chatroomDetail.chatroom,
                     oldConversations.lastOrNull()
                 )
-                dates.forEach {
-                    if (it is ChatroomDateViewData) {
-                        Log.d("PUI", "Else =Dates: ${it.date}")
-                    }
-                }
                 PaginatedViewData.Builder()
                     .scrollState(scrollState)
                     .data(
