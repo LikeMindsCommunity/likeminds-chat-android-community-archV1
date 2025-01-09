@@ -118,6 +118,7 @@ import com.likeminds.chatmm.utils.observer.ChatEvent
 import com.likeminds.chatmm.utils.permissions.*
 import com.likeminds.chatmm.utils.recyclerview.LMSwipeController
 import com.likeminds.chatmm.utils.recyclerview.SwipeControllerActions
+import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.chatmm.widget.model.WidgetViewData
 import com.likeminds.likemindschat.chatroom.model.ChatRequestState
 import com.likeminds.likemindschat.conversation.worker.CreateConversationWorker
@@ -6359,7 +6360,7 @@ class ChatroomDetailFragment :
             ShareUtils.shareChatroom(
                 requireContext(),
                 (viewModel.chatroomDetail.chatroom?.id ?: ""),
-                ShareUtils.domain
+                LMChatUserMetaData.getInstance().domain ?: ShareUtils.DOMAIN
             )
             viewModel.sendChatroomShared()
         }
