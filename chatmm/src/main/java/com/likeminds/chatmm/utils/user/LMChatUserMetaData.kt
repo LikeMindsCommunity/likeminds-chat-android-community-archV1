@@ -1,7 +1,6 @@
 package com.likeminds.chatmm.utils.user
 
 import android.content.Context
-import android.provider.Settings
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import com.likeminds.chatmm.SDKApplication
@@ -16,7 +15,7 @@ import com.likeminds.likemindschat.user.model.RegisterDeviceRequest
 import kotlinx.coroutines.*
 
 class LMChatUserMetaData {
-    private var domain: String? = null
+    var domain: String? = null
     private var enablePushNotifications: Boolean = false
     var deviceId: String? = null
 
