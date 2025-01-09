@@ -67,7 +67,7 @@ object Route {
 
     //create route string as per uri with check for the host (likeminds)
     private fun getRouteFromDeepLink(data: Uri?): String? {
-        val host = data?.host ?: return null
+        data?.host ?: return null
         val firstPathSegment = data.pathSegments.firstOrNull()
         when {
             (firstPathSegment == DEEP_LINK_CHATROOM) -> {

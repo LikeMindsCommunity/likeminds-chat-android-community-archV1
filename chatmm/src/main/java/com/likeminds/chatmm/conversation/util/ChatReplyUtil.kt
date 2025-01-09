@@ -1,6 +1,5 @@
 package com.likeminds.chatmm.conversation.util
 
-import android.content.Context
 import androidx.annotation.DrawableRes
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.chatroom.detail.model.ChatReplyViewData
@@ -17,66 +16,31 @@ object ChatReplyUtil {
     fun getChatRoomReplyData(
         chatRoom: ChatroomViewData,
         currentMemberId: String,
-        context: Context,
-        checkForDeletedChatroom: Boolean = true,
         type: String? = null
     ): ChatReplyViewData {
         val memberViewData = chatRoom.memberViewData
-        return if (checkForDeletedChatroom && chatRoom.deletedBy != null) {
-            ChatReplyViewData.Builder()
-                .memberName(MemberUtil.getMemberNameForDisplay(memberViewData, currentMemberId))
-                .isMessageDeleted(true)
-                .deleteMessage(
-                    ChatroomUtil.getDeletedMessage(context, chatRoom, currentMemberId)
-                )
-                .attachmentType("")
-                .build()
-        } else {
-            getReplyData(
-                chatRoom.title,
-                memberViewData,
-                currentMemberId,
-                type = type
-            )
-        }
+        return getReplyData(
+            chatRoom.title,
+            memberViewData,
+            currentMemberId,
+            type = type
+        )
     }
 
     fun getConversationReplyData(
         conversation: ConversationViewData,
         currentMemberId: String,
-        context: Context,
-        checkForDeletedConversation: Boolean = true,
         type: String? = null
     ): ChatReplyViewData {
-        return if (checkForDeletedConversation && conversation.deletedBy != null) {
-            ChatReplyViewData.Builder()
-                .memberName(
-                    MemberUtil.getMemberNameForDisplay(
-                        conversation.memberViewData,
-                        currentMemberId
-                    )
-                )
-                .isMessageDeleted(true)
-                .deleteMessage(
-                    ChatroomUtil.getDeletedMessage(
-                        context,
-                        conversation,
-                        currentMemberId
-                    )
-                )
-                .attachmentType("")
-                .build()
-        } else {
-            getReplyData(
-                conversation.answer,
-                conversation.memberViewData,
-                currentMemberId,
-                conversation.attachments,
-                conversation.ogTags,
-                conversationState = conversation.state,
-                type = type
-            )
-        }
+        return getReplyData(
+            conversation.answer,
+            conversation.memberViewData,
+            currentMemberId,
+            conversation.attachments,
+            conversation.ogTags,
+            conversationState = conversation.state,
+            type = type
+        )
     }
 
     private fun getReplyData(
