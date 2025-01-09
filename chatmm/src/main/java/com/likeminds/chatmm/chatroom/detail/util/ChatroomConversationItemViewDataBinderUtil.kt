@@ -81,10 +81,7 @@ import com.likeminds.chatmm.utils.databinding.ImageBindingUtil
 import com.likeminds.chatmm.utils.link.LMLinkMovementMethod
 import com.likeminds.chatmm.utils.mediauploader.worker.UploadHelper
 import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
-import com.likeminds.chatmm.utils.model.BaseViewType
-import com.likeminds.chatmm.utils.model.ITEM_IMAGE
-import com.likeminds.chatmm.utils.model.ITEM_PDF
-import com.likeminds.chatmm.utils.model.ITEM_VIDEO
+import com.likeminds.chatmm.utils.model.*
 import java.util.UUID
 
 object ChatroomConversationItemViewDataBinderUtil {
