@@ -3,7 +3,7 @@ package com.likeminds.chatmm.theme.customview
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.Toolbar
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 
 class LikeMindsToolbar : Toolbar {
     constructor(context: Context) : super(context) {
@@ -24,10 +24,10 @@ class LikeMindsToolbar : Toolbar {
 
     private fun initiate() {
         // background color
-        this.setBackgroundColor(LMTheme.getHeaderColor())
+        this.setBackgroundColor(LMChatAppearance.getHeaderColor())
 
         // toolbar color
-        val color = LMTheme.getToolbarColor()
+        val color = LMChatAppearance.getToolbarColor()
         this.overflowIcon?.setTint(color)
         this.navigationIcon?.setTint(color)
     }

@@ -5,7 +5,7 @@ import android.graphics.Typeface
 import android.view.*
 import android.widget.TextView
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil
 import com.likeminds.chatmm.databinding.ItemFollowedChatRoomBinding
 import com.likeminds.chatmm.homefeed.model.HomeFeedItemViewData
@@ -52,7 +52,7 @@ class FollowedChatroomViewDataBinder(
         position: Int
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
             homeFeedItemViewData = data
             hideBottomLine = data.isLastItem
             showUnseenCount = data.unseenConversationCount > 0
@@ -81,7 +81,7 @@ class FollowedChatroomViewDataBinder(
                     0
                 )
                 tvChatroomName.compoundDrawables.forEach {
-                    it?.setTintList(ColorStateList.valueOf(LMTheme.getButtonsColor()))
+                    it?.setTintList(ColorStateList.valueOf(LMChatAppearance.getButtonsColor()))
                 }
             } else {
                 tvChatroomName.setCompoundDrawablesWithIntrinsicBounds(
@@ -91,7 +91,7 @@ class FollowedChatroomViewDataBinder(
                     0
                 )
                 tvChatroomName.compoundDrawables.forEach {
-                    it?.setTintList(ColorStateList.valueOf(LMTheme.getButtonsColor()))
+                    it?.setTintList(ColorStateList.valueOf(LMChatAppearance.getButtonsColor()))
                 }
             }
 
@@ -164,7 +164,7 @@ class FollowedChatroomViewDataBinder(
                     tvLastConversation,
                     tvLastConversation.text.toString(),
                     false,
-                    LMTheme.getTextLinkColor()
+                    LMChatAppearance.getTextLinkColor()
                 )
             } else {
                 //Last conversation was deleted

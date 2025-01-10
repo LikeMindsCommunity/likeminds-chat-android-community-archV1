@@ -21,7 +21,7 @@ import com.likeminds.chatmm.member.view.adapter.CommunityMembersAdapter
 import com.likeminds.chatmm.member.view.adapter.CommunityMembersAdapterListener
 import com.likeminds.chatmm.member.viewmodel.CommunityMembersViewModel
 import com.likeminds.chatmm.search.util.LMChatCustomSearchBar
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
@@ -170,7 +170,7 @@ class LMChatCommunityMembersFragment :
 
     private fun updateMenu(menu: Menu) {
         val item = menu.findItem(R.id.menu_search)
-        item?.icon?.setTint(LMTheme.getToolbarColor())
+        item?.icon?.setTint(LMChatAppearance.getToolbarColor())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

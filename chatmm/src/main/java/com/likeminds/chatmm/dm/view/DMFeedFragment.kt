@@ -24,7 +24,7 @@ import com.likeminds.chatmm.homefeed.model.HomeFeedItemViewData
 import com.likeminds.chatmm.member.model.*
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.member.view.LMChatCommunityMembersActivity
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
@@ -180,7 +180,7 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
     }
 
     private fun setTheme() {
-        binding.buttonColor = LMTheme.getButtonsColor()
+        binding.buttonColor = LMChatAppearance.getButtonsColor()
     }
 
     //init recycler view and handles all recycler view operation

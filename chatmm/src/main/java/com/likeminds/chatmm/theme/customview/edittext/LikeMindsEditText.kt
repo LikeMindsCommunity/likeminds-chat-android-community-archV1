@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatEditText
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.theme.util.ThemeUtil
 
 internal class LikeMindsEditText @JvmOverloads constructor(
@@ -26,7 +26,7 @@ internal class LikeMindsEditText @JvmOverloads constructor(
         //edittext background color
         val etType = array.getString(R.styleable.LikeMindsEditText_et_type)
         if (etType.equals("special"))
-            this.backgroundTintList = ColorStateList.valueOf(LMTheme.getButtonsColor())
+            this.backgroundTintList = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
 
         array.recycle()
     }

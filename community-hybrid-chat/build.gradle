@@ -1,0 +1,52 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+    id 'androidx.navigation.safeargs'
+    id 'com.google.gms.google-services'
+}
+
+android {
+    namespace 'com.likeminds.community.hybrid.chat'
+    compileSdk lm_chat_versions.compile_sdk
+
+    defaultConfig {
+        applicationId "com.likeminds.community.hybrid.chat"
+        minSdk lm_chat_versions.min_sdk
+        targetSdk lm_chat_versions.target_sdk
+        versionCode lm_chat_versions.app_version_code
+        versionName "$lm_chat_versions.app_version_major.$lm_chat_versions.app_version_minor.$lm_chat_versions.app_version_patch"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    def localProperties = new Properties()
+    localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            buildConfigField("String", "INTIATE_URL", "\"" + localProperties['prodInitiateUrl'] + "\"")
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            buildConfigField("String", "INTIATE_URL", "\"" + localProperties['betaInitiateUrl'] + "\"")
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures {
+        dataBinding = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+}
+
+apply from: "dependencies.gradle"

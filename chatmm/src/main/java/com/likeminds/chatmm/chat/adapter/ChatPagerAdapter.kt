@@ -2,12 +2,12 @@ package com.likeminds.chatmm.chat.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.likeminds.chatmm.chat.view.LMChatFragment
+import com.likeminds.chatmm.chat.view.CommunityHybridChatFragment
 import com.likeminds.chatmm.dm.view.DMFeedFragment
 import com.likeminds.chatmm.homefeed.view.HomeFeedFragment
 
 class ChatPagerAdapter(
-    private val fragment: LMChatFragment,
+    private val fragment: CommunityHybridChatFragment,
 ) : FragmentStateAdapter(fragment) {
 
     companion object {

@@ -17,8 +17,8 @@ import com.likeminds.chatmm.di.polls.PollsComponent
 import com.likeminds.chatmm.di.reactions.ReactionsComponent
 import com.likeminds.chatmm.di.report.ReportComponent
 import com.likeminds.chatmm.di.search.SearchComponent
-import com.likeminds.chatmm.theme.model.LMChatTheme
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
+import com.likeminds.chatmm.theme.model.LMChatAppearanceRequest
 import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.LMChatSDKCallback
@@ -61,6 +61,8 @@ class SDKApplication : LMChatSDKCallback {
         private var sdkApplicationInstance: SDKApplication? = null
         private var lmChatCoreCallback: LMChatCoreCallback? = null
 
+        var selectedTheme = LMChatTheme.COMMUNITY_HYBRID_CHAT
+
         /**
          * @return Singleton Instance of SDK Application class, which used for injecting dagger in fragments.
          * */
@@ -83,8 +85,9 @@ class SDKApplication : LMChatSDKCallback {
 
     fun initSDKApplication(
         application: Application,
+        theme: LMChatTheme,
         lmChatCoreCallback: LMChatCoreCallback?,
-        chatTheme: LMChatTheme?,
+        lmChatAppearanceRequest: LMChatAppearanceRequest?,
         domain: String? = null,
         enablePushNotifications: Boolean = false,
         deviceId: String? = null,
@@ -93,8 +96,10 @@ class SDKApplication : LMChatSDKCallback {
             .lmChatSDKCallback(this)
             .build()
 
+        selectedTheme = theme
+
         SDKApplication.lmChatCoreCallback = lmChatCoreCallback
-        setupTheme(chatTheme)
+        setupTheme(lmChatAppearanceRequest)
         initAppComponent(application)
         EmojiManager.install(GoogleEmojiProvider())
         initAWSMobileClient(application)
@@ -104,9 +109,9 @@ class SDKApplication : LMChatSDKCallback {
     }
 
     // sets theme to the app
-    fun setupTheme(lmChatTheme: LMChatTheme?) {
-        val chatTheme = lmChatTheme ?: LMChatTheme.Builder().build()
-        LMTheme.setTheme(chatTheme)
+    fun setupTheme(lmChatAppearanceRequest: LMChatAppearanceRequest?) {
+        val chatTheme = lmChatAppearanceRequest ?: LMChatAppearanceRequest.Builder().build()
+        LMChatAppearance.setTheme(chatTheme)
     }
 
     private fun initAWSMobileClient(applicationContext: Context) {

@@ -17,7 +17,7 @@ import com.likeminds.chatmm.media.view.adapter.MediaPickerAdapter
 import com.likeminds.chatmm.media.view.adapter.MediaPickerAdapterListener
 import com.likeminds.chatmm.media.viewmodel.MediaViewModel
 import com.likeminds.chatmm.search.util.LMChatCustomSearchBar
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.customview.BaseFragment
 import kotlin.collections.set
 
@@ -101,17 +101,17 @@ class LMChatMediaPickerDocumentFragment :
     private fun updateMenu(menu: Menu) {
         //update search icon
         val item = menu.findItem(R.id.menu_item_search)
-        item?.icon?.setTint(LMTheme.getToolbarColor())
+        item?.icon?.setTint(LMChatAppearance.getToolbarColor())
 
         //update sort icon
         val item2 = menu.findItem(R.id.menu_item_sort)
-        item2?.icon?.setTint(LMTheme.getToolbarColor())
+        item2?.icon?.setTint(LMChatAppearance.getToolbarColor())
     }
 
     private fun setTheme() {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
-            toolbarColor = LMTheme.getToolbarColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
+            toolbarColor = LMChatAppearance.getToolbarColor()
         }
     }
 
