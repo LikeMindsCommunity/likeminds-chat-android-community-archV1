@@ -1,14 +1,14 @@
-package com.likeminds.community.hybrid.chat.likemindschat
+package com.likeminds.community.chat
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.chat.view.CommunityHybridChatFragment
+import com.likeminds.chatmm.homefeed.view.CommunityChatFragment
 import com.likeminds.chatmm.member.model.UserResponse
-import com.likeminds.community.hybrid.chat.R
-import com.likeminds.community.hybrid.chat.auth.util.AuthPreferences
+import com.likeminds.community.chat.auth.util.AuthPreferences
 
-class LikeMindsChatActivity : AppCompatActivity() {
+class CommunityChatActivity : AppCompatActivity() {
 
     private val authPreferences: AuthPreferences by lazy {
         AuthPreferences(this)
@@ -16,7 +16,7 @@ class LikeMindsChatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_likeminds_chat)
+        setContentView(R.layout.activity_community_chat)
 
         val successCallback = { userResponse: UserResponse ->
             replaceFragment()
@@ -38,7 +38,7 @@ class LikeMindsChatActivity : AppCompatActivity() {
     private fun replaceFragment() {
         val containerViewId = R.id.frame_layout
 
-        val chatFragment = CommunityHybridChatFragment.getInstance()
+        val chatFragment = CommunityChatFragment.getInstance()
 
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(containerViewId, chatFragment, containerViewId.toString())

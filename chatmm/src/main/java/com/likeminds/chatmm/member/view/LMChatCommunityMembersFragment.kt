@@ -11,7 +11,7 @@ import com.likeminds.chatmm.SDKApplication
 import com.likeminds.chatmm.databinding.LmChatFragmentCommunityMembersBinding
 import com.likeminds.chatmm.dm.model.CheckDMLimitViewData
 import com.likeminds.chatmm.dm.model.DMLimitExceededDialogExtras
-import com.likeminds.chatmm.dm.view.DMFeedFragment.Companion.COMMUNITY_MEMBERS_RESULT
+import com.likeminds.chatmm.dm.view.NetworkingChatFragment.Companion.COMMUNITY_MEMBERS_RESULT
 import com.likeminds.chatmm.dm.view.DMLimitExceededDialogFragment
 import com.likeminds.chatmm.member.model.CommunityMembersExtras
 import com.likeminds.chatmm.member.model.MemberViewData

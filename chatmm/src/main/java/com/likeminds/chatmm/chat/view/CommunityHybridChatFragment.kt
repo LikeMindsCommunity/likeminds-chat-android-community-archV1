@@ -21,6 +21,7 @@ import com.likeminds.chatmm.R
 import com.likeminds.chatmm.SDKApplication
 import com.likeminds.chatmm.chat.adapter.ChatPagerAdapter
 import com.likeminds.chatmm.chat.viewmodel.ChatViewModel
+import com.likeminds.chatmm.databinding.FragmentCommunityHybridChatBinding
 import com.likeminds.chatmm.dm.model.CheckDMTabViewData
 import com.likeminds.chatmm.member.model.MemberViewData
 import com.likeminds.chatmm.member.util.MemberImageUtil
@@ -33,7 +34,8 @@ import com.likeminds.chatmm.utils.snackbar.CustomSnackBar
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
-class CommunityHybridChatFragment : BaseFragment<FragmentCommunityHybridChatBinding, ChatViewModel>(),
+class CommunityHybridChatFragment :
+    BaseFragment<FragmentCommunityHybridChatBinding, ChatViewModel>(),
     ConnectivityReceiverListener {
 
     var dmMeta: CheckDMTabViewData? = null

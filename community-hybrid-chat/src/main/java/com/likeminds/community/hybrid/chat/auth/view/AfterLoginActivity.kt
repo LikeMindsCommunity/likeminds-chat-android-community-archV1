@@ -9,11 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.utils.ExtrasUtil
-import com.likeminds.chatsampleapp.databinding.ActivityAfterLoginBinding
-import com.likeminds.community.hybrid.chat.ChatMMApplication
+import com.likeminds.community.hybrid.chat.CommunityHybridChatApplication
 import com.likeminds.community.hybrid.chat.auth.model.LoginExtras
 import com.likeminds.community.hybrid.chat.auth.util.AuthPreferences
-import com.likeminds.community.hybrid.chat.likemindschat.LikeMindsChatActivity
+import com.likeminds.community.hybrid.chat.databinding.ActivityAfterLoginBinding
+import com.likeminds.community.hybrid.chat.CommunityHybridChatActivity
 import com.likeminds.likemindschat.user.model.LogoutRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +34,7 @@ class AfterLoginActivity : AppCompatActivity() {
 
         extra = ExtrasUtil.getParcelable(
             intent.extras,
-            ChatMMApplication.EXTRA_LOGIN,
+            CommunityHybridChatApplication.EXTRA_LOGIN,
             LoginExtras::class.java
         )
 
@@ -43,7 +43,7 @@ class AfterLoginActivity : AppCompatActivity() {
         }
 
         binding.btnStartChat.setOnClickListener {
-            val intent = Intent(this, LikeMindsChatActivity::class.java)
+            val intent = Intent(this, CommunityHybridChatActivity::class.java)
             startActivity(intent)
         }
 

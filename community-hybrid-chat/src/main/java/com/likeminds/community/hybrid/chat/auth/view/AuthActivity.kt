@@ -12,11 +12,11 @@ import com.likeminds.chatmm.theme.model.LMChatAppearanceRequest
 import com.likeminds.chatmm.theme.model.LMFonts
 import com.likeminds.chatmm.utils.Route
 import com.likeminds.chatmm.utils.ViewUtils
-import com.likeminds.chatsampleapp.R
-import com.likeminds.chatsampleapp.databinding.ActivityAuthBinding
-import com.likeminds.community.hybrid.chat.ChatMMApplication
+import com.likeminds.community.hybrid.chat.CommunityHybridChatApplication
+import com.likeminds.community.hybrid.chat.R
 import com.likeminds.community.hybrid.chat.auth.model.LoginExtras
 import com.likeminds.community.hybrid.chat.auth.util.AuthPreferences
+import com.likeminds.community.hybrid.chat.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {
 
@@ -64,7 +64,7 @@ class AuthActivity : AppCompatActivity() {
             authPreferences.getUserName(),
             authPreferences.getUserId(),
         )
-        intent.putExtra(ChatMMApplication.EXTRA_LOGIN, extras)
+        intent.putExtra(CommunityHybridChatApplication.EXTRA_LOGIN, extras)
         startActivity(intent)
         finish()
     }

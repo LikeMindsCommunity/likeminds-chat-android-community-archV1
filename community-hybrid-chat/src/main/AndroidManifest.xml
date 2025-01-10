@@ -4,16 +4,16 @@
     package="com.likeminds.community.hybrid.chat">
 
     <application
-        android:name="com.likeminds.community.hybrid.chat.ChatMMApplication"
+        android:name="com.likeminds.community.hybrid.chat.CommunityHybridChatApplication"
         android:allowBackup="false"
         android:icon="@mipmap/lm_chat_ic_launcher"
         android:label="@string/lm_chat_app_name"
         android:roundIcon="@mipmap/lm_chat_ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.LikeMindsAndroidChatMM"
+        android:theme="@style/Theme.LikeMindsAndroidCommunityHybridChat"
         tools:targetApi="31">
         <activity
-            android:name="com.likeminds.community.hybrid.chat.likemindschat.LikeMindsChatActivity"
+            android:name="com.likeminds.community.hybrid.chat.CommunityHybridChatActivity"
             android:exported="false" />
         <activity
             android:name="com.likeminds.community.hybrid.chat.auth.view.AuthActivity"
@@ -42,7 +42,7 @@
             android:exported="false" />
 
         <service
-            android:name="com.likeminds.community.hybrid.chat.ChatMMessagingService"
+            android:name="com.likeminds.community.hybrid.chat.CommunityHybridChatMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

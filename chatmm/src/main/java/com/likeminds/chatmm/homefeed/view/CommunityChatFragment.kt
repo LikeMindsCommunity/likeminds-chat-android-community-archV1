@@ -22,12 +22,12 @@ import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailFragment
 import com.likeminds.chatmm.chatroom.explore.view.ChatroomExploreActivity
 import com.likeminds.chatmm.community.utils.LMChatCommunitySettingsUtil
-import com.likeminds.chatmm.databinding.FragmentHomeFeedBinding
+import com.likeminds.chatmm.databinding.FragmentCommunityChatBinding
 import com.likeminds.chatmm.homefeed.model.*
 import com.likeminds.chatmm.homefeed.util.HomeFeedPreferences
 import com.likeminds.chatmm.homefeed.view.adapter.HomeFeedAdapter
 import com.likeminds.chatmm.homefeed.view.adapter.HomeFeedAdapterListener
-import com.likeminds.chatmm.homefeed.viewmodel.HomeFeedViewModel
+import com.likeminds.chatmm.homefeed.viewmodel.CommunityChatViewModel
 import com.likeminds.chatmm.member.model.MemberViewData
 import com.likeminds.chatmm.member.util.MemberImageUtil
 import com.likeminds.chatmm.member.util.UserPreferences
@@ -50,7 +50,7 @@ import java.util.Timer
 import javax.inject.Inject
 import kotlin.concurrent.schedule
 
-class HomeFeedFragment : BaseFragment<FragmentHomeFeedBinding, HomeFeedViewModel>(),
+class CommunityChatFragment : BaseFragment<FragmentCommunityChatBinding, CommunityChatViewModel>(),
     HomeFeedAdapterListener,
     ConnectivityReceiverListener,
     JoinChatroomInviteDialogListener {
@@ -90,18 +90,18 @@ class HomeFeedFragment : BaseFragment<FragmentHomeFeedBinding, HomeFeedViewModel
          **/
         @JvmStatic
         fun getInstance(
-        ): HomeFeedFragment {
-            val fragment = HomeFeedFragment()
+        ): CommunityChatFragment {
+            val fragment = CommunityChatFragment()
             return fragment
         }
     }
 
-    override fun getViewModelClass(): Class<HomeFeedViewModel> {
-        return HomeFeedViewModel::class.java
+    override fun getViewModelClass(): Class<CommunityChatViewModel> {
+        return CommunityChatViewModel::class.java
     }
 
-    override fun getViewBinding(): FragmentHomeFeedBinding {
-        return FragmentHomeFeedBinding.inflate(layoutInflater)
+    override fun getViewBinding(): FragmentCommunityChatBinding {
+        return FragmentCommunityChatBinding.inflate(layoutInflater)
     }
 
     override fun attachDagger() {
@@ -145,7 +145,7 @@ class HomeFeedFragment : BaseFragment<FragmentHomeFeedBinding, HomeFeedViewModel
 
         viewModel.homeEventsFlow.onEach { homeEvent ->
             when (homeEvent) {
-                is HomeFeedViewModel.HomeEvent.UpdateChatrooms -> {
+                is CommunityChatViewModel.HomeEvent.UpdateChatrooms -> {
                     updateChatrooms()
                 }
             }
@@ -156,19 +156,19 @@ class HomeFeedFragment : BaseFragment<FragmentHomeFeedBinding, HomeFeedViewModel
     private fun observeErrors() {
         viewModel.errorMessageEventFlow.onEach { response ->
             when (response) {
-                is HomeFeedViewModel.ErrorMessageEvent.GetChatroom -> {
+                is CommunityChatViewModel.ErrorMessageEvent.GetChatroom -> {
                     ViewUtils.showErrorMessageToast(requireContext(), response.errorMessage)
                 }
 
-                is HomeFeedViewModel.ErrorMessageEvent.GetExploreTabCount -> {
+                is CommunityChatViewModel.ErrorMessageEvent.GetExploreTabCount -> {
                     ViewUtils.showErrorMessageToast(requireContext(), response.errorMessage)
                 }
 
-                is HomeFeedViewModel.ErrorMessageEvent.GetChannelInvites -> {
+                is CommunityChatViewModel.ErrorMessageEvent.GetChannelInvites -> {
                     ViewUtils.showErrorMessageToast(requireContext(), response.errorMessage)
                 }
 
-                is HomeFeedViewModel.ErrorMessageEvent.UpdateChannelInvite -> {
+                is CommunityChatViewModel.ErrorMessageEvent.UpdateChannelInvite -> {
                     ViewUtils.showErrorMessageToast(requireContext(), response.errorMessage)
                 }
             }
@@ -270,7 +270,7 @@ class HomeFeedFragment : BaseFragment<FragmentHomeFeedBinding, HomeFeedViewModel
             when {
                 firstTimeObserver != null -> {
                     val syncStartedAt = System.currentTimeMillis()
-                    firstTimeObserver.observe(this@HomeFeedFragment, Observer { workInfoList ->
+                    firstTimeObserver.observe(this@CommunityChatFragment, Observer { workInfoList ->
                         workInfoList.forEach { workInfo ->
                             if (workInfo.state != WorkInfo.State.SUCCEEDED) {
                                 return@Observer
@@ -284,7 +284,7 @@ class HomeFeedFragment : BaseFragment<FragmentHomeFeedBinding, HomeFeedViewModel
                 }
 
                 appConfigObserver != null -> {
-                    appConfigObserver.observe(this@HomeFeedFragment, Observer { workInfoList ->
+                    appConfigObserver.observe(this@CommunityChatFragment, Observer { workInfoList ->
                         workInfoList.forEach { workInfo ->
                             if (workInfo.state != WorkInfo.State.SUCCEEDED) {
                                 return@Observer

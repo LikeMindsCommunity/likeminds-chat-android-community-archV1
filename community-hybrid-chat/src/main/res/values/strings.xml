@@ -1,5 +1,5 @@
 <resources>
-    <string name="lm_chat_app_name">LikeMinds Chat Sample App</string>
+    <string name="lm_chat_app_name">LikeMinds Community Hybrid Chat</string>
     <string name="text_links">Text Links</string>
     <string name="choose_branding">Choose Branding</string>
     <string name="start">Start</string>

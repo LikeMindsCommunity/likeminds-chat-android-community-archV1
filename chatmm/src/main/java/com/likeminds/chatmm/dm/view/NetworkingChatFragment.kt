@@ -15,11 +15,11 @@ import com.likeminds.chatmm.LMAnalytics
 import com.likeminds.chatmm.SDKApplication
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
-import com.likeminds.chatmm.databinding.FragmentDmFeedBinding
+import com.likeminds.chatmm.databinding.FragmentNetworkingChatBinding
 import com.likeminds.chatmm.dm.model.CheckDMTabViewData
 import com.likeminds.chatmm.dm.view.adapter.DMAdapter
 import com.likeminds.chatmm.dm.view.adapter.DMAdapterListener
-import com.likeminds.chatmm.dm.viewmodel.DMFeedViewModel
+import com.likeminds.chatmm.dm.viewmodel.NetworkingChatViewModel
 import com.likeminds.chatmm.homefeed.model.HomeFeedItemViewData
 import com.likeminds.chatmm.member.model.*
 import com.likeminds.chatmm.member.util.UserPreferences
@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
+class NetworkingChatFragment : BaseFragment<FragmentNetworkingChatBinding, NetworkingChatViewModel>(),
     DMAdapterListener {
 
     private var dmMetaExtras: CheckDMTabViewData? = null
@@ -63,8 +63,8 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
         const val TAG = "DMFeedFragment"
         const val QUERY_SHOW_LIST = "show_list"
 
-        fun getInstance(dmMeta: CheckDMTabViewData?): DMFeedFragment {
-            val fragment = DMFeedFragment()
+        fun getInstance(dmMeta: CheckDMTabViewData? = null): NetworkingChatFragment {
+            val fragment = NetworkingChatFragment()
             val bundle = Bundle()
             bundle.putParcelable(DM_META_EXTRAS, dmMeta)
             fragment.arguments = bundle
@@ -88,12 +88,12 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
         SDKApplication.getInstance().dmComponent()?.inject(this)
     }
 
-    override fun getViewModelClass(): Class<DMFeedViewModel> {
-        return DMFeedViewModel::class.java
+    override fun getViewModelClass(): Class<NetworkingChatViewModel> {
+        return NetworkingChatViewModel::class.java
     }
 
-    override fun getViewBinding(): FragmentDmFeedBinding {
-        return FragmentDmFeedBinding.inflate(layoutInflater)
+    override fun getViewBinding(): FragmentNetworkingChatBinding {
+        return FragmentNetworkingChatBinding.inflate(layoutInflater)
     }
 
     override fun setUpViews() {
@@ -109,7 +109,7 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
         super.observeData()
         viewModel.dmFeedFlow.onEach { dmFeedEvent ->
             when (dmFeedEvent) {
-                DMFeedViewModel.DMFeedEvent.ShowDMFeedData -> {
+                NetworkingChatViewModel.DMFeedEvent.ShowDMFeedData -> {
                     fetchDMChatrooms()
                 }
             }
@@ -122,11 +122,11 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
 
         viewModel.errorMessageEventFlow.onEach { response ->
             when (response) {
-                is DMFeedViewModel.ErrorMessageEvent.GetDMChatroom -> {
+                is NetworkingChatViewModel.ErrorMessageEvent.GetDMChatroom -> {
                     ViewUtils.showErrorMessageToast(requireContext(), response.errorMessage)
                 }
 
-                is DMFeedViewModel.ErrorMessageEvent.CheckDMStatus -> {
+                is NetworkingChatViewModel.ErrorMessageEvent.CheckDMStatus -> {
                     ViewUtils.showErrorMessageToast(requireContext(), response.errorMessage)
                 }
             }
@@ -154,7 +154,7 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
         lifecycleScope.launch(Dispatchers.Main) {
             when {
                 firstTimeObserver != null -> {
-                    firstTimeObserver.observe(this@DMFeedFragment, Observer { workInfoList ->
+                    firstTimeObserver.observe(this@NetworkingChatFragment, Observer { workInfoList ->
                         workInfoList.forEach { workInfo ->
                             if (workInfo.state != WorkInfo.State.SUCCEEDED) {
                                 return@Observer
@@ -166,7 +166,7 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
                 }
 
                 appConfigObserver != null -> {
-                    appConfigObserver.observe(this@DMFeedFragment, Observer { workInfoList ->
+                    appConfigObserver.observe(this@NetworkingChatFragment, Observer { workInfoList ->
                         workInfoList.forEach { workInfo ->
                             if (workInfo.state != WorkInfo.State.SUCCEEDED) {
                                 return@Observer
@@ -186,7 +186,7 @@ class DMFeedFragment : BaseFragment<FragmentDmFeedBinding, DMFeedViewModel>(),
     //init recycler view and handles all recycler view operation
     private fun initRecyclerView() {
         binding.rvDmChatrooms.apply {
-            mAdapter = DMAdapter(this@DMFeedFragment, userPreferences)
+            mAdapter = DMAdapter(this@NetworkingChatFragment, userPreferences)
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
             adapter = mAdapter

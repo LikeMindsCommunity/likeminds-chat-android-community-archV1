@@ -1,15 +1,16 @@
-package com.likeminds.community.hybrid.chat
+package com.likeminds.community.chat
 
 import android.annotation.SuppressLint
 import android.app.Application
 import android.provider.Settings
 import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.LMChatCoreCallback
+import com.likeminds.chatmm.LMChatTheme
 import com.likeminds.chatmm.theme.model.LMChatAppearanceRequest
 import com.likeminds.chatmm.theme.model.LMFonts
-import com.likeminds.community.hybrid.chat.auth.util.AuthPreferences
+import com.likeminds.community.chat.auth.util.AuthPreferences
 
-class ChatMMApplication : Application(), LMChatCoreCallback {
+class CommunityChatApplication : Application(), LMChatCoreCallback {
 
     private lateinit var authPreferences: AuthPreferences
 
@@ -23,7 +24,7 @@ class ChatMMApplication : Application(), LMChatCoreCallback {
 
         authPreferences = AuthPreferences(this)
 
-        val chatTheme = LMChatAppearanceRequest.Builder()
+        val lmChatAppearanceRequest = LMChatAppearanceRequest.Builder()
             .headerColor(authPreferences.getHeaderColor())
             .buttonsColor(authPreferences.getButtonColor())
             .textLinkColor(authPreferences.getTextLinkColor())
@@ -38,8 +39,9 @@ class ChatMMApplication : Application(), LMChatCoreCallback {
 
         LMChatCore.setup(
             application = this,
+            theme = LMChatTheme.COMMUNITY_HYBRID_CHAT,
             lmChatCoreCallback = this,
-            theme = chatTheme,
+            lmChatAppearanceRequest = lmChatAppearanceRequest,
             domain = deviceId(),
             enablePushNotifications = true,
             deviceId = deviceId()

@@ -1,6 +1,6 @@
 package com.likeminds.chatmm.di.dm
 
-import com.likeminds.chatmm.dm.view.DMFeedFragment
+import com.likeminds.chatmm.dm.view.NetworkingChatFragment
 import dagger.Subcomponent
 
 @Subcomponent(modules = [DMViewModelModule::class])
@@ -11,5 +11,5 @@ interface DMComponent {
         fun create(): DMComponent
     }
 
-    fun inject(dmFeedFragment: DMFeedFragment)
+    fun inject(networkingChatFragment: NetworkingChatFragment)
 }

@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class HomeFeedViewModel @Inject constructor(
+class CommunityChatViewModel @Inject constructor(
     private val userPreferences: UserPreferences,
     private val homeFeedPreferences: HomeFeedPreferences,
 ) : ViewModel() {

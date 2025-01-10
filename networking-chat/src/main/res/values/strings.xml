@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">networking-chat</string>
+    <string name="lm_chat_app_name">LikeMinds Networking Chat</string>
+    <string name="text_links">Text Links</string>
+    <string name="choose_branding">Choose Branding</string>
+    <string name="start">Start</string>
+    <string name="header">Header</string>
+    <string name="button">Button</string>
+    <string name="api_key">Api Key</string>
+    <string name="enter_api_key">Enter API Key</string>
+    <string name="user_name">User Name</string>
+    <string name="user_id">User Id</string>
+    <string name="user">User</string>
+    <string name="enter_user_name">Enter user name</string>
+    <string name="enter_user_id">Enter user id</string>
+    <string name="community_tab">Community Tab</string>
+    <string name="logout">Logout</string>
 </resources>

@@ -2,8 +2,7 @@ package com.likeminds.community.hybrid.chat
 
 import android.content.Context
 import android.util.Log
-import com.likeminds.chat.BuildConfig
-import com.likeminds.community.hybrid.chat.ChatMMApplication.Companion.LM_CHAT_EXAMPLE_TAG
+import com.likeminds.community.hybrid.chat.CommunityHybridChatApplication.Companion.LM_CHAT_EXAMPLE_TAG
 import com.likeminds.community.hybrid.chat.auth.util.AuthPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
