@@ -15,6 +15,7 @@
         <activity
             android:name=".CommunityChatActivity"
             android:exported="false" />
+
         <activity
             android:name="com.likeminds.community.chat.auth.view.AuthActivity"
             android:exported="true">

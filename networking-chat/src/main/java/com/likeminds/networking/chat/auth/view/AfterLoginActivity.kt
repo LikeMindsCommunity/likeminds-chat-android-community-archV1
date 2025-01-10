@@ -10,6 +10,7 @@ import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.utils.ExtrasUtil
 import com.likeminds.likemindschat.user.model.LogoutRequest
+import com.likeminds.networking.chat.NetworkingChatActivity
 import com.likeminds.networking.chat.NetworkingChatApplication
 import com.likeminds.networking.chat.auth.model.LoginExtras
 import com.likeminds.networking.chat.auth.util.AuthPreferences
@@ -42,7 +43,7 @@ class AfterLoginActivity : AppCompatActivity() {
         }
 
         binding.btnStartChat.setOnClickListener {
-            val intent = Intent(this, NetworkingChatApplication::class.java)
+            val intent = Intent(this, NetworkingChatActivity::class.java)
             startActivity(intent)
         }
 

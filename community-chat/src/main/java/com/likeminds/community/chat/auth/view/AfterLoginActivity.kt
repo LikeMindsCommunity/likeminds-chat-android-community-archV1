@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.utils.ExtrasUtil
+import com.likeminds.community.chat.CommunityChatActivity
 import com.likeminds.community.chat.CommunityChatApplication
 import com.likeminds.community.chat.databinding.ActivityAfterLoginBinding
 import com.likeminds.community.chat.auth.model.LoginExtras
@@ -42,7 +43,7 @@ class AfterLoginActivity : AppCompatActivity() {
         }
 
         binding.btnStartChat.setOnClickListener {
-            val intent = Intent(this, CommunityChatApplication::class.java)
+            val intent = Intent(this, CommunityChatActivity::class.java)
             startActivity(intent)
         }
 
