@@ -9,7 +9,9 @@ import com.likeminds.chatmm.homefeed.model.HomeChatroomListShimmerViewData
 import com.likeminds.chatmm.homefeed.model.HomeFeedItemViewData
 import com.likeminds.chatmm.homefeed.util.HomeFeedPreferences
 import com.likeminds.chatmm.homefeed.util.HomeFeedUtil
+import com.likeminds.chatmm.member.model.MemberViewData
 import com.likeminds.chatmm.member.util.UserPreferences
+import com.likeminds.chatmm.utils.ViewDataConverter
 import com.likeminds.chatmm.utils.coroutine.launchIO
 import com.likeminds.chatmm.utils.model.BaseViewType
 import com.likeminds.chatmm.utils.model.ITEM_DIRECT_MESSAGE
@@ -36,6 +38,9 @@ class NetworkingChatViewModel @Inject constructor(
     private val lmChatClient = LMChatClient.getInstance()
 
     private val compositeDisposable = CompositeDisposable()
+
+    private val _userData = MutableLiveData<MemberViewData?>()
+    val userData: LiveData<MemberViewData?> = _userData
 
     private val allChatRoomsData = mutableListOf<HomeFeedItemViewData>()
 
@@ -72,6 +77,11 @@ class NetworkingChatViewModel @Inject constructor(
 
     fun setWasChatroomFetched(value: Boolean) {
         homeFeedPreferences.setIsDMFeedShimmerShown(value)
+    }
+
+    fun getUserFromLocalDb() {
+        val userResponse = lmChatClient.getLoggedInUser()
+        _userData.postValue(ViewDataConverter.convertUser(userResponse.data?.user))
     }
 
     private val chatroomListener = object : HomeChatroomListener() {

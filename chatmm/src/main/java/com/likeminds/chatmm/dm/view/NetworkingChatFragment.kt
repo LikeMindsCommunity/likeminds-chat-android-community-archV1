@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -12,7 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
 import com.likeminds.chatmm.LMAnalytics
+import com.likeminds.chatmm.LMChatTheme
 import com.likeminds.chatmm.SDKApplication
+import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
 import com.likeminds.chatmm.databinding.FragmentNetworkingChatBinding
@@ -21,24 +25,36 @@ import com.likeminds.chatmm.dm.view.adapter.DMAdapter
 import com.likeminds.chatmm.dm.view.adapter.DMAdapterListener
 import com.likeminds.chatmm.dm.viewmodel.NetworkingChatViewModel
 import com.likeminds.chatmm.homefeed.model.HomeFeedItemViewData
-import com.likeminds.chatmm.member.model.*
+import com.likeminds.chatmm.member.model.CommunityMembersExtras
+import com.likeminds.chatmm.member.model.CommunityMembersFilter
+import com.likeminds.chatmm.member.model.CommunityMembersResultExtras
+import com.likeminds.chatmm.member.model.MemberViewData
+import com.likeminds.chatmm.member.util.MemberImageUtil
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.member.view.LMChatCommunityMembersActivity
+import com.likeminds.chatmm.search.view.LMChatSearchActivity
 import com.likeminds.chatmm.theme.model.LMChatAppearance
-import com.likeminds.chatmm.utils.*
+import com.likeminds.chatmm.utils.ExtrasUtil
+import com.likeminds.chatmm.utils.Route
+import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
 import com.likeminds.chatmm.utils.customview.BaseFragment
+import com.likeminds.chatmm.utils.observeInLifecycle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class NetworkingChatFragment : BaseFragment<FragmentNetworkingChatBinding, NetworkingChatViewModel>(),
+class NetworkingChatFragment :
+    BaseFragment<FragmentNetworkingChatBinding, NetworkingChatViewModel>(),
     DMAdapterListener {
 
     private var dmMetaExtras: CheckDMTabViewData? = null
     private var showList: Int = CommunityMembersFilter.ALL_MEMBERS.value
+
+    private var communityId: String = ""
+    private var communityName: String = ""
 
     @Inject
     lateinit var userPreferences: UserPreferences
@@ -99,6 +115,7 @@ class NetworkingChatFragment : BaseFragment<FragmentNetworkingChatBinding, Netwo
     override fun setUpViews() {
         super.setUpViews()
         setTheme()
+        initToolbar()
         initRecyclerView()
         checkForHideDMTab()
         initApis()
@@ -107,6 +124,11 @@ class NetworkingChatFragment : BaseFragment<FragmentNetworkingChatBinding, Netwo
 
     override fun observeData() {
         super.observeData()
+
+        viewModel.userData.observe(viewLifecycleOwner) { user ->
+            observeUserData(user)
+        }
+
         viewModel.dmFeedFlow.onEach { dmFeedEvent ->
             when (dmFeedEvent) {
                 NetworkingChatViewModel.DMFeedEvent.ShowDMFeedData -> {
@@ -133,6 +155,23 @@ class NetworkingChatFragment : BaseFragment<FragmentNetworkingChatBinding, Netwo
         }
     }
 
+    //observe user data
+    private fun observeUserData(user: MemberViewData?) {
+        if (user != null) {
+            communityId = user.communityId ?: ""
+            communityName = user.communityName ?: ""
+
+            MemberImageUtil.setImage(
+                user.imageUrl,
+                user.name,
+                user.sdkClientInfo.uuid,
+                binding.memberImage,
+                showRoundImage = true,
+                objectKey = user.updatedAt
+            )
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         if (!viewModel.isDBEmpty() && !userPreferences.getIsGuestUser()) {
@@ -154,26 +193,30 @@ class NetworkingChatFragment : BaseFragment<FragmentNetworkingChatBinding, Netwo
         lifecycleScope.launch(Dispatchers.Main) {
             when {
                 firstTimeObserver != null -> {
-                    firstTimeObserver.observe(this@NetworkingChatFragment, Observer { workInfoList ->
-                        workInfoList.forEach { workInfo ->
-                            if (workInfo.state != WorkInfo.State.SUCCEEDED) {
-                                return@Observer
+                    firstTimeObserver.observe(
+                        this@NetworkingChatFragment,
+                        Observer { workInfoList ->
+                            workInfoList.forEach { workInfo ->
+                                if (workInfo.state != WorkInfo.State.SUCCEEDED) {
+                                    return@Observer
+                                }
                             }
-                        }
-                        viewModel.setWasChatroomFetched(true)
-                        viewModel.refetchDMChatrooms()
-                    })
+                            viewModel.setWasChatroomFetched(true)
+                            viewModel.refetchDMChatrooms()
+                        })
                 }
 
                 appConfigObserver != null -> {
-                    appConfigObserver.observe(this@NetworkingChatFragment, Observer { workInfoList ->
-                        workInfoList.forEach { workInfo ->
-                            if (workInfo.state != WorkInfo.State.SUCCEEDED) {
-                                return@Observer
+                    appConfigObserver.observe(
+                        this@NetworkingChatFragment,
+                        Observer { workInfoList ->
+                            workInfoList.forEach { workInfo ->
+                                if (workInfo.state != WorkInfo.State.SUCCEEDED) {
+                                    return@Observer
+                                }
                             }
-                        }
-                        viewModel.refetchDMChatrooms()
-                    })
+                            viewModel.refetchDMChatrooms()
+                        })
                 }
             }
         }
@@ -181,6 +224,30 @@ class NetworkingChatFragment : BaseFragment<FragmentNetworkingChatBinding, Netwo
 
     private fun setTheme() {
         binding.buttonColor = LMChatAppearance.getButtonsColor()
+        binding.toolbarColor = LMChatAppearance.getToolbarColor()
+    }
+
+    private fun initToolbar() {
+        binding.apply {
+            if (SDKApplication.selectedTheme == LMChatTheme.NETWORKING_CHAT) {
+                toolbar.show()
+
+                (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+
+                //if user is guest user hide, profile icon from toolbar
+                memberImage.isVisible = !isGuestUser
+
+                //get user from local db
+                viewModel.getUserFromLocalDb()
+
+                ivSearch.setOnClickListener {
+                    LMChatSearchActivity.start(requireContext())
+                    Log.d(LOG_TAG, "search started")
+                }
+            } else {
+                toolbar.hide()
+            }
+        }
     }
 
     //init recycler view and handles all recycler view operation

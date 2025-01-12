@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -194,7 +195,6 @@ class CommunityChatFragment : BaseFragment<FragmentCommunityChatBinding, Communi
 
     // initializes home feed data
     private fun initData() {
-        initToolbar()
         fetchData()
         startSync()
 
@@ -316,17 +316,23 @@ class CommunityChatFragment : BaseFragment<FragmentCommunityChatBinding, Communi
 
     private fun initToolbar() {
         binding.apply {
-            (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+            if (SDKApplication.selectedTheme == LMChatTheme.COMMUNITY_CHAT) {
+                toolbar.show()
 
-            //if user is guest user hide, profile icon from toolbar
-            memberImage.isVisible = !isGuestUser
+                (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
-            //get user from local db
-            viewModel.getUserFromLocalDb()
+                //if user is guest user hide, profile icon from toolbar
+                memberImage.isVisible = !isGuestUser
 
-            ivSearch.setOnClickListener {
-                LMChatSearchActivity.start(requireContext())
-                Log.d(LOG_TAG, "search started")
+                //get user from local db
+                viewModel.getUserFromLocalDb()
+
+                ivSearch.setOnClickListener {
+                    LMChatSearchActivity.start(requireContext())
+                    Log.d(LOG_TAG, "search started")
+                }
+            } else {
+                toolbar.hide()
             }
         }
     }

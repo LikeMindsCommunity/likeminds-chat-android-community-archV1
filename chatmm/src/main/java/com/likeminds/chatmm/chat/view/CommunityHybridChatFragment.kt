@@ -86,9 +86,9 @@ class CommunityHybridChatFragment :
         initTabLayout()
         setTheme()
         setupReceivers()
-        initToolbar()
         initPagerAdapter()
         initData()
+        initToolbar()
     }
 
     override fun observeData() {
@@ -168,7 +168,6 @@ class CommunityHybridChatFragment :
     // calls api to initiate data
     private fun initData() {
         viewModel.checkDMTab()
-        initToolbar()
     }
 
     //init tab adapter and perform operations are per selected tab

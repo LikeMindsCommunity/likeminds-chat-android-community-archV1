@@ -22,11 +22,11 @@
             android:contentInsetEnd="0dp"
             android:contentInsetRight="0dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            android:visibility="gone"
             app:contentInsetEnd="0dp"
             app:contentInsetLeft="0dp"
             app:contentInsetRight="0dp"
             app:contentInsetStart="0dp"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -52,8 +52,7 @@
                     app:fontType="medium"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="@string/lm_chat_community" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:id="@+id/iv_search"
