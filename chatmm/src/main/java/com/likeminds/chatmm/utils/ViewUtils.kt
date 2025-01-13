@@ -32,7 +32,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.theme.customview.snackbar.LikeMindsSnackbar
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.member.util.MemberImageUtil
 import com.likeminds.chatmm.utils.databinding.ImageBindingUtil
 
@@ -45,7 +45,7 @@ object ViewUtils {
         radioButton: RadioButton? = null,
         materialButton: MaterialButton? = null,
     ) {
-        val buttonsColor = LMTheme.getButtonsColor()
+        val buttonsColor = LMChatAppearance.getButtonsColor()
 
         val disableColor = Color.LTGRAY
         val percentage = 70f / 100

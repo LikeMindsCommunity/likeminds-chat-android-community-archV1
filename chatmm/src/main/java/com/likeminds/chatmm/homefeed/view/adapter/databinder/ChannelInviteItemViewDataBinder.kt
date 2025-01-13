@@ -3,7 +3,7 @@ package com.likeminds.chatmm.homefeed.view.adapter.databinder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.databinding.ItemChannelInviteBinding
 import com.likeminds.chatmm.homefeed.model.ChannelInviteViewData
 import com.likeminds.chatmm.homefeed.view.adapter.HomeFeedAdapterListener
@@ -37,7 +37,7 @@ class ChannelInviteItemViewDataBinder(
             val context = root.context
 
             // set data in binding
-            buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
             channelInviteViewData = data
             this.position = position
 

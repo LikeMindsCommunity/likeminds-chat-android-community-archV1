@@ -4,16 +4,8 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.TextPaint
-import android.text.TextUtils
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
-import android.text.style.ImageSpan
-import android.text.style.StyleSpan
+import android.text.*
+import android.text.style.*
 import android.text.util.Linkify
 import android.view.View
 import android.view.ViewGroup
@@ -29,51 +21,27 @@ import androidx.core.view.isVisible
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.android.material.button.MaterialButton
-import com.likeminds.chatmm.LMAnalytics
-import com.likeminds.chatmm.R
-import com.likeminds.chatmm.SDKApplication
+import com.likeminds.chatmm.*
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomViewData
 import com.likeminds.chatmm.chatroom.detail.model.TYPE_DIRECT_MESSAGE
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ChatroomDetailAdapterListener
-import com.likeminds.chatmm.conversation.model.AttachmentViewData
-import com.likeminds.chatmm.conversation.model.ConversationViewData
-import com.likeminds.chatmm.conversation.model.LinkOGTagsViewData
-import com.likeminds.chatmm.conversation.model.ReportLinkExtras
+import com.likeminds.chatmm.conversation.model.*
 import com.likeminds.chatmm.conversation.util.ChatReplyUtil
-import com.likeminds.chatmm.databinding.GridMessageReactionsBinding
-import com.likeminds.chatmm.databinding.ItemAudioBinding
-import com.likeminds.chatmm.databinding.ItemConversationSinglePdfBinding
-import com.likeminds.chatmm.databinding.ItemConversationVoiceNoteBinding
-import com.likeminds.chatmm.databinding.LayoutLinkViewBinding
-import com.likeminds.chatmm.databinding.LayoutMediaUploadingActionsBinding
-import com.likeminds.chatmm.databinding.LayoutReplyBinding
-import com.likeminds.chatmm.media.model.AUDIO
-import com.likeminds.chatmm.media.model.GIF
-import com.likeminds.chatmm.media.model.IMAGE
-import com.likeminds.chatmm.media.model.MEDIA_ACTION_NONE
-import com.likeminds.chatmm.media.model.MEDIA_ACTION_PAUSE
-import com.likeminds.chatmm.media.model.MEDIA_ACTION_PLAY
-import com.likeminds.chatmm.media.model.PDF
-import com.likeminds.chatmm.media.model.VIDEO
+import com.likeminds.chatmm.databinding.*
+import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.media.util.MediaUtils
 import com.likeminds.chatmm.member.model.MemberViewData
 import com.likeminds.chatmm.member.util.MemberImageUtil
-import com.likeminds.chatmm.polls.model.POLL_MULTIPLE_STATE_EXACTLY
-import com.likeminds.chatmm.polls.model.POLL_MULTIPLE_STATE_LEAST
-import com.likeminds.chatmm.polls.model.POLL_MULTIPLE_STATE_MAX
-import com.likeminds.chatmm.polls.model.POLL_TYPE_DEFERRED
-import com.likeminds.chatmm.polls.model.POLL_TYPE_INSTANT
-import com.likeminds.chatmm.polls.model.PollInfoData
-import com.likeminds.chatmm.polls.model.PollViewData
+import com.likeminds.chatmm.polls.model.*
 import com.likeminds.chatmm.polls.view.PollViewListener
 import com.likeminds.chatmm.reactions.model.ReactionsGridViewData
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
+import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.AndroidUtils
 import com.likeminds.chatmm.utils.DateUtil
 import com.likeminds.chatmm.utils.Route
 import com.likeminds.chatmm.utils.ValueUtils.getValidTextForLinkify
 import com.likeminds.chatmm.utils.ValueUtils.isValidYoutubeLink
-import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
 import com.likeminds.chatmm.utils.chrometabs.CustomTabIntent
@@ -81,10 +49,7 @@ import com.likeminds.chatmm.utils.databinding.ImageBindingUtil
 import com.likeminds.chatmm.utils.link.LMLinkMovementMethod
 import com.likeminds.chatmm.utils.mediauploader.worker.UploadHelper
 import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
-import com.likeminds.chatmm.utils.model.BaseViewType
-import com.likeminds.chatmm.utils.model.ITEM_IMAGE
-import com.likeminds.chatmm.utils.model.ITEM_PDF
-import com.likeminds.chatmm.utils.model.ITEM_VIDEO
+import com.likeminds.chatmm.utils.model.*
 import java.util.UUID
 
 object ChatroomConversationItemViewDataBinderUtil {
@@ -376,7 +341,7 @@ object ChatroomConversationItemViewDataBinderUtil {
             tvConversation,
             trimmedText,
             true,
-            LMTheme.getTextLinkColor()
+            LMChatAppearance.getTextLinkColor()
         ) {
             adapterListener?.onMemberTagClicked(it)
         }
@@ -892,14 +857,16 @@ object ChatroomConversationItemViewDataBinderUtil {
                     replyConversation != null -> {
                         ChatReplyUtil.getConversationReplyData(
                             replyConversation,
-                            currentMemberId
+                            currentMemberId,
+                            root.context
                         )
                     }
 
                     replyChatRoom != null -> {
                         ChatReplyUtil.getChatRoomReplyData(
                             replyChatRoom,
-                            currentMemberId
+                            currentMemberId,
+                            root.context
                         )
                     }
 
@@ -929,7 +896,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                         tvConversation,
                         replyData.conversationText,
                         false,
-                        LMTheme.getTextLinkColor()
+                        LMChatAppearance.getTextLinkColor()
                     )
 
                     if (replyData.drawable != null && binding.tvConversation.editableText != null) {
@@ -1372,7 +1339,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                     )
                 } else {
                     backgroundTintList =
-                        ColorStateList.valueOf(LMTheme.getButtonsColor())
+                        ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
                 }
             }
         }
@@ -1410,9 +1377,9 @@ object ChatroomConversationItemViewDataBinderUtil {
             return
         }
         btnSubmitVote.apply {
-            iconTint = ColorStateList.valueOf(LMTheme.getButtonsColor())
-            setTextColor(LMTheme.getButtonsColor())
-            strokeColor = ColorStateList.valueOf(LMTheme.getButtonsColor())
+            iconTint = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
+            setTextColor(LMChatAppearance.getButtonsColor())
+            strokeColor = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
             tag = "POLL_CLICK_ENABLED"
             isEnabled = true
         }

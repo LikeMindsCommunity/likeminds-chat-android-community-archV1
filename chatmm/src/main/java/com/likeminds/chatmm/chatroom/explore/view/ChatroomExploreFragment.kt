@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.likeminds.chatmm.LMAnalytics.Source.COMMUNITY_FEED
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.SDKApplication
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailResultExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
@@ -178,7 +178,7 @@ class ChatroomExploreFragment :
     // initializes the toolbar
     private fun initToolbar() {
         binding.apply {
-            toolbarColor = LMTheme.getToolbarColor()
+            toolbarColor = LMChatAppearance.getToolbarColor()
 
             (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 

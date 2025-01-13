@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.databinding.ItemReportTagBinding
 import com.likeminds.chatmm.report.model.ReportTagViewData
 import com.likeminds.chatmm.report.view.adapter.ReportAdapterListener
@@ -38,7 +38,7 @@ class ReportTagItemViewDataBinder constructor(
 
         binding.apply {
             if (reportTagViewData?.isSelected == true) {
-                drawable.setStroke(width, LMTheme.getButtonsColor())
+                drawable.setStroke(width, LMChatAppearance.getButtonsColor())
             } else {
                 drawable.setStroke(
                     width,
@@ -55,7 +55,7 @@ class ReportTagItemViewDataBinder constructor(
     ) {
         binding.apply {
             reportTagViewData = data
-            buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
             setTagBackground(this)
         }
     }
