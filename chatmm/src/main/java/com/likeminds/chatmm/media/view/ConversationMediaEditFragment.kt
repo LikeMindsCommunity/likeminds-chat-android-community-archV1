@@ -31,7 +31,7 @@ import com.likeminds.chatmm.media.view.MediaActivity.Companion.BUNDLE_MEDIA_EXTR
 import com.likeminds.chatmm.media.viewmodel.MediaViewModel
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEditTextListener
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.ValueUtils.getMediaType
 import com.likeminds.chatmm.utils.customview.BaseFragment
@@ -149,7 +149,7 @@ class ConversationMediaEditFragment :
         MemberTaggingDecoder.decode(
             binding.etConversation,
             mediaExtras.text,
-            LMTheme.getTextLinkColor()
+            LMChatAppearance.getTextLinkColor()
         )
 
         //hide add media button if only allowMultipleSelection is enabled.
@@ -291,7 +291,7 @@ class ConversationMediaEditFragment :
     }
 
     private fun setTheme() {
-        binding.buttonColor = LMTheme.getButtonsColor()
+        binding.buttonColor = LMChatAppearance.getButtonsColor()
     }
 
     private fun initRichEditorSupport() {
@@ -528,7 +528,7 @@ class ConversationMediaEditFragment :
             MemberTaggingExtras.Builder()
                 .editText(binding.etConversation)
                 .color(
-                    LMTheme.getTextLinkColor()
+                    LMChatAppearance.getTextLinkColor()
                 )
                 .darkMode(true)
                 .build()

@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.core.text.util.LinkifyCompat
 import androidx.core.view.isVisible
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil
 import com.likeminds.chatmm.conversation.model.*
 import com.likeminds.chatmm.databinding.ItemDmChatroomBinding
@@ -147,7 +147,7 @@ class DMChatroomViewDataBinder constructor(
                 val linkifyLinks =
                     (Linkify.WEB_URLS or Linkify.EMAIL_ADDRESSES or Linkify.PHONE_NUMBERS)
                 LinkifyCompat.addLinks(tvLastConversation, linkifyLinks)
-                tvLastConversation.setLinkTextColor(LMTheme.getTextLinkColor())
+                tvLastConversation.setLinkTextColor(LMChatAppearance.getTextLinkColor())
                 tvLastConversation.movementMethod = LinkMovementMethod.getInstance()
                 return
             }
@@ -186,7 +186,7 @@ class DMChatroomViewDataBinder constructor(
                     tvLastConversation,
                     tvLastConversation.text.toString(),
                     false,
-                    LMTheme.getTextLinkColor()
+                    LMChatAppearance.getTextLinkColor()
                 )
             } else {
                 //Last conversation was deleted

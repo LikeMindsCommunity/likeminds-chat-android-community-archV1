@@ -6,7 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.SDKApplication
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.detail.model.ViewParticipantsExtras
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ViewParticipantsAdapter
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ViewParticipantsAdapterListener
@@ -84,7 +84,7 @@ class ViewParticipantsFragment :
     // initializes the toolbar
     private fun initToolbar() {
         binding.apply {
-            toolbarColor = LMTheme.getToolbarColor()
+            toolbarColor = LMChatAppearance.getToolbarColor()
 
             (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 

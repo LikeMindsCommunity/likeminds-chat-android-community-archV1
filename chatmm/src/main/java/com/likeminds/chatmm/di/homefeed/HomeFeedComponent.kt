@@ -1,6 +1,6 @@
 package com.likeminds.chatmm.di.homefeed
 
-import com.likeminds.chatmm.homefeed.view.HomeFeedFragment
+import com.likeminds.chatmm.homefeed.view.CommunityChatFragment
 import dagger.Subcomponent
 
 @Subcomponent(modules = [HomeFeedViewModelModule::class])
@@ -11,5 +11,5 @@ interface HomeFeedComponent {
         fun create(): HomeFeedComponent
     }
 
-    fun inject(homeFeedFragment: HomeFeedFragment)
+    fun inject(communityChatFragment: CommunityChatFragment)
 }

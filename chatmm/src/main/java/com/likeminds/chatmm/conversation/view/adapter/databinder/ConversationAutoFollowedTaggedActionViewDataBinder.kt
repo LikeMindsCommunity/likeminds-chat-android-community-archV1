@@ -2,7 +2,7 @@ package com.likeminds.chatmm.conversation.view.adapter.databinder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ChatroomDetailAdapterListener
 import com.likeminds.chatmm.databinding.ItemConversationAutoFollowedTaggedActionBinding
 import com.likeminds.chatmm.utils.customview.ViewDataBinder
@@ -34,7 +34,7 @@ internal class ConversationAutoFollowedTaggedActionViewDataBinder constructor(
 
     private fun setButtonClick(binding: ItemConversationAutoFollowedTaggedActionBinding) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
 
             btnKeepFollowing.setOnClickListener {
                 chatroomDetailAdapterListener.keepFollowingChatRoomClicked()

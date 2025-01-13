@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.likeminds.chatmm.SDKApplication
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.create.view.adapter.ChatroomItemAdapter
 import com.likeminds.chatmm.databinding.FragmentMediaVerticalListBinding
 import com.likeminds.chatmm.media.model.*
@@ -67,8 +67,8 @@ class MediaVerticalListFragment :
     }
 
     private fun setTheme() {
-        binding.toolbarColor = LMTheme.getToolbarColor()
-        binding.headerColor = LMTheme.getHeaderColor()
+        binding.toolbarColor = LMChatAppearance.getToolbarColor()
+        binding.headerColor = LMChatAppearance.getHeaderColor()
     }
 
     private fun initImageListView() {
