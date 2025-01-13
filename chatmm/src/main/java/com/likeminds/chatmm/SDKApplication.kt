@@ -61,7 +61,7 @@ class SDKApplication : LMChatSDKCallback {
         private var sdkApplicationInstance: SDKApplication? = null
         private var lmChatCoreCallback: LMChatCoreCallback? = null
 
-        var selectedTheme = LMChatTheme.COMMUNITY_HYBRID_CHAT
+        var selectedTheme = LMChatTheme.COMMUNITY_CHAT
 
         /**
          * @return Singleton Instance of SDK Application class, which used for injecting dagger in fragments.

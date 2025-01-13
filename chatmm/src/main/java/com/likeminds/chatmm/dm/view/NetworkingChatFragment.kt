@@ -25,22 +25,16 @@ import com.likeminds.chatmm.dm.view.adapter.DMAdapter
 import com.likeminds.chatmm.dm.view.adapter.DMAdapterListener
 import com.likeminds.chatmm.dm.viewmodel.NetworkingChatViewModel
 import com.likeminds.chatmm.homefeed.model.HomeFeedItemViewData
-import com.likeminds.chatmm.member.model.CommunityMembersExtras
-import com.likeminds.chatmm.member.model.CommunityMembersFilter
-import com.likeminds.chatmm.member.model.CommunityMembersResultExtras
-import com.likeminds.chatmm.member.model.MemberViewData
+import com.likeminds.chatmm.member.model.*
 import com.likeminds.chatmm.member.util.MemberImageUtil
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.member.view.LMChatCommunityMembersActivity
 import com.likeminds.chatmm.search.view.LMChatSearchActivity
 import com.likeminds.chatmm.theme.model.LMChatAppearance
-import com.likeminds.chatmm.utils.ExtrasUtil
-import com.likeminds.chatmm.utils.Route
-import com.likeminds.chatmm.utils.ViewUtils
+import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
 import com.likeminds.chatmm.utils.customview.BaseFragment
-import com.likeminds.chatmm.utils.observeInLifecycle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -244,6 +238,8 @@ class NetworkingChatFragment :
                     LMChatSearchActivity.start(requireContext())
                     Log.d(LOG_TAG, "search started")
                 }
+
+                ivSearch.hide()
             } else {
                 toolbar.hide()
             }

@@ -79,6 +79,7 @@ class NetworkingChatViewModel @Inject constructor(
         homeFeedPreferences.setIsDMFeedShimmerShown(value)
     }
 
+    // gets the user from local db
     fun getUserFromLocalDb() {
         val userResponse = lmChatClient.getLoggedInUser()
         _userData.postValue(ViewDataConverter.convertUser(userResponse.data?.user))

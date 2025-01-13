@@ -10,12 +10,8 @@ import com.likeminds.chatmm.utils.sharedpreferences.LMChatMasterPrefUtils
 import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.LMResponse
-import com.likeminds.likemindschat.user.model.InitiateUserRequest
-import com.likeminds.likemindschat.user.model.LogoutRequest
-import com.likeminds.likemindschat.user.model.ValidateUserRequest
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.likeminds.likemindschat.user.model.*
+import kotlinx.coroutines.*
 
 object LMChatCore {
     /**
