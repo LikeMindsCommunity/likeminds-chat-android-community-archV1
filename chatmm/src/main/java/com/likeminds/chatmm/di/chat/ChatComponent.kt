@@ -1,6 +1,6 @@
 package com.likeminds.chatmm.di.chat
 
-import com.likeminds.chatmm.chat.view.LMChatFragment
+import com.likeminds.chatmm.chat.view.CommunityHybridChatFragment
 import dagger.Subcomponent
 
 @Subcomponent(modules = [ChatViewModelModule::class])
@@ -11,5 +11,5 @@ interface ChatComponent {
         fun create(): ChatComponent
     }
 
-    fun inject(chatFragment: LMChatFragment)
+    fun inject(chatFragment: CommunityHybridChatFragment)
 }

@@ -4,7 +4,7 @@ import android.graphics.drawable.*
 import android.view.*
 import androidx.core.content.ContextCompat
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.create.view.adapter.*
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomConversationItemViewDataBinderUtil.hasPollEnded
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomConversationItemViewDataBinderUtil.isAddNewOptionEnabled
@@ -43,7 +43,7 @@ class ItemPollViewDataBinder constructor(
         position: Int
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
             pollViewData = data
             this.position = position
             val context = root.context
@@ -150,7 +150,7 @@ class ItemPollViewDataBinder constructor(
             }
             tvNoVotes.visibility = View.VISIBLE
             if (data.isSelected == true) {
-                tvNoVotes.setTextColor(LMTheme.getButtonsColor())
+                tvNoVotes.setTextColor(LMChatAppearance.getButtonsColor())
             } else {
                 tvNoVotes.setTextColor(
                     ContextCompat.getColor(context, R.color.lm_chat_grey)
@@ -177,7 +177,7 @@ class ItemPollViewDataBinder constructor(
         } else {
             if (isPollSelectedByUser) {
                 if (data.isSelected == true) {
-                    drawable.setStroke(width, LMTheme.getButtonsColor())
+                    drawable.setStroke(width, LMChatAppearance.getButtonsColor())
                 } else {
                     drawable.setStroke(
                         width,
@@ -191,7 +191,7 @@ class ItemPollViewDataBinder constructor(
                         ContextCompat.getColor(binding.root.context, R.color.lm_chat_cloudy_blue)
                     )
                 } else {
-                    drawable.setStroke(width, LMTheme.getButtonsColor())
+                    drawable.setStroke(width, LMChatAppearance.getButtonsColor())
                 }
             }
         }
@@ -233,7 +233,7 @@ class ItemPollViewDataBinder constructor(
             clip.setTint(ContextCompat.getColor(binding.root.context, R.color.lm_chat_cloudy_blue))
         } else {
             if (data.isSelected == true) {
-                clip.setTint(LMTheme.getButtonsColor())
+                clip.setTint(LMChatAppearance.getButtonsColor())
             } else {
                 clip.setTint(ContextCompat.getColor(binding.root.context, R.color.lm_chat_cloudy_blue))
             }

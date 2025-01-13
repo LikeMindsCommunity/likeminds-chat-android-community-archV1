@@ -5,7 +5,7 @@ import android.content.res.ColorStateList
 import android.util.AttributeSet
 import com.google.android.material.button.MaterialButton
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.theme.util.ThemeUtil
 
 internal class LikeMindsButton : MaterialButton {
@@ -37,20 +37,20 @@ internal class LikeMindsButton : MaterialButton {
 
         // applies button color to button drawables
         if (!drawableType.equals("normal")) {
-            iconTint = ColorStateList.valueOf(LMTheme.getButtonsColor())
+            iconTint = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
             compoundDrawables.forEach {
-                it?.setTintList(ColorStateList.valueOf(LMTheme.getButtonsColor()))
+                it?.setTintList(ColorStateList.valueOf(LMChatAppearance.getButtonsColor()))
             }
         }
 
         // bg color
         if (!buttonType.equals("normal")) {
-            backgroundTintList = ColorStateList.valueOf(LMTheme.getButtonsColor())
+            backgroundTintList = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
         }
 
         // text color
         if (!textType.equals("normal")) {
-            setTextColor(LMTheme.getButtonsColor())
+            setTextColor(LMChatAppearance.getButtonsColor())
         }
     }
 }

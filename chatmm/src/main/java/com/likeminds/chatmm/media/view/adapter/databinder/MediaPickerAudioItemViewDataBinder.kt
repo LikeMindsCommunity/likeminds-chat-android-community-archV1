@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.databinding.ItemMediaPickerAudioBinding
 import com.likeminds.chatmm.media.model.MEDIA_ACTION_NONE
 import com.likeminds.chatmm.media.model.MEDIA_ACTION_PAUSE
@@ -64,7 +64,7 @@ class MediaPickerAudioItemViewDataBinder @Inject constructor(
             this.position = position
             mediaViewData = data
             isSelected = listener.isMediaSelected(data.uri.toString())
-            buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
 
             if (data.filteredKeywords.isNullOrEmpty()) {
                 tvAudioName.text = data.mediaName

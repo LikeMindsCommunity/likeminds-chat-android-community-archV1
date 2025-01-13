@@ -1,6 +1,6 @@
 package com.likeminds.chatmm.utils.permissions.view
 
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.databinding.DialogPermissionBinding
 import com.likeminds.chatmm.utils.customview.BaseAppCompatActivity
 import com.likeminds.chatmm.utils.permissions.*
@@ -33,8 +33,8 @@ class LMChatPermissionDialog(
         setContentView(dialogPermissionBinding.root)
 
         //set theme to view
-        dialogPermissionBinding.imageViewIcon.setBackgroundColor(LMTheme.getButtonsColor())
-        dialogPermissionBinding.textViewPositiveButton.setTextColor(LMTheme.getButtonsColor())
+        dialogPermissionBinding.imageViewIcon.setBackgroundColor(LMChatAppearance.getButtonsColor())
+        dialogPermissionBinding.textViewPositiveButton.setTextColor(LMChatAppearance.getButtonsColor())
 
         if (permission != null) {
             existingPermissionsDialog()

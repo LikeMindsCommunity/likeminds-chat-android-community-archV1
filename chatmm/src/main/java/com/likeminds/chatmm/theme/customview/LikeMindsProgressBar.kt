@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.widget.ProgressBar
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 
 class LikeMindsProgressBar : ProgressBar {
     constructor(context: Context) : super(context) {
@@ -25,7 +25,7 @@ class LikeMindsProgressBar : ProgressBar {
 
     private fun initiate() {
         // color
-        this.progressTintList = ColorStateList.valueOf(LMTheme.getButtonsColor())
-        this.indeterminateTintList = ColorStateList.valueOf(LMTheme.getButtonsColor())
+        this.progressTintList = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
+        this.indeterminateTintList = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
     }
 }

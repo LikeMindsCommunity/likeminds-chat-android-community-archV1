@@ -2,7 +2,7 @@ package com.likeminds.chatmm.di.homefeed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.likeminds.chatmm.homefeed.viewmodel.HomeFeedViewModel
+import com.likeminds.chatmm.homefeed.viewmodel.CommunityChatViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -15,6 +15,6 @@ abstract class HomeFeedViewModelModule {
 
     @Binds
     @IntoMap
-    @HomeFeedViewModelKey(HomeFeedViewModel::class)
-    abstract fun bindHomeFeedViewModel(homeFeedViewModel: HomeFeedViewModel): ViewModel
+    @HomeFeedViewModelKey(CommunityChatViewModel::class)
+    abstract fun bindHomeFeedViewModel(communityChatViewModel: CommunityChatViewModel): ViewModel
 }

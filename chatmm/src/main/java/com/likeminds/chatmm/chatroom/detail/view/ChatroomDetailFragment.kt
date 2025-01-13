@@ -82,7 +82,7 @@ import com.likeminds.chatmm.search.view.LMChatSearchActivity
 import com.likeminds.chatmm.search.view.LMChatSearchActivity.Companion.LM_CHAT_SEARCH_RESULT
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEditTextListener
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEmojiEditText
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.Route.getNullableQueryParameter
 import com.likeminds.chatmm.utils.ValueUtils.getEmailIfExist
@@ -569,8 +569,8 @@ class ChatroomDetailFragment :
     // initializes the toolbar
     private fun initToolbar() {
         binding.apply {
-            toolbarColor = LMTheme.getToolbarColor()
-            buttonColor = LMTheme.getButtonsColor()
+            toolbarColor = LMChatAppearance.getToolbarColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
 
             (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
@@ -1867,7 +1867,7 @@ class ChatroomDetailFragment :
                 MemberTaggingExtras.Builder()
                     .editText(binding.inputBox.etAnswer)
                     .maxHeightInPercentage(0.4f)
-                    .color(LMTheme.getTextLinkColor())
+                    .color(LMChatAppearance.getTextLinkColor())
                     .build()
             )
             memberTagging.addListener(object : MemberTaggingViewListener {
@@ -2597,7 +2597,7 @@ class ChatroomDetailFragment :
                             tvChatroom,
                             topic.answer,
                             false,
-                            LMTheme.getTextLinkColor()
+                            LMChatAppearance.getTextLinkColor()
                         )
                     }
                 }
@@ -2662,7 +2662,7 @@ class ChatroomDetailFragment :
                     tvChatroom,
                     chatroom.title,
                     false,
-                    LMTheme.getTextLinkColor()
+                    LMChatAppearance.getTextLinkColor()
                 )
             }
         }
@@ -3361,7 +3361,7 @@ class ChatroomDetailFragment :
         binding.apply {
             val isAIBot = viewModel.isOtherUserAIBot()
             tvAiBot.isVisible = isAIBot
-            tvAiBot.setBackgroundColor(LMTheme.getButtonsColor())
+            tvAiBot.setBackgroundColor(LMChatAppearance.getButtonsColor())
 
             if (viewModel.isDmChatroom()) {
                 tvToolbarSubTitle.hide()
@@ -4781,7 +4781,7 @@ class ChatroomDetailFragment :
                 )
             )
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                ?.setTextColor(LMTheme.getButtonsColor())
+                ?.setTextColor(LMChatAppearance.getButtonsColor())
         }
         alertDialog.show()
     }
@@ -5565,7 +5565,7 @@ class ChatroomDetailFragment :
                         tvConversation,
                         replyData.conversationText,
                         false,
-                        LMTheme.getTextLinkColor()
+                        LMChatAppearance.getTextLinkColor()
                     )
                 }
             }
@@ -5671,12 +5671,12 @@ class ChatroomDetailFragment :
                 viewReply.tvConversation,
                 editData.conversationText,
                 false,
-                LMTheme.getTextLinkColor()
+                LMChatAppearance.getTextLinkColor()
             )
             MemberTaggingDecoder.decode(
                 etAnswer,
                 editData.conversationText,
-                LMTheme.getTextLinkColor()
+                LMChatAppearance.getTextLinkColor()
             )
             etAnswer.setSelection(etAnswer.text?.length ?: 0)
             ViewUtils.showKeyboard(requireContext(), etAnswer)
@@ -6062,7 +6062,7 @@ class ChatroomDetailFragment :
 
         val searchMenuItem = actionsMenu?.findItem(R.id.menu_item_search)
         searchMenuItem?.isVisible = true
-        searchMenuItem?.icon?.setTint(LMTheme.getToolbarColor())
+        searchMenuItem?.icon?.setTint(LMChatAppearance.getToolbarColor())
 
         viewModel.getChatroomActions()?.forEach { chatroomActionViewData ->
             when (chatroomActionViewData.id) {
@@ -6078,7 +6078,7 @@ class ChatroomDetailFragment :
                     item?.title = chatroomActionViewData.title
                     val item2 = actionsMenu?.findItem(R.id.share_chatroom_icon)
                     item2?.isVisible = true
-                    item2?.icon?.setTint(LMTheme.getToolbarColor())
+                    item2?.icon?.setTint(LMChatAppearance.getToolbarColor())
                 }
 
                 "4", "9" -> {

@@ -7,7 +7,7 @@ import android.util.Log
 import androidx.core.app.*
 import com.google.gson.Gson
 import com.likeminds.chatmm.*
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.di.DaggerLikeMindsChatComponent
 import com.likeminds.chatmm.di.LikeMindsChatComponent
 import com.likeminds.chatmm.member.util.UserPreferences
@@ -87,7 +87,7 @@ class NotificationActionBroadcastReceiver : BroadcastReceiver() {
         notificationIcon = R.drawable.lm_chat_ic_notification
 
         // set notification text color as theme color
-        notificationTextColor = LMTheme.getButtonsColor()
+        notificationTextColor = LMChatAppearance.getButtonsColor()
 
         when (intent.action) {
             ACTION_CHATROOM_REPLY -> {
