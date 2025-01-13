@@ -857,16 +857,14 @@ object ChatroomConversationItemViewDataBinderUtil {
                     replyConversation != null -> {
                         ChatReplyUtil.getConversationReplyData(
                             replyConversation,
-                            currentMemberId,
-                            root.context
+                            currentMemberId
                         )
                     }
 
                     replyChatRoom != null -> {
                         ChatReplyUtil.getChatRoomReplyData(
                             replyChatRoom,
-                            currentMemberId,
-                            root.context
+                            currentMemberId
                         )
                     }
 
