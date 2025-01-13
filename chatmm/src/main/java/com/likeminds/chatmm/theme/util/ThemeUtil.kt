@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Typeface
 import androidx.core.content.res.ResourcesCompat
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 
 object ThemeUtil {
     /**
@@ -13,7 +13,7 @@ object ThemeUtil {
      * @return Typeface? - typeface of current font as per the [fontStyle]
      * */
     fun getTypeFace(context: Context, fontStyle: String?): Typeface? {
-        val currentFont = LMTheme.getCurrentFonts()
+        val currentFont = LMChatAppearance.getCurrentFonts()
 
         val typeface = when (fontStyle) {
             "bold" -> {
@@ -52,13 +52,13 @@ object ThemeUtil {
     fun getTextColor(defaultColor: Int, textType: String?): Int {
         val color = when (textType) {
             "title" -> {
-                LMTheme.getToolbarColor()
+                LMChatAppearance.getToolbarColor()
             }
             "subtitle" -> {
-                LMTheme.getSubtitleColor()
+                LMChatAppearance.getSubtitleColor()
             }
             "special" -> {
-                LMTheme.getButtonsColor()
+                LMChatAppearance.getButtonsColor()
             }
             else -> {
                 defaultColor

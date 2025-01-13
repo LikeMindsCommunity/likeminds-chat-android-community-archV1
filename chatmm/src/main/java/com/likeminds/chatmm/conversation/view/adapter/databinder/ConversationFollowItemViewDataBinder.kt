@@ -3,7 +3,7 @@ package com.likeminds.chatmm.conversation.view.adapter.databinder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailFragment
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ChatroomDetailAdapterListener
 import com.likeminds.chatmm.databinding.ItemConversationFollowBinding
@@ -34,7 +34,7 @@ internal class ConversationFollowItemViewDataBinder constructor(
         position: Int,
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
             val context = root.context
             if (adapterListener.getChatRoom()?.isSecret == true) {
                 tvFollowConst.text =

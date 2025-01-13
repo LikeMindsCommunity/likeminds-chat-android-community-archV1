@@ -2,7 +2,7 @@ package com.likeminds.chatmm.di.dm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.likeminds.chatmm.dm.viewmodel.DMFeedViewModel
+import com.likeminds.chatmm.dm.viewmodel.NetworkingChatViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -15,6 +15,6 @@ abstract class DMViewModelModule {
 
     @Binds
     @IntoMap
-    @DMViewModelKey(DMFeedViewModel::class)
-    abstract fun bindDMFeedViewModel(dmFeedViewModel: DMFeedViewModel): ViewModel
+    @DMViewModelKey(NetworkingChatViewModel::class)
+    abstract fun bindDMFeedViewModel(networkingChatViewModel: NetworkingChatViewModel): ViewModel
 }

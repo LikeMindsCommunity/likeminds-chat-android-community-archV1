@@ -3,7 +3,7 @@ package com.likeminds.chatmm.chatroom.explore.view.adapter.databinder
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.explore.model.ExploreViewData
 import com.likeminds.chatmm.chatroom.explore.view.adapter.ChatroomExploreAdapterListener
 import com.likeminds.chatmm.databinding.ItemChatroomExploreBinding
@@ -46,7 +46,7 @@ internal class ChatroomExploreViewDataBinder(
         position: Int
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
             this.data = data
             this.position = position
 

@@ -8,7 +8,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.SDKApplication
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.databinding.FragmentPollResultBinding
 import com.likeminds.chatmm.databinding.LayoutPollResultTabBinding
 import com.likeminds.chatmm.polls.model.PollInfoData
@@ -65,7 +65,7 @@ class PollResultFragment : BaseFragment<FragmentPollResultBinding, PollResultVie
 
     override fun setUpViews() {
         super.setUpViews()
-        binding.tabHeader.setSelectedTabIndicatorColor(LMTheme.getButtonsColor())
+        binding.tabHeader.setSelectedTabIndicatorColor(LMChatAppearance.getButtonsColor())
         initData()
         initListener()
     }
@@ -138,7 +138,7 @@ class PollResultFragment : BaseFragment<FragmentPollResultBinding, PollResultVie
         tab?.select()
         val firstViewAtTab = tab?.customView?.findViewById<TextView>(R.id.tv_poll_count)
         firstViewAtTab?.apply {
-            setTextColor(LMTheme.getButtonsColor())
+            setTextColor(LMChatAppearance.getButtonsColor())
             setTypeface(null, Typeface.BOLD)
         }
 
@@ -146,7 +146,7 @@ class PollResultFragment : BaseFragment<FragmentPollResultBinding, PollResultVie
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 val view = tab?.customView?.findViewById<TextView>(R.id.tv_poll_count) ?: return
                 view.apply {
-                    setTextColor(LMTheme.getButtonsColor())
+                    setTextColor(LMChatAppearance.getButtonsColor())
                     setTypeface(null, Typeface.BOLD)
                 }
 
@@ -172,7 +172,7 @@ class PollResultFragment : BaseFragment<FragmentPollResultBinding, PollResultVie
             override fun onTabReselected(tab: TabLayout.Tab?) {
                 val view = tab?.customView?.findViewById<TextView>(R.id.tv_poll_count) ?: return
                 view.apply {
-                    setTextColor(LMTheme.getButtonsColor())
+                    setTextColor(LMChatAppearance.getButtonsColor())
                     setTypeface(null, Typeface.BOLD)
                 }
             }
