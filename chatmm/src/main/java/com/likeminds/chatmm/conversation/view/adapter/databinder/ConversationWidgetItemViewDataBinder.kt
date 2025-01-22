@@ -10,7 +10,7 @@ import com.likeminds.chatmm.databinding.ItemConversationCustomWidgetBinding
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.reactions.util.ReactionUtil
 import com.likeminds.chatmm.reactions.util.ReactionsPreferences
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
 import com.likeminds.chatmm.utils.customview.ViewDataBinder
@@ -41,8 +41,8 @@ class ConversationWidgetItemViewDataBinder(
         position: Int
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
-            viewReply.buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
+            viewReply.buttonColor = LMChatAppearance.getButtonsColor()
             conversation = data
 
             val context = root.context

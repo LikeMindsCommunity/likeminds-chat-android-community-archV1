@@ -2,7 +2,7 @@ package com.likeminds.chatmm.chatroom.detail.view.adapter.databinder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomViewData
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomConversationItemViewDataBinderUtil
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ChatroomDetailAdapterListener
@@ -35,7 +35,7 @@ internal class ChatroomItemViewDataBinder constructor(
         position: Int,
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
             chatroomViewData = data as ChatroomViewData
             ChatroomConversationItemViewDataBinderUtil.initChatRoomBubbleView(
                 clBubble,

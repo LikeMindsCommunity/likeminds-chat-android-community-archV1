@@ -164,7 +164,7 @@ interface ChatroomDetailAdapterListener {
     fun isChatRoomSelected(chatRoomId: String): Boolean
     fun isConversationSelected(conversationId: String): Boolean
     fun scrollToRepliedAnswer(conversation: ConversationViewData, repliedConversationId: String)
-    fun scrollToRepliedChatroom(repliedChatRoomId: String)
+    fun scrollToRepliedChatroom(repliedChatroomId: String)
     fun isScrolledConversation(position: Int): Boolean
     fun isReportedConversation(conversationId: String?): Boolean
     fun showActionDialogForReportedMessage()

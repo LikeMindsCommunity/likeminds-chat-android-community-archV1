@@ -121,8 +121,6 @@ class ChatroomDetailViewModel @Inject constructor(
     private val _showDM: MutableLiveData<Boolean> by lazy { MutableLiveData() }
     val showDM: LiveData<Boolean> by lazy { _showDM }
 
-    var dmRequestText: String = ""
-
     private val _updatedChatRequestState: MutableLiveData<ChatRequestState> by lazy { MutableLiveData() }
     val updatedChatRequestState: LiveData<ChatRequestState> by lazy { _updatedChatRequestState }
 
@@ -425,6 +423,7 @@ class ChatroomDetailViewModel @Inject constructor(
                 GetChatroomRequest.Builder().chatroomId(chatroomDetailExtras.chatroomId).build()
             val getChatroomResponse = lmChatClient.getChatroom(request)
             val chatroom = getChatroomResponse.data?.chatroom
+
             val dataList = mutableListOf<BaseViewType>()
             //1st case -> chatroom is not present, if yes return
             if (chatroom == null) {
@@ -951,12 +950,13 @@ class ChatroomDetailViewModel @Inject constructor(
                     dataList.add(0, header)
                     conversationsViewData = conversationsViewData.drop(1)
                 }
+                val dates = addDateViewToList(
+                    conversationsViewData,
+                    chatroomDetail.chatroom,
+                    null
+                )
                 dataList.addAll(
-                    addDateViewToList(
-                        conversationsViewData,
-                        chatroomDetail.chatroom,
-                        null
-                    )
+                    dates
                 )
                 PaginatedViewData.Builder()
                     .scrollState(scrollState)
@@ -966,14 +966,15 @@ class ChatroomDetailViewModel @Inject constructor(
                     .repliedConversationId(repliedConversationId)
                     .build()
             } else {
+                val dates = addDateViewToList(
+                    conversationsViewData,
+                    chatroomDetail.chatroom,
+                    oldConversations.lastOrNull()
+                )
                 PaginatedViewData.Builder()
                     .scrollState(scrollState)
                     .data(
-                        addDateViewToList(
-                            conversationsViewData,
-                            chatroomDetail.chatroom,
-                            oldConversations.lastOrNull()
-                        )
+                        dates
                     )
                     .extremeScrollTo(extremeScrollTo)
                     .repliedChatRoomId(repliedChatRoomId)
@@ -1755,19 +1756,44 @@ class ChatroomDetailViewModel @Inject constructor(
     }
 
     fun fetchRepliedConversationOnClick(
-        conversation: ConversationViewData,
         repliedConversationId: String,
         oldConversations: List<BaseViewType>,
     ) {
-        val data = fetchPaginatedData(
-            SCROLL_UP,
-            conversation,
-            oldConversations,
-            repliedConversationId = repliedConversationId
-        )
-        if (data != null) {
+        val conversationKey =
+            oldConversations.firstOrNull { it is ConversationViewData } as? ConversationViewData?
+                ?: return
+
+        val conversationWithinLimitRequest = ConversationWithinLimitRequest.Builder()
+            .chatroomId(conversationKey.chatroomId ?: "")
+            .conversationKey(ViewDataConverter.convertConversation(conversationKey))
+            .targetConversationId(repliedConversationId)
+            .limit(CONVERSATIONS_LIMIT)
+            .build()
+        val isPresent = lmChatClient.isConversationWithinLimit(conversationWithinLimitRequest)
+
+        if (isPresent) {
+            val data = fetchPaginatedData(
+                SCROLL_UP,
+                conversationKey,
+                oldConversations,
+                repliedConversationId = repliedConversationId
+            )
+            if (data != null) {
+                viewModelScope.launchMain {
+                    _paginatedData.value = data
+                }
+            }
+        } else {
+            val conversations = fetchIntermediateConversations(
+                getChatroomViewData()!!,
+                medianConversationId = repliedConversationId
+            )
             viewModelScope.launchMain {
-                _paginatedData.value = data
+                _scrolledData.value = PaginatedViewData.Builder()
+                    .scrollState(SCROLL_UP)
+                    .data(conversations)
+                    .repliedConversationId(repliedConversationId)
+                    .build()
             }
         }
     }
@@ -2065,12 +2091,13 @@ class ChatroomDetailViewModel @Inject constructor(
     fun sendDMRequest(
         chatroomId: String,
         chatRequestState: ChatRequestState,
-        isM2CM: Boolean = false
+        isM2CM: Boolean = false,
+        requestText: String? = null
     ) {
         viewModelScope.launchIO {
             val request = SendDMRequest.Builder()
                 .chatroomId(chatroomId)
-                .text(dmRequestText)
+                .text(requestText)
                 .chatRequestState(chatRequestState)
                 .build()
 

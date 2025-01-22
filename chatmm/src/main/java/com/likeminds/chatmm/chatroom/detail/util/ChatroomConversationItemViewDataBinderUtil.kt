@@ -36,8 +36,11 @@ import com.likeminds.chatmm.member.util.MemberImageUtil
 import com.likeminds.chatmm.polls.model.*
 import com.likeminds.chatmm.polls.view.PollViewListener
 import com.likeminds.chatmm.reactions.model.ReactionsGridViewData
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.*
+import com.likeminds.chatmm.utils.AndroidUtils
+import com.likeminds.chatmm.utils.DateUtil
+import com.likeminds.chatmm.utils.Route
 import com.likeminds.chatmm.utils.ValueUtils.getValidTextForLinkify
 import com.likeminds.chatmm.utils.ValueUtils.isValidYoutubeLink
 import com.likeminds.chatmm.utils.ViewUtils.hide
@@ -346,7 +349,7 @@ object ChatroomConversationItemViewDataBinderUtil {
             tvConversation,
             trimmedText,
             true,
-            LMTheme.getTextLinkColor()
+            LMChatAppearance.getTextLinkColor()
         ) {
             adapterListener?.onMemberTagClicked(it)
         }
@@ -844,16 +847,14 @@ object ChatroomConversationItemViewDataBinderUtil {
                     replyConversation != null -> {
                         ChatReplyUtil.getConversationReplyData(
                             replyConversation,
-                            currentMemberId,
-                            root.context
+                            currentMemberId
                         )
                     }
 
                     replyChatRoom != null -> {
                         ChatReplyUtil.getChatRoomReplyData(
                             replyChatRoom,
-                            currentMemberId,
-                            root.context
+                            currentMemberId
                         )
                     }
 
@@ -879,20 +880,12 @@ object ChatroomConversationItemViewDataBinderUtil {
                         )
                     }
 
-                    when {
-                        replyData.isMessageDeleted -> {
-                            tvConversation.text = replyData.deleteMessage
-                        }
-
-                        else -> {
-                            MemberTaggingDecoder.decode(
-                                tvConversation,
-                                replyData.conversationText,
-                                false,
-                                LMTheme.getTextLinkColor()
-                            )
-                        }
-                    }
+                    MemberTaggingDecoder.decode(
+                        tvConversation,
+                        replyData.conversationText,
+                        false,
+                        LMChatAppearance.getTextLinkColor()
+                    )
 
                     if (replyData.drawable != null && binding.tvConversation.editableText != null) {
                         tvConversation.editableText.setSpan(
@@ -1334,7 +1327,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                     )
                 } else {
                     backgroundTintList =
-                        ColorStateList.valueOf(LMTheme.getButtonsColor())
+                        ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
                 }
             }
         }
@@ -1372,9 +1365,9 @@ object ChatroomConversationItemViewDataBinderUtil {
             return
         }
         btnSubmitVote.apply {
-            iconTint = ColorStateList.valueOf(LMTheme.getButtonsColor())
-            setTextColor(LMTheme.getButtonsColor())
-            strokeColor = ColorStateList.valueOf(LMTheme.getButtonsColor())
+            iconTint = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
+            setTextColor(LMChatAppearance.getButtonsColor())
+            strokeColor = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
             tag = "POLL_CLICK_ENABLED"
             isEnabled = true
         }

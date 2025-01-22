@@ -16,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.SDKApplication
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.databinding.FragmentMediaPickerAudioBinding
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.media.util.LMMediaPlayer
@@ -138,7 +138,7 @@ class MediaPickerAudioFragment :
 
     private fun updateMenu(menu: Menu) {
         val item = menu.findItem(R.id.menu_item_search)
-        item?.icon?.setTint(LMTheme.getToolbarColor())
+        item?.icon?.setTint(LMChatAppearance.getToolbarColor())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -246,8 +246,8 @@ class MediaPickerAudioFragment :
 
     private fun setTheme() {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
-            toolbarColor = LMTheme.getToolbarColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
+            toolbarColor = LMChatAppearance.getToolbarColor()
         }
     }
 

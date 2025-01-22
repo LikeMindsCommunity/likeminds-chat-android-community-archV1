@@ -9,7 +9,7 @@ import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import com.google.gson.Gson
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.conversation.model.ReportLinkExtras
 
 internal object CustomTabIntent {
@@ -28,7 +28,7 @@ internal object CustomTabIntent {
                 val builder = CustomTabsIntent.Builder()
                 builder.setDefaultColorSchemeParams(
                     CustomTabColorSchemeParams.Builder()
-                        .setToolbarColor(LMTheme.getHeaderColor()).build()
+                        .setToolbarColor(LMChatAppearance.getHeaderColor()).build()
                 )
                 builder.setStartAnimations(context, R.anim.lm_chat_slide_in_right, R.anim.lm_chat_slide_out_left)
                 builder.setStartAnimations(
@@ -80,7 +80,7 @@ internal object CustomTabIntent {
                 val builder = CustomTabsIntent.Builder()
                 builder.setDefaultColorSchemeParams(
                     CustomTabColorSchemeParams.Builder()
-                        .setToolbarColor(LMTheme.getHeaderColor()).build()
+                        .setToolbarColor(LMChatAppearance.getHeaderColor()).build()
                 )
                 builder.setStartAnimations(context, R.anim.lm_chat_slide_in_right, R.anim.lm_chat_slide_out_left)
                 builder.setStartAnimations(

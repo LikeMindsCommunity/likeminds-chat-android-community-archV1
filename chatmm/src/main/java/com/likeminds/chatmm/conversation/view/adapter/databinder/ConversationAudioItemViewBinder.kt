@@ -3,6 +3,7 @@ package com.likeminds.chatmm.conversation.view.adapter.databinder
 import android.annotation.SuppressLint
 import android.view.*
 import com.likeminds.chatmm.LMAnalytics
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.create.view.adapter.ChatroomItemAdapterListener
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomConversationItemViewDataBinderUtil
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ChatroomDetailAdapterListener
@@ -10,7 +11,6 @@ import com.likeminds.chatmm.conversation.model.ConversationViewData
 import com.likeminds.chatmm.databinding.ItemConversationAudioBinding
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.reactions.util.ReactionUtil
-import com.likeminds.chatmm.theme.model.LMTheme
 import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
@@ -45,9 +45,9 @@ class ConversationAudioItemViewBinder @Inject constructor(
         position: Int,
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
-            textLinkColor = LMTheme.getTextLinkColor()
-            viewReply.buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
+            textLinkColor = LMChatAppearance.getTextLinkColor()
+            viewReply.buttonColor = LMChatAppearance.getButtonsColor()
             conversation = data as ConversationViewData
             itemPosition = position
 

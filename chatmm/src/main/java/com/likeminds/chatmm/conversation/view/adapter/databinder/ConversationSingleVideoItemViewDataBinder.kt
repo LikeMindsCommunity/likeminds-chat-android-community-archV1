@@ -4,7 +4,7 @@ import android.net.Uri
 import android.view.*
 import com.likeminds.chatmm.LMAnalytics
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomConversationItemViewDataBinderUtil
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ChatroomDetailAdapterListener
 import com.likeminds.chatmm.conversation.model.ConversationViewData
@@ -46,8 +46,8 @@ internal class ConversationSingleVideoItemViewDataBinder @Inject constructor(
         position: Int,
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
-            viewReply.buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
+            viewReply.buttonColor = LMChatAppearance.getButtonsColor()
             conversation = data as ConversationViewData
             itemPosition = position
             ChatroomConversationItemViewDataBinderUtil.initConversationBubbleView(

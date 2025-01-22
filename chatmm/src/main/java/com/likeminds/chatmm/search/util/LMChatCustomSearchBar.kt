@@ -17,7 +17,7 @@ import androidx.annotation.CheckResult
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LifecycleCoroutineScope
 import com.likeminds.chatmm.databinding.LmChatLayoutSearchBarBinding
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.AnimationUtils
 import com.likeminds.chatmm.utils.ViewUtils
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -202,7 +202,7 @@ class LMChatCustomSearchBar @JvmOverloads constructor(
             etSearch.setText("")
             etSearch.requestFocus()
             AnimationUtils.circleRevealView(searchToolbar)
-            setBackgroundColor(LMTheme.getHeaderColor())
+            setBackgroundColor(LMChatAppearance.getHeaderColor())
             elevation = 20F
             isOpen = true
             mSearchViewListener?.onSearchViewOpened()

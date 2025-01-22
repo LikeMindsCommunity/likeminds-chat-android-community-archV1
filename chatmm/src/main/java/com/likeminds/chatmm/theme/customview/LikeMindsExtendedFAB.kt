@@ -5,7 +5,7 @@ import android.content.res.ColorStateList
 import android.util.AttributeSet
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.theme.util.ThemeUtil
 
 internal class LikeMindsExtendedFAB : ExtendedFloatingActionButton {
@@ -33,6 +33,6 @@ internal class LikeMindsExtendedFAB : ExtendedFloatingActionButton {
         array.recycle()
 
         // color
-        this.backgroundTintList = ColorStateList.valueOf(LMTheme.getButtonsColor())
+        this.backgroundTintList = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
     }
 }

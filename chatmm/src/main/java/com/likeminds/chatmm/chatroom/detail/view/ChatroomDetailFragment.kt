@@ -82,7 +82,7 @@ import com.likeminds.chatmm.search.view.LMChatSearchActivity
 import com.likeminds.chatmm.search.view.LMChatSearchActivity.Companion.LM_CHAT_SEARCH_RESULT
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEditTextListener
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEmojiEditText
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.Route.getNullableQueryParameter
 import com.likeminds.chatmm.utils.ValueUtils.getEmailIfExist
@@ -119,6 +119,7 @@ import com.likeminds.chatmm.utils.observer.ChatEvent
 import com.likeminds.chatmm.utils.permissions.*
 import com.likeminds.chatmm.utils.recyclerview.LMSwipeController
 import com.likeminds.chatmm.utils.recyclerview.SwipeControllerActions
+import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.chatmm.widget.model.WidgetViewData
 import com.likeminds.likemindschat.chatroom.model.ChatRequestState
 import com.likeminds.likemindschat.user.model.MemberBlockState
@@ -568,8 +569,8 @@ class ChatroomDetailFragment :
     // initializes the toolbar
     private fun initToolbar() {
         binding.apply {
-            toolbarColor = LMTheme.getToolbarColor()
-            buttonColor = LMTheme.getButtonsColor()
+            toolbarColor = LMChatAppearance.getToolbarColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
 
             (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
@@ -1097,6 +1098,7 @@ class ChatroomDetailFragment :
         worker.observe(viewLifecycleOwner) { state ->
             when (state) {
                 WorkInfo.State.SUCCEEDED -> {
+                    Log.i(TAG, "blocker syncChatroom state - SUCCEEDED")
                     //If shimmer is showing that means chatroom is not present. So after syncing fetch again.
                     if (isShimmerShowing()) {
                         /* Adding a flag to extras that we are trying to fetch the data again after syncing. Still if
@@ -1115,11 +1117,11 @@ class ChatroomDetailFragment :
                 }
 
                 WorkInfo.State.CANCELLED -> {
-                    Log.i(TAG, "syncChatroom got cancelled")
+                    Log.i(TAG, "blocker syncChatroom got cancelled")
                 }
 
                 else -> {
-                    Log.i(TAG, "syncChatroom state - $state")
+                    Log.i(TAG, "blocker syncChatroom state - $state")
                 }
             }
         }
@@ -1137,6 +1139,12 @@ class ChatroomDetailFragment :
             .observe(viewLifecycleOwner) { state ->
                 when (state) {
                     WorkInfo.State.SUCCEEDED -> {
+                        Log.i(TAG, "background syncChatroom state - $state")
+                        if (isShimmerShowing()) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                fetchInitialData()
+                            }
+                        }
                         viewModel.setIsFirstTimeSync(false)
                     }
 
@@ -1859,7 +1867,7 @@ class ChatroomDetailFragment :
                 MemberTaggingExtras.Builder()
                     .editText(binding.inputBox.etAnswer)
                     .maxHeightInPercentage(0.4f)
-                    .color(LMTheme.getTextLinkColor())
+                    .color(LMChatAppearance.getTextLinkColor())
                     .build()
             )
             memberTagging.addListener(object : MemberTaggingViewListener {
@@ -2014,7 +2022,6 @@ class ChatroomDetailFragment :
                         viewModel.isDmChatroom()
                         && (viewModel.getChatroomViewData()?.chatRequestState == ChatRequestState.NOTHING)
                     ) {
-                        viewModel.dmRequestText = inputText
                         if (inputText.length >= DM_SEND_REQUEST_TEXT_LIMIT) {
                             ViewUtils.showShortToast(
                                 requireContext(),
@@ -2028,7 +2035,7 @@ class ChatroomDetailFragment :
 
                         // if the DM is M2M then show dialog otherwise send dm request directly
                         if (viewModel.getChatroomViewData()?.isPrivateMember == true) {
-                            SendDMRequestDialogFragment.showDialog(childFragmentManager)
+                            SendDMRequestDialogFragment.showDialog(childFragmentManager, inputText)
                             setChatInputBoxViewType(
                                 CHAT_BOX_NORMAL,
                                 viewModel.showDM.value
@@ -2037,7 +2044,8 @@ class ChatroomDetailFragment :
                             viewModel.sendDMRequest(
                                 viewModel.getChatroomViewData()?.id.toString(),
                                 ChatRequestState.ACCEPTED,
-                                true
+                                true,
+                                inputText
                             )
                         }
                         clearEditTextAnswer()
@@ -2127,7 +2135,6 @@ class ChatroomDetailFragment :
                 }
 
                 clearEditTextAnswer()
-                updateDmMessaged()
                 if (isLinkViewVisible() || isReplyViewVisible()) {
                     setChatInputBoxViewType(CHAT_BOX_NORMAL)
                 }
@@ -2369,7 +2376,6 @@ class ChatroomDetailFragment :
                     }
                 }
                 clearEditTextAnswer()
-                updateDmMessaged()
                 if (isReplyViewVisible()) {
                     setChatInputBoxViewType(CHAT_BOX_NORMAL)
                 }
@@ -2380,10 +2386,6 @@ class ChatroomDetailFragment :
                 )
             }
         }
-    }
-
-    private fun updateDmMessaged() {
-        // todo:
     }
 
     /**
@@ -2703,7 +2705,7 @@ class ChatroomDetailFragment :
                             tvChatroom,
                             topic.answer,
                             false,
-                            LMTheme.getTextLinkColor()
+                            LMChatAppearance.getTextLinkColor()
                         )
                     }
                 }
@@ -2768,7 +2770,7 @@ class ChatroomDetailFragment :
                     tvChatroom,
                     chatroom.title,
                     false,
-                    LMTheme.getTextLinkColor()
+                    LMChatAppearance.getTextLinkColor()
                 )
             }
         }
@@ -3066,6 +3068,30 @@ class ChatroomDetailFragment :
         viewModel.paginatedData.observe(viewLifecycleOwner) { data ->
             when (data.scrollState) {
                 SCROLL_UP -> {
+                    var lastDate: String? = null
+
+                    // Find the date of the last item to be added in the adapter list
+                    for (i in data.data.size - 1 downTo 0) {
+                        val viewData = data.data[i]
+                        if (viewData is ConversationViewData) {
+                            lastDate = viewData.date
+                            break
+                        }
+
+                        if (viewData is ChatroomDateViewData) {
+                            lastDate = viewData.date
+                            break
+                        }
+                    }
+
+                    if (!lastDate.isNullOrEmpty()) {
+                        // Find the index of the lastDate and remove it from the adapter if it is present, as it will be added again!
+                        val dateIndex = getIndexOfDate(lastDate)
+                        if (dateIndex != -1) {
+                            chatroomDetailAdapter.removeIndex(dateIndex)
+                        }
+                    }
+
                     chatroomDetailAdapter.addAll(0, data.data)
                     binding.rvChatroom.post {
                         chatroomScrollListener.topLoadingDone()
@@ -3282,7 +3308,7 @@ class ChatroomDetailFragment :
                         }
 
                         // adds the date view only if the [lastInsertedDate] is different from the current conversation date and updates [lastInsertedDate]
-                        if (!lastInsertedDate.equals(response.conversation.date)) {
+                        if (lastInsertedDate?.trim() != response.conversation.date?.trim()) {
                             lastInsertedDate = response.conversation.date
                             chatroomDetailAdapter.add(viewModel.getDateView(response.conversation.date))
                         }
@@ -3443,7 +3469,7 @@ class ChatroomDetailFragment :
         binding.apply {
             val isAIBot = viewModel.isOtherUserAIBot()
             tvAiBot.isVisible = isAIBot
-            tvAiBot.setBackgroundColor(LMTheme.getButtonsColor())
+            tvAiBot.setBackgroundColor(LMChatAppearance.getButtonsColor())
 
             if (viewModel.isDmChatroom()) {
                 tvToolbarSubTitle.hide()
@@ -4382,7 +4408,6 @@ class ChatroomDetailFragment :
     ) {
         if (!highlightConversation(repliedConversationId)) {
             viewModel.fetchRepliedConversationOnClick(
-                conversation,
                 repliedConversationId,
                 chatroomDetailAdapter.items()
             )
@@ -4856,7 +4881,7 @@ class ChatroomDetailFragment :
                 )
             )
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                ?.setTextColor(LMTheme.getButtonsColor())
+                ?.setTextColor(LMChatAppearance.getButtonsColor())
         }
         alertDialog.show()
     }
@@ -5097,6 +5122,19 @@ class ChatroomDetailFragment :
         return chatroomDetailAdapter.items().indexOfFirst {
             it is ConversationViewData && it.id == id
         }
+    }
+
+    /**
+     * Returns the current index of the date if exists from the recyclerview
+     * @param date Date string
+     */
+    private fun getIndexOfDate(date: String): Int {
+        chatroomDetailAdapter.items().forEachIndexed { index, item ->
+            if (item is ChatroomDateViewData && item.date == date) {
+                return index
+            }
+        }
+        return -1
     }
 
     /**
@@ -5447,8 +5485,8 @@ class ChatroomDetailFragment :
         val workerUUID = viewModel.postFailedConversation(requireContext(), updatedConversation)
         val chatReplyViewData = ChatReplyUtil.getConversationReplyData(
             conversation,
-            userPreferences.getUUID(),
-            requireContext()
+            userPreferences.getUUID()
+
         )
         observeCreateConversationWorker(
             workerUUID,
@@ -5478,7 +5516,6 @@ class ChatroomDetailFragment :
             val replyData = ChatReplyUtil.getConversationReplyData(
                 conversation,
                 userPreferences.getUUID(),
-                requireContext(),
                 type = type
             )
             setReplyViewData(replyData)
@@ -5496,7 +5533,6 @@ class ChatroomDetailFragment :
             val replyData = ChatReplyUtil.getChatRoomReplyData(
                 chatRoom,
                 userPreferences.getUUID(),
-                requireContext(),
                 type = type
             )
             setReplyViewData(replyData)
@@ -5534,7 +5570,7 @@ class ChatroomDetailFragment :
                         tvConversation,
                         replyData.conversationText,
                         false,
-                        LMTheme.getTextLinkColor()
+                        LMChatAppearance.getTextLinkColor()
                     )
                 }
             }
@@ -5640,12 +5676,12 @@ class ChatroomDetailFragment :
                 viewReply.tvConversation,
                 editData.conversationText,
                 false,
-                LMTheme.getTextLinkColor()
+                LMChatAppearance.getTextLinkColor()
             )
             MemberTaggingDecoder.decode(
                 etAnswer,
                 editData.conversationText,
-                LMTheme.getTextLinkColor()
+                LMChatAppearance.getTextLinkColor()
             )
             etAnswer.setSelection(etAnswer.text?.length ?: 0)
             ViewUtils.showKeyboard(requireContext(), etAnswer)
@@ -5953,8 +5989,8 @@ class ChatroomDetailFragment :
     }
 
     // sends dm request when the user clicks on confirm
-    override fun sendDMRequest() {
-        viewModel.sendDMRequest(chatroomId, ChatRequestState.INITIATED)
+    override fun sendDMRequest(requestText: String) {
+        viewModel.sendDMRequest(chatroomId, ChatRequestState.INITIATED, requestText = requestText)
         clearEditTextAnswer()
     }
 
@@ -6031,7 +6067,7 @@ class ChatroomDetailFragment :
 
         val searchMenuItem = actionsMenu?.findItem(R.id.menu_item_search)
         searchMenuItem?.isVisible = true
-        searchMenuItem?.icon?.setTint(LMTheme.getToolbarColor())
+        searchMenuItem?.icon?.setTint(LMChatAppearance.getToolbarColor())
 
         viewModel.getChatroomActions()?.forEach { chatroomActionViewData ->
             when (chatroomActionViewData.id) {
@@ -6047,7 +6083,7 @@ class ChatroomDetailFragment :
                     item?.title = chatroomActionViewData.title
                     val item2 = actionsMenu?.findItem(R.id.share_chatroom_icon)
                     item2?.isVisible = true
-                    item2?.icon?.setTint(LMTheme.getToolbarColor())
+                    item2?.icon?.setTint(LMChatAppearance.getToolbarColor())
                 }
 
                 "4", "9" -> {
@@ -6326,7 +6362,7 @@ class ChatroomDetailFragment :
             ShareUtils.shareChatroom(
                 requireContext(),
                 (viewModel.chatroomDetail.chatroom?.id ?: ""),
-                ShareUtils.domain
+                LMChatUserMetaData.getInstance().domain ?: ShareUtils.DOMAIN
             )
             viewModel.sendChatroomShared()
         }

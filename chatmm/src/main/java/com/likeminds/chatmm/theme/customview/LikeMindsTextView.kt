@@ -5,7 +5,7 @@ import android.content.res.ColorStateList
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.theme.util.ThemeUtil
 
 internal class LikeMindsTextView : AppCompatTextView {
@@ -29,7 +29,7 @@ internal class LikeMindsTextView : AppCompatTextView {
     private fun initiate(attrs: AttributeSet?) {
         // fonts
         val array = context.obtainStyledAttributes(attrs, R.styleable.LikeMindsTextView)
-        val drawableType = array.getString(R.styleable.LikeMindsButton_drawable_type)
+        val drawableType = array.getString(R.styleable.LikeMindsTextView_drawableType)
 
         typeface = ThemeUtil.getTypeFace(
             context,
@@ -45,12 +45,12 @@ internal class LikeMindsTextView : AppCompatTextView {
         )
 
         // sets text link color
-        setLinkTextColor(LMTheme.getTextLinkColor())
+        setLinkTextColor(LMChatAppearance.getTextLinkColor())
 
         // applies button color to button drawables
         if (drawableType.equals("special")) {
             compoundDrawables.forEach {
-                it?.setTintList(ColorStateList.valueOf(LMTheme.getButtonsColor()))
+                it?.setTintList(ColorStateList.valueOf(LMChatAppearance.getButtonsColor()))
             }
         }
 

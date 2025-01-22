@@ -10,7 +10,7 @@ import com.likeminds.chatmm.utils.customview.BaseRecyclerAdapter
 import com.likeminds.chatmm.utils.customview.ViewDataBinder
 import com.likeminds.chatmm.utils.model.BaseViewType
 
-class DMAdapter constructor(
+class DMAdapter(
     private val dmAdapterListener: DMAdapterListener,
     private val userPreferences: UserPreferences
 ) : BaseRecyclerAdapter<BaseViewType>() {
