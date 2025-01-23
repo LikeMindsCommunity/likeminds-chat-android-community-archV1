@@ -73,7 +73,7 @@ abstract class ConversationWorker(
             return Result.failure()
         }
         return withContext(Dispatchers.IO) {
-            val result = suspendCoroutine { continuation ->
+            val result = suspendCoroutine<Int> { continuation ->
                 uploadFiles(continuation)
             }
             return@withContext when (result) {
