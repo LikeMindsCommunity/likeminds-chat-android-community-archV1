@@ -1,7 +1,6 @@
 package com.likeminds.chatmm.conversation.model
 
 import android.os.Parcelable
-import android.util.Log
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.member.model.MemberViewData
@@ -143,16 +142,6 @@ class ConversationViewData private constructor(
         if (!isTemporaryConversation()) {
             return false
         }
-
-        Log.d(
-            "PUI", """
-            isFailed
-            id: $id
-            localCreatedEpoch: $localCreatedEpoch
-            currentTimeMillis: $currentTimeMillis
-            workeruuid: $workerUUID
-        """.trimIndent()
-        )
 
         return when {
             (localCreatedEpoch != null && attachments.isNullOrEmpty()) -> {

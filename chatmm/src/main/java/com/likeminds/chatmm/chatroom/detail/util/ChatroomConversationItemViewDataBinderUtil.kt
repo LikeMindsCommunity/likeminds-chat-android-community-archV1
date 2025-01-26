@@ -157,13 +157,10 @@ object ChatroomConversationItemViewDataBinderUtil {
             }
             set.applyTo(clRoot)
 
-            Log.d("PUI", "initConversationBubbleView1 $itemPosition")
-
             if (conversationViewData?.isFailed() == true) {
                 imageViewStatus?.visibility = View.GONE
                 imageViewFailed?.visibility = View.VISIBLE
                 conversationViewData.workerUUID?.let { workerUUID ->
-                    Log.d("PUI", "initConversationBubbleView: $workerUUID")
                     WorkManager.getInstance(context).cancelWorkById(UUID.fromString(workerUUID))
                 }
             } else {

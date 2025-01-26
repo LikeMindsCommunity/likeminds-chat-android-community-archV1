@@ -49,7 +49,6 @@ abstract class ConversationWorker(
         const val OUTPUT_POST_CONVERSATION_RESPONSE = "OUTPUT_POST_CONVERSATION_RESPONSE"
 
         fun getProgress(workInfo: WorkInfo): Pair<Long, Long>? {
-            Log.d("PUI", "getProgress: ")
             val progress = workInfo.progress.getLongArray(ARG_PROGRESS)
             if (progress == null || progress.size != 2) {
                 return null
@@ -143,7 +142,6 @@ abstract class ConversationWorker(
         }
     }
 
-    // TODO: call this in appropriate places as this is useful to retry attachment uploading
     private fun getFailureResult(failedArrayIndex: IntArray = IntArray(0)): Result {
         return Result.failure(
             Data.Builder()
@@ -229,7 +227,6 @@ abstract class ConversationWorker(
         totalFileCount: Int,
         continuation: Continuation<Int>
     ) {
-        Log.d("PUI", "postConversation: ")
         //updateConversation
         val attachments = conversation.attachments ?: return
 

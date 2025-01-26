@@ -2165,11 +2165,6 @@ class ChatroomDetailFragment :
                 .observe(viewLifecycleOwner) { workInfo ->
                     when (workInfo.state) {
                         WorkInfo.State.SUCCEEDED -> {
-                            Log.d(
-                                "PUI",
-                                "observeCreateConversationWorker:conversation created!!!!! ${System.currentTimeMillis()}"
-                            )
-
                             //get output data
                             val successResponseString =
                                 workInfo.outputData.getString(OUTPUT_POST_CONVERSATION_RESPONSE)
@@ -2246,10 +2241,6 @@ class ChatroomDetailFragment :
                                 workInfo.outputData.getIntArray(ARG_MEDIA_INDEX_LIST)
 
                             failedMediaIndex?.let { indexList ->
-                                Log.d(
-                                    "PUI",
-                                    "observeCreateConversationWorker: failed list: $indexList"
-                                )
                                 val position = getIndexOfConversation(conversationId)
                                 if (position >= 0) {
                                     val oldConversation = chatroomDetailAdapter[position]
@@ -2281,24 +2272,13 @@ class ChatroomDetailFragment :
                         }
 
                         else -> {
-                            Log.d("PUI", "observeCreateConversationWorker: " + workInfo.state)
-                            val progress = ConversationWorker.getProgress(workInfo) ?: return@observe
-                            Log.d(
-                                "PUI",
-                                "observeCreateConversationWorker-1: " + conversationId + ":::" + getIndexOfConversation(
-                                    conversationId
-                                )
-                            )
+                            val progress =
+                                ConversationWorker.getProgress(workInfo) ?: return@observe
                             val position = getIndexOfConversation(conversationId)
                             if (position.isValidIndex()) {
                                 val oldConversation = chatroomDetailAdapter[position]
                                         as? ConversationViewData
                                     ?: return@observe
-
-                                Log.d(
-                                    "PUI",
-                                    "observeCreateConversationWorker: upload completed!!!!! ${progress.first} ${progress.second}"
-                                )
 
                                 val updatedConversation =
                                     if ((progress.first / (progress.second * 1.0)) == 1.0) {
@@ -4684,19 +4664,33 @@ class ChatroomDetailFragment :
     }
 
     override fun onRetryConversationMediaUpload(conversationId: String, attachmentCount: Int) {
-        Log.d("PUI", "onRetryConversationMediaUpload: ")
-        viewModel.createRetryConversationMediaWorker(
+        val uuid = viewModel.createRetryConversationMediaWorker(
             requireContext(),
             conversationId,
             attachmentCount
         )
+
+        if (uuid.isNotEmpty()) {
+            val conversation = getIndexedConversation(conversationId)?.second ?: return
+            val chatReplyViewData = ChatReplyUtil.getConversationReplyData(
+                conversation,
+                userPreferences.getUUID()
+            )
+
+            observeCreateConversationWorker(
+                uuid,
+                conversationId,
+                chatReplyViewData,
+                conversation.replyConversation?.id,
+                conversation.replyChatroomId
+            )
+        }
     }
 
     override fun onFailedConversationClick(
         conversation: ConversationViewData,
         itemPosition: Int,
     ) {
-        Log.d("PUI", "onFailedConversationClick: ")
         showFailedConversationMenu(conversation, itemPosition)
     }
 
@@ -5486,8 +5480,8 @@ class ChatroomDetailFragment :
         val chatReplyViewData = ChatReplyUtil.getConversationReplyData(
             conversation,
             userPreferences.getUUID()
-
         )
+
         observeCreateConversationWorker(
             workerUUID,
             conversation.id,
@@ -5496,7 +5490,6 @@ class ChatroomDetailFragment :
             conversation.replyChatroomId
         )
 
-        Log.d("PUI", "resendFailedConversation $index:::${updatedConversation.localCreatedEpoch}")
         chatroomDetailAdapter.update(index, updatedConversation)
     }
 

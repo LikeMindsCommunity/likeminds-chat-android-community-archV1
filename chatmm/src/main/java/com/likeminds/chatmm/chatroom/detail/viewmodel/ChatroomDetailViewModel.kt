@@ -1727,9 +1727,9 @@ class ChatroomDetailViewModel @Inject constructor(
         context: Context,
         conversationId: String,
         attachmentCount: Int,
-    ) {
+    ): String {
         if (conversationId.isEmpty() || attachmentCount <= 0) {
-            return
+            return ""
         }
         val uploadData = getUploadWorker(context, conversationId)
         val updateConversationUploadWorkerUUIDRequest =
@@ -1739,6 +1739,7 @@ class ChatroomDetailViewModel @Inject constructor(
                 .build()
         lmChatClient.updateConversationWorkerUUID(updateConversationUploadWorkerUUIDRequest)
         uploadData.first.enqueue()
+        return uploadData.second
     }
 
     @SuppressLint("EnqueueWork")
@@ -1851,9 +1852,6 @@ class ChatroomDetailViewModel @Inject constructor(
 
 
     fun postFailedConversation(context: Context, conversation: ConversationViewData): String {
-        //TODO: check if the conversations are already uploaded then don't upload attachments
-
-
         //create upload worker
         val uploadData = getUploadWorker(context, conversation.id)
 
