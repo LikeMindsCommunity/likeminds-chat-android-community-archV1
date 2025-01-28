@@ -15,7 +15,6 @@ import com.likeminds.chatmm.utils.ValueUtils.getItemInList
 import com.likeminds.chatmm.utils.customview.*
 import com.likeminds.chatmm.utils.model.*
 import com.likeminds.likemindschat.user.model.MemberBlockState
-import java.util.UUID
 
 class ChatroomDetailAdapter(
     val sdkPreferences: SDKPreferences,
@@ -200,7 +199,6 @@ interface ChatroomDetailAdapterListener {
 
     fun onMultipleItemsExpanded(conversation: ConversationViewData, position: Int) {}
 
-    fun observeMediaUpload(uuid: UUID, conversation: ConversationViewData)
     fun onRetryConversationMediaUpload(conversationId: String, attachmentCount: Int)
     fun onFailedConversationClick(conversation: ConversationViewData, itemPosition: Int)
     fun showMemberProfile(member: MemberViewData)

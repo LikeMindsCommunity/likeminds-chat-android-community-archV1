@@ -79,7 +79,7 @@ internal class ChatroomDetailDiffUtilCallback(
                 && oldItem.deletedBy == newItem.deletedBy
                 && oldItem.attachmentCount == newItem.attachmentCount
                 && oldItem.attachmentsUploaded == newItem.attachmentsUploaded
-                && oldItem.uploadWorkerUUID == newItem.uploadWorkerUUID
+                && oldItem.workerUUID == newItem.workerUUID
                 && oldItem.isLastItem == newItem.isLastItem
                 && reactions(oldItem.reactions, newItem.reactions)
                 && oldItem.replyChatroomId == newItem.replyChatroomId

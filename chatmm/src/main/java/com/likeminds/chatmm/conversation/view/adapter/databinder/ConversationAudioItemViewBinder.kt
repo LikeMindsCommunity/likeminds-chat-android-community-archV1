@@ -173,18 +173,9 @@ class ConversationAudioItemViewBinder @Inject constructor(
                 listener = chatroomDetailAdapterListener
             )
 
-            val mediaActionVisible = if (mediaUploadData.third == "sending") {
-                true
-            } else {
-                mediaUploadData.second
-            }
-            val mediaUploadFailed = data.isFailed()
+            val mediaActionVisible = mediaUploadData.second
 
-            if (mediaUploadData.first != null) {
-                chatroomDetailAdapterListener.observeMediaUpload(
-                    mediaUploadData.first!!, data
-                )
-            }
+            val mediaUploadFailed = data.isFailed()
 
             val attachments = data.attachments.orEmpty().map {
                 it.toBuilder()

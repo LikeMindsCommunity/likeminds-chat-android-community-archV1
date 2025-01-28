@@ -203,12 +203,6 @@ internal class ConversationMultipleDocumentViewDataBinder(
 
             mediaActionVisible = mediaUploadData.second
 
-            if (mediaUploadData.first != null) {
-                chatroomDetailAdapterListener.observeMediaUpload(
-                    mediaUploadData.first!!, conversation
-                )
-            }
-
             binding.tvShowMore.setOnClickListener {
                 chatroomDetailAdapterListener.onMultipleItemsExpanded(conversation, position)
             }

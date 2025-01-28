@@ -1,0 +1,19 @@
+dependencies {
+    //core
+    implementation deps.android_core.core
+    implementation deps.android_core.appcompat
+    implementation deps.ktx.fragment
+
+    //firebase
+    implementation platform(deps.firebase.bom)
+    implementation deps.firebase.messaging
+
+    //testing
+    testImplementation deps.junit.main
+    androidTestImplementation deps.android_test.android
+    androidTestImplementation deps.android_test.espresso
+
+    implementation deps.colorPicker.main
+
+    implementation project(":chatmm")
+}

@@ -181,12 +181,6 @@ internal class ConversationMultipleMediaItemViewDataBinder @Inject constructor(
 
             mediaActionVisible = mediaUploadData.second
 
-            if (mediaUploadData.first != null) {
-                adapterListener.observeMediaUpload(
-                    mediaUploadData.first!!, conversationViewData
-                )
-            }
-
             ivAddReaction.setOnClickListener {
                 adapterListener.onLongPressConversation(
                     conversationViewData,

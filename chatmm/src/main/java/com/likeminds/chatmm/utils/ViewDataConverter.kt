@@ -252,7 +252,7 @@ object ViewDataConverter {
             .replyChatroomId(conversation.replyChatroomId)
             .attachmentCount(conversation.attachmentCount ?: 0)
             .attachmentsUploaded(conversation.attachmentUploaded)
-            .uploadWorkerUUID(conversation.uploadWorkerUUID)
+            .workerUUID(conversation.workerUUID)
             .temporaryId(conversation.temporaryId)
             .shortAnswer(ViewMoreUtil.getShortAnswer(updatedAnswer, 1000))
             .pollInfoData(convertPollInfoData(conversation))
@@ -261,6 +261,7 @@ object ViewDataConverter {
             .deletedByMember(convertMember(conversation.deletedByMember))
             .widgetId(conversation.widgetId)
             .widget(convertWidget(conversation.widget))
+            .attachmentsUploadedEpoch(conversation.attachmentsUploadedEpoch)
             .build()
     }
 
@@ -753,13 +754,13 @@ object ViewDataConverter {
             .replyChatroomId(conversationViewData.replyChatroomId)
             .attachmentCount(conversationViewData.attachmentCount)
             .attachmentUploaded(conversationViewData.attachmentsUploaded)
-            .uploadWorkerUUID(conversationViewData.uploadWorkerUUID)
+            .workerUUID(conversationViewData.workerUUID)
             .localCreatedEpoch(conversationViewData.localCreatedEpoch)
             .deletedBy(conversationViewData.deletedBy)
             .temporaryId(conversationViewData.temporaryId)
             .isEdited(conversationViewData.isEdited)
             .replyChatroomId(conversationViewData.replyChatroomId)
-            .attachmentUploaded(conversationViewData.attachmentsUploaded)
+            .attachmentsUploadedEpoch(conversationViewData.attachmentsUploadedEpoch)
             .build()
     }
 

@@ -191,17 +191,9 @@ internal class ConversationVoiceNoteItemViewDataBinder(
             listener = adapterListener
         )
 
-        val mediaActionVisible = if (mediaUploadData.third == "sending") {
-            true
-        } else {
-            mediaUploadData.second
-        }
+        val mediaActionVisible = mediaUploadData.second
 
         val mediaUploadFailed = conversation.isFailed()
-
-        if (mediaUploadData.first != null) {
-            adapterListener.observeMediaUpload(mediaUploadData.first!!, conversation)
-        }
 
         val attachment = binding.attachment ?: return
 
@@ -262,11 +254,13 @@ internal class ConversationVoiceNoteItemViewDataBinder(
                             }, ViewConfiguration.getLongPressTimeout().toLong())
                         }
                     }
+
                     MotionEvent.ACTION_UP -> {
                         isProgressBarFocused = false
                         handler?.removeCallbacksAndMessages(null)
                         handler = null
                     }
+
                     MotionEvent.ACTION_MOVE -> {
                         if (event.x - xAtDown >= ViewUtils.dpToPx(5) || event.y - yAtDown >= ViewUtils.dpToPx(
                                 5

@@ -246,18 +246,11 @@ internal class ConversationSingleImageItemViewDataBinder(
                         attachmentViewData
                     )
 
-                    val uploadData =
-                        ChatroomConversationItemViewDataBinderUtil.initUploadMediaAction(
-                            viewMediaUploadingActions,
-                            conversation = conversationViewData,
-                            listener = adapterListener
-                        )
-
-                    if (uploadData.first != null) {
-                        adapterListener.observeMediaUpload(
-                            uploadData.first!!, conversationViewData
-                        )
-                    }
+                    ChatroomConversationItemViewDataBinderUtil.initUploadMediaAction(
+                        viewMediaUploadingActions,
+                        conversation = conversationViewData,
+                        listener = adapterListener
+                    )
                 } else {
                     ivSingleImage.visibility = View.GONE
                     ProgressHelper.showProgress(progressBar, false)

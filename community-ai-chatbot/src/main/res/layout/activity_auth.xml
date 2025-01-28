@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/lm_chat_white">
+
+        <TextView
+            android:id="@+id/tv_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/lm_chat_roboto_medium"
+            android:gravity="center"
+            android:text="@string/lm_chat_app_name"
+            android:textColor="@color/lm_chat_black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_api_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="30dp"
+            android:text="@string/enter_api_key"
+            android:textColor="@color/lm_chat_black"
+            android:textSize="16sp"
+            app:fontType="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_heading" />
+
+        <EditText
+            android:id="@+id/et_api_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="5dp"
+            android:backgroundTint="@color/lm_chat_black"
+            android:hint="@string/api_key"
+            android:inputType="text"
+            android:textColor="@color/lm_chat_black"
+            app:font_style="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_api_key"
+            tools:ignore="Autofill" />
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/user_name"
+            android:textColor="@color/lm_chat_black"
+            android:textSize="16sp"
+            app:fontType="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_api_key" />
+
+        <EditText
+            android:id="@+id/et_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="5dp"
+            android:backgroundTint="@color/lm_chat_black"
+            android:hint="@string/user_name"
+            android:inputType="text"
+            android:textColor="@color/lm_chat_black"
+            app:font_style="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_user_name"
+            tools:ignore="Autofill" />
+
+        <TextView
+            android:id="@+id/tv_user_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/user_id"
+            android:textColor="@color/lm_chat_black"
+            android:textSize="16sp"
+            app:fontType="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_user_name" />
+
+        <EditText
+            android:id="@+id/et_user_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="5dp"
+            android:backgroundTint="@color/lm_chat_black"
+            android:hint="@string/user_id"
+            android:inputType="text"
+            android:textColor="@color/lm_chat_black"
+            app:font_style="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_user_id"
+            tools:ignore="Autofill" />
+
+        <TextView
+            android:id="@+id/tv_branding_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/choose_branding"
+            android:textColor="@color/lm_chat_black"
+            android:textSize="16sp"
+            app:fontType="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_user_id" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/iv_branding_header"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            android:backgroundTint="@color/lm_chat_white"
+            android:src="@color/lm_chat_white"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintStart_toStartOf="@id/et_user_id"
+            app:layout_constraintTop_toBottomOf="@id/tv_branding_header" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/header"
+            android:textColor="@color/lm_chat_black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@id/iv_branding_header"
+            app:layout_constraintStart_toStartOf="@id/iv_branding_header"
+            app:layout_constraintTop_toBottomOf="@id/iv_branding_header" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/iv_branding_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="15dp"
+            android:backgroundTint="@color/lm_chat_purple_500"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintStart_toEndOf="@id/iv_branding_header"
+            app:layout_constraintTop_toBottomOf="@id/tv_branding_header" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/button"
+            android:textColor="@color/lm_chat_black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@id/iv_branding_button"
+            app:layout_constraintStart_toStartOf="@id/iv_branding_button"
+            app:layout_constraintTop_toBottomOf="@id/iv_branding_header" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/iv_branding_text_link"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="15dp"
+            android:backgroundTint="@color/lm_chat_pure_blue"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintStart_toEndOf="@id/iv_branding_button"
+            app:layout_constraintTop_toBottomOf="@id/tv_branding_header"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/text_links"
+            android:textColor="@color/lm_chat_black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@id/iv_branding_text_link"
+            app:layout_constraintStart_toStartOf="@id/iv_branding_text_link"
+            app:layout_constraintTop_toBottomOf="@id/iv_branding_header" />
+
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="50dp"
+            android:text="@string/start"
+            android:textColor="@color/lm_chat_white"
+            app:font_type="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_branding_header"
+            app:text_type="normal" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

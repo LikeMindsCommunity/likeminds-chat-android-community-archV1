@@ -16,7 +16,7 @@ import com.likeminds.chatmm.utils.customview.BaseRecyclerAdapter
 import com.likeminds.chatmm.utils.customview.ViewDataBinder
 import com.likeminds.chatmm.utils.model.BaseViewType
 
-class ChatroomItemAdapter constructor(
+class ChatroomItemAdapter(
     val userPreferences: UserPreferences,
     val chatroomItemAdapterListener: ChatroomItemAdapterListener? = null,
     val createPollItemAdapterListener: CreatePollItemAdapterListener? = null,
