@@ -6,6 +6,7 @@ import com.amazonaws.mobile.client.*
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.likeminds.chatmm.di.DaggerLikeMindsChatComponent
 import com.likeminds.chatmm.di.LikeMindsChatComponent
+import com.likeminds.chatmm.di.aichatbot.AIChatbotComponent
 import com.likeminds.chatmm.di.chat.ChatComponent
 import com.likeminds.chatmm.di.chatroomdetail.ChatroomDetailComponent
 import com.likeminds.chatmm.di.dm.DMComponent
@@ -55,6 +56,7 @@ class SDKApplication : LMChatSDKCallback {
     private var dmComponent: DMComponent? = null
     private var memberComponent: MemberComponent? = null
     private var chatComponent: ChatComponent? = null
+    private var aiChatbotComponent: AIChatbotComponent? = null
 
     companion object {
         const val LOG_TAG = "LikeMindsChat"
@@ -249,6 +251,17 @@ class SDKApplication : LMChatSDKCallback {
             chatComponent = likeMindsChatComponent?.chatComponent()?.create()
         }
         return chatComponent
+    }
+
+    /**
+     * initiate and return AIChatbotComponent: All dependencies required for chatroom screen package
+     * */
+    fun aiChatbotComponent(): AIChatbotComponent? {
+        if (aiChatbotComponent == null) {
+            aiChatbotComponent = likeMindsChatComponent?.aiChatbotComponent()?.create()
+        }
+
+        return aiChatbotComponent
     }
 
     override fun onAccessTokenExpiredAndRefreshed(accessToken: String, refreshToken: String) {

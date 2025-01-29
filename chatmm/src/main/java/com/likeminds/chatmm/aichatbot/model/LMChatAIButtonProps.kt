@@ -45,6 +45,16 @@ class LMChatAIButtonProps private constructor(
         fun refreshToken(refreshToken: String?) = apply {
             this.refreshToken = refreshToken
         }
+
+        fun build() = LMChatAIButtonProps(
+            apiKey,
+            uuid,
+            userName,
+            imageUrl,
+            isGuest,
+            accessToken,
+            refreshToken
+        )
     }
 
     fun toBuilder(): Builder {

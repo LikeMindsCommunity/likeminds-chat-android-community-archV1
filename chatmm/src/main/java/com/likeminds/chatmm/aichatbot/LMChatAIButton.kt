@@ -6,6 +6,9 @@ import com.google.android.material.button.MaterialButton
 import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.aichatbot.model.LMChatAIButtonProps
 import com.likeminds.chatmm.aichatbot.util.LMChatAIChatBotPreferences
+import com.likeminds.chatmm.aichatbot.view.LMChatAIBotInitiationActivity
+import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
+import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
 
 class LMChatAIButton : MaterialButton {
 
@@ -49,12 +52,10 @@ class LMChatAIButton : MaterialButton {
                 }
             }
         }
-    }
 
-    override fun setOnClickListener(l: OnClickListener?) {
-        super.setOnClickListener(l)
-
-        startAIChatBot()
+        this.setOnClickListener {
+            startAIChatBot()
+        }
     }
 
     @Throws(Exception::class)
@@ -95,11 +96,17 @@ class LMChatAIButton : MaterialButton {
     }
 
     private fun initiateChatBot() {
-        val chatroomIDWithAIChatbot = LMChatAIChatBotPreferences(context).getChatroomIDWithAIChatbot()
+        val chatroomIDWithAIChatbot =
+            LMChatAIChatBotPreferences(context).getChatroomIDWithAIChatbot()
         if (chatroomIDWithAIChatbot.isEmpty()) {
-
+            LMChatAIBotInitiationActivity.start(context)
         } else {
-
+            ChatroomDetailActivity.start(
+                context,
+                ChatroomDetailExtras.Builder()
+                    .chatroomId(chatroomIDWithAIChatbot)
+                    .build()
+            )
         }
     }
 }

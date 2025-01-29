@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_ai_chatbot_initiation.xml"
+    app:startDestination="@id/ai_chatbot_fragment">
+
+    <fragment
+        android:id="@+id/ai_chatbot_fragment"
+        android:name="com.likeminds.chatmm.aichatbot.view.LMChatAIBotInitiationFragment"
+        android:label="LMChatAIBotInitiationFragment" />
+</navigation>

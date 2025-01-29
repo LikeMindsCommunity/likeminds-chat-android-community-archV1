@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/lm_chat_white">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/ai_chatbot_anim"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="68dp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/lm_chat_chatbot_ai_animation" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:fontFamily="@font/lm_chat_roboto_regular"
+            android:text="@string/lm_chat_setting_up_ai_chatbot"
+            android:textColor="@color/lm_chat_brown_grey"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

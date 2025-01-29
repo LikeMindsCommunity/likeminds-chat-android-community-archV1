@@ -2,10 +2,11 @@ package com.likeminds.chatmm.aichatbot.util
 
 import android.content.Context
 import com.likeminds.chatmm.utils.sharedpreferences.BasePreferences
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LMChatAIChatBotPreferences(
+class LMChatAIChatBotPreferences @Inject constructor(
     context: Context
 ) : BasePreferences(AI_CHATBOT_PREFS, context) {
 
