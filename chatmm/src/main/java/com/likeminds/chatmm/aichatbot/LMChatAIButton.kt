@@ -1,26 +1,40 @@
 package com.likeminds.chatmm.aichatbot
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.AttributeSet
 import com.google.android.material.button.MaterialButton
 import com.likeminds.chatmm.LMChatCore
+import com.likeminds.chatmm.R
 import com.likeminds.chatmm.aichatbot.model.LMChatAIButtonProps
 import com.likeminds.chatmm.aichatbot.util.LMChatAIChatBotPreferences
 import com.likeminds.chatmm.aichatbot.view.LMChatAIBotInitiationActivity
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 
 class LMChatAIButton : MaterialButton {
 
-    constructor(context: Context) : super(context)
+    constructor(context: Context) : super(context) {
+        initialize()
+    }
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        initialize()
+    }
 
     constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
         context,
         attrs,
         defStyle
-    )
+    ) {
+        initialize()
+    }
+
+    private fun initialize() {
+        backgroundTintList = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
+        text = context.getString(R.string.lm_chat_ai_bot)
+    }
 
     private lateinit var chatAIButtonProps: LMChatAIButtonProps
 

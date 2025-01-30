@@ -3447,10 +3447,6 @@ class ChatroomDetailFragment :
     // updates the header name on chatroom
     private fun updateHeader(header: String, isSecretChatRoom: Boolean) {
         binding.apply {
-            val isAIBot = viewModel.isOtherUserAIBot()
-            tvAiBot.isVisible = isAIBot
-            tvAiBot.setBackgroundColor(LMChatAppearance.getButtonsColor())
-
             if (viewModel.isDmChatroom()) {
                 tvToolbarSubTitle.hide()
                 val member = viewModel.getOtherDmMember() ?: return
