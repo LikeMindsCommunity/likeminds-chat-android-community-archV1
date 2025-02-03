@@ -39,7 +39,7 @@ class CommunityChatApplication : Application(), LMChatCoreCallback {
 
         LMChatCore.setup(
             application = this,
-            theme = LMChatTheme.COMMUNITY_CHAT,
+            theme = LMChatTheme.AI_CHATBOT,
             lmChatCoreCallback = this,
             lmChatAppearanceRequest = lmChatAppearanceRequest,
             domain = deviceId(),
