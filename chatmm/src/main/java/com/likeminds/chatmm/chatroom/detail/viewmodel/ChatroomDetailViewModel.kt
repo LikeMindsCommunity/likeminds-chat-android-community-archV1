@@ -2101,6 +2101,7 @@ class ChatroomDetailViewModel @Inject constructor(
 
             val response = lmChatClient.sendDMRequest(request)
             if (response.success) {
+                sendDMChatroomCreated()
                 if (isM2CM) {
                     _dmInitiatedForCM.postValue(true)
                 }
@@ -2630,6 +2631,38 @@ class ChatroomDetailViewModel @Inject constructor(
                     "chatroom_title" to chatroom.header,
                     LMAnalytics.Keys.COMMUNITY_ID to chatroom.communityId,
                     LMAnalytics.Keys.COMMUNITY_NAME to chatroom.communityName
+                )
+            )
+        }
+    }
+
+    /**
+     * Triggers when a user initiates DM Chatroom
+     **/
+    private fun sendDMChatroomCreated() {
+        getChatroomViewData()?.let { chatroom ->
+            val senderId = userPreferences.getUUID()
+            val senderName = userPreferences.getMemberName()
+            val receiverDetails = if (chatroom.chatroomWithUser?.sdkClientInfo?.uuid == senderId) {
+                Pair(chatroom.memberViewData.sdkClientInfo.uuid, chatroom.memberViewData.name)
+            } else {
+                Pair(
+                    chatroom.chatroomWithUser?.sdkClientInfo?.uuid,
+                    chatroom.chatroomWithUser?.name
+                )
+            }
+
+            Log.d(
+                "PUI",
+                "sendDMChatroomCreated: $senderId:::$senderName:::${receiverDetails.first}:::${receiverDetails.second}"
+            )
+            LMAnalytics.track(
+                LMAnalytics.Events.DM_CHATROOM_CREATED,
+                mapOf(
+                    "sender_id" to senderId,
+                    "sender_name" to senderName,
+                    "receiver_name" to receiverDetails.second,
+                    "receiver_id" to receiverDetails.first,
                 )
             )
         }

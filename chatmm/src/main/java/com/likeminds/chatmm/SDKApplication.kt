@@ -282,6 +282,14 @@ class SDKApplication : LMChatSDKCallback {
                         .build()
                     val response = mChatClient.initiateUser(initiateUserRequest)
 
+                    LMAnalytics.track(
+                        LMAnalytics.Events.SDK_INITIATE,
+                        mapOf(
+                            "success" to response.success.toString(),
+                            LMAnalytics.Keys.UUID to user.sdkClientInfo?.uuid
+                        )
+                    )
+
                     if (response.success) {
                         val accessToken = response.data?.accessToken ?: ""
                         val refreshToken = response.data?.refreshToken ?: ""
