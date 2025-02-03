@@ -2652,10 +2652,6 @@ class ChatroomDetailViewModel @Inject constructor(
                 )
             }
 
-            Log.d(
-                "PUI",
-                "sendDMChatroomCreated: $senderId:::$senderName:::${receiverDetails.first}:::${receiverDetails.second}"
-            )
             LMAnalytics.track(
                 LMAnalytics.Events.DM_CHATROOM_CREATED,
                 mapOf(

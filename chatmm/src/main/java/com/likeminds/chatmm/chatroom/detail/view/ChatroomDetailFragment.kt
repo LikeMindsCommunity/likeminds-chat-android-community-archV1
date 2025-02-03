@@ -436,6 +436,7 @@ class ChatroomDetailFragment :
 
         const val SCREEN_RECORD = "screen_record"
         const val SOURCE_HOME_FEED = "home_feed"
+        const val SOURCE_AI_CHATBOT = "ai_chatbot"
         const val SOURCE_TAGGED_AUTO_FOLLOWED = "tagged_auto_followed"
 
         const val MUTE_ACTION_TITLE = "Mute notifications"

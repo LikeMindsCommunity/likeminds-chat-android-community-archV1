@@ -5,6 +5,7 @@ import com.likeminds.chatmm.aichatbot.util.LMChatAIChatBotPreferences
 import com.likeminds.chatmm.aichatbot.viewmodel.LMChatAIBotViewModel
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
+import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailFragment.Companion.SOURCE_AI_CHATBOT
 import com.likeminds.chatmm.databinding.LmChatAiBotInitiationFragmentBinding
 import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.customview.BaseFragment
@@ -48,6 +49,7 @@ class LMChatAIBotInitiationFragment :
                     requireContext(),
                     ChatroomDetailExtras.Builder()
                         .chatroomId(chatroomId)
+                        .source(SOURCE_AI_CHATBOT)
                         .build()
                 )
 

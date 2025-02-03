@@ -11,7 +11,9 @@ import com.likeminds.chatmm.aichatbot.util.LMChatAIChatBotPreferences
 import com.likeminds.chatmm.aichatbot.view.LMChatAIBotInitiationActivity
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
+import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailFragment.Companion.SOURCE_AI_CHATBOT
 import com.likeminds.chatmm.theme.model.LMChatAppearance
+import com.likeminds.chatmm.utils.ViewUtils
 
 class LMChatAIButton : MaterialButton {
 
@@ -80,7 +82,6 @@ class LMChatAIButton : MaterialButton {
             }
 
             if (apiKey != null) {
-                //TODO: Ask why we don't take user image and isGuest in showChat function
                 LMChatCore.showChat(
                     context,
                     apiKey,
@@ -90,7 +91,10 @@ class LMChatAIButton : MaterialButton {
                         initiateChatBot()
                     },
                     error = {
-
+                        ViewUtils.showShortToast(
+                            context,
+                            context.getString(R.string.lm_chat_something_went_wrong)
+                        )
                     }
                 )
             } else {
@@ -102,7 +106,10 @@ class LMChatAIButton : MaterialButton {
                         initiateChatBot()
                     },
                     error = {
-
+                        ViewUtils.showShortToast(
+                            context,
+                            context.getString(R.string.lm_chat_something_went_wrong)
+                        )
                     }
                 )
             }
@@ -119,6 +126,7 @@ class LMChatAIButton : MaterialButton {
                 context,
                 ChatroomDetailExtras.Builder()
                     .chatroomId(chatroomIDWithAIChatbot)
+                    .source(SOURCE_AI_CHATBOT)
                     .build()
             )
         }
