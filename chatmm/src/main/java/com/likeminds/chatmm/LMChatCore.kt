@@ -83,6 +83,15 @@ object LMChatCore {
                     .build()
 
                 val response = lmChatClient.initiateUser(initiateUserRequest)
+
+                LMAnalytics.track(
+                    LMAnalytics.Events.SDK_INITIATE,
+                    mapOf(
+                        "success" to response.success.toString(),
+                        LMAnalytics.Keys.UUID to uuid
+                    )
+                )
+
                 if (response.success) {
                     success?.let { success ->
                         response.data?.let {
