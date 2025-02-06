@@ -1,6 +1,6 @@
 package com.likeminds.chatmm.aichatbot.model
 
-class LMChatAIButtonProps private constructor(
+class LMChatAIBotButtonProps private constructor(
     val apiKey: String?,
     val uuid: String?,
     val userName: String?,
@@ -46,7 +46,7 @@ class LMChatAIButtonProps private constructor(
             this.refreshToken = refreshToken
         }
 
-        fun build() = LMChatAIButtonProps(
+        fun build() = LMChatAIBotButtonProps(
             apiKey,
             uuid,
             userName,

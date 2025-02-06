@@ -1,4 +1,4 @@
-package com.likeminds.community.ai.chatbot.auth.model
+package com.likeminds.ai.chatbot.auth.model
 
 import android.os.Parcelable
 import androidx.annotation.Keep

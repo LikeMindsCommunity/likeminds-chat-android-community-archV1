@@ -6,8 +6,8 @@ import android.util.AttributeSet
 import com.google.android.material.button.MaterialButton
 import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.aichatbot.model.LMChatAIButtonProps
-import com.likeminds.chatmm.aichatbot.util.LMChatAIChatBotPreferences
+import com.likeminds.chatmm.aichatbot.model.LMChatAIBotButtonProps
+import com.likeminds.chatmm.aichatbot.util.LMChatAIBotPreferences
 import com.likeminds.chatmm.aichatbot.view.LMChatAIBotInitiationActivity
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
@@ -15,7 +15,7 @@ import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailFragment.Companio
 import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.ViewUtils
 
-class LMChatAIButton : MaterialButton {
+class LMChatAIBotButton : MaterialButton {
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -38,15 +38,15 @@ class LMChatAIButton : MaterialButton {
         text = context.getString(R.string.lm_chat_ai_bot)
     }
 
-    private lateinit var chatAIButtonProps: LMChatAIButtonProps
+    private lateinit var chatAIButtonProps: LMChatAIBotButtonProps
 
-    fun setChatAIButtonProps(chatAIButtonProps: LMChatAIButtonProps) {
+    fun setChatAIButtonProps(chatAIButtonProps: LMChatAIBotButtonProps) {
         chatAIButtonProps.apply {
             if (apiKey == null) {
                 if (accessToken.isNullOrEmpty() || refreshToken.isNullOrEmpty()) {
                     throw IllegalArgumentException("Please pass `accessToken` and `refreshToken`")
                 } else {
-                    this@LMChatAIButton.chatAIButtonProps = chatAIButtonProps
+                    this@LMChatAIBotButton.chatAIButtonProps = chatAIButtonProps
                 }
             } else {
                 when {
@@ -63,7 +63,7 @@ class LMChatAIButton : MaterialButton {
                     }
 
                     else -> {
-                        this@LMChatAIButton.chatAIButtonProps = chatAIButtonProps
+                        this@LMChatAIBotButton.chatAIButtonProps = chatAIButtonProps
                     }
                 }
             }
@@ -118,7 +118,7 @@ class LMChatAIButton : MaterialButton {
 
     private fun initiateChatBot() {
         val chatroomIDWithAIChatbot =
-            LMChatAIChatBotPreferences(context).getChatroomIDWithAIChatbot()
+            LMChatAIBotPreferences(context).getChatroomIDWithAIChatbot()
         if (chatroomIDWithAIChatbot.isEmpty()) {
             LMChatAIBotInitiationActivity.start(context)
         } else {

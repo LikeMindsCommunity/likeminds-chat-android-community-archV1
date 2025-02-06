@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.likeminds.community.ai.chatbot">
+    package="com.likeminds.ai.chatbot">
 
     <application
-        android:name="com.likeminds.community.ai.chatbot.CommunityAIChatbotApplication"
+        android:name="com.likeminds.ai.chatbot.AIChatbotApplication"
         android:allowBackup="false"
         android:icon="@mipmap/lm_chat_ic_launcher"
         android:label="@string/lm_chat_app_name"
@@ -13,10 +13,10 @@
         android:theme="@style/Theme.LikeMindsAndroidCommunityAIChatbot"
         tools:targetApi="31">
         <activity
-            android:name=".CommunityAIChatbotActivity"
+            android:name="com.likeminds.ai.chatbot.AIChatbotActivity"
             android:exported="false" />
         <activity
-            android:name=".auth.view.AuthActivity"
+            android:name="com.likeminds.ai.chatbot.auth.view.AuthActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,11 +38,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".auth.view.AfterLoginActivity"
+            android:name="com.likeminds.ai.chatbot.auth.view.AfterLoginActivity"
             android:exported="false" />
 
         <service
-            android:name=".CommunityAIChatbotMessagingService"
+            android:name="com.likeminds.ai.chatbot.AIChatbotMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

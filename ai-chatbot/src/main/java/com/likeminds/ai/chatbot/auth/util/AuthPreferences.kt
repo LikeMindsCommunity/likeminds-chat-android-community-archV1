@@ -1,8 +1,8 @@
-package com.likeminds.community.ai.chatbot.auth.util
+package com.likeminds.ai.chatbot.auth.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.likeminds.community.ai.chatbot.auth.view.AuthActivity
+import com.likeminds.ai.chatbot.auth.view.AuthActivity
 import javax.inject.Singleton
 
 @Singleton
