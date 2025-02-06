@@ -1,4 +1,4 @@
-package com.likeminds.community.ai.chatbot.auth.view
+package com.likeminds.ai.chatbot.auth.view
 
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -12,10 +12,10 @@ import com.likeminds.chatmm.theme.model.LMChatAppearanceRequest
 import com.likeminds.chatmm.theme.model.LMFonts
 import com.likeminds.chatmm.utils.Route
 import com.likeminds.chatmm.utils.ViewUtils
-import com.likeminds.community.ai.chatbot.CommunityAIChatbotApplication
+import com.likeminds.ai.chatbot.AIChatbotApplication
 import com.likeminds.community.ai.chatbot.R
-import com.likeminds.community.ai.chatbot.auth.model.LoginExtras
-import com.likeminds.community.ai.chatbot.auth.util.AuthPreferences
+import com.likeminds.ai.chatbot.auth.model.LoginExtras
+import com.likeminds.ai.chatbot.auth.util.AuthPreferences
 import com.likeminds.community.ai.chatbot.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {
@@ -64,7 +64,7 @@ class AuthActivity : AppCompatActivity() {
             authPreferences.getUserName(),
             authPreferences.getUserId(),
         )
-        intent.putExtra(CommunityAIChatbotApplication.EXTRA_LOGIN, extras)
+        intent.putExtra(AIChatbotApplication.EXTRA_LOGIN, extras)
         startActivity(intent)
         finish()
     }

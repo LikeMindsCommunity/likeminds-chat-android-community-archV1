@@ -1,4 +1,4 @@
-package com.likeminds.community.ai.chatbot.auth.view
+package com.likeminds.ai.chatbot.auth.view
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -9,10 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.utils.ExtrasUtil
-import com.likeminds.community.ai.chatbot.CommunityAIChatbotActivity
-import com.likeminds.community.ai.chatbot.CommunityAIChatbotApplication
-import com.likeminds.community.ai.chatbot.auth.model.LoginExtras
-import com.likeminds.community.ai.chatbot.auth.util.AuthPreferences
+import com.likeminds.ai.chatbot.AIChatbotActivity
+import com.likeminds.ai.chatbot.AIChatbotApplication
+import com.likeminds.ai.chatbot.auth.model.LoginExtras
+import com.likeminds.ai.chatbot.auth.util.AuthPreferences
 import com.likeminds.community.ai.chatbot.databinding.ActivityAfterLoginBinding
 import com.likeminds.likemindschat.user.model.LogoutRequest
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +34,7 @@ class AfterLoginActivity : AppCompatActivity() {
 
         extra = ExtrasUtil.getParcelable(
             intent.extras,
-            CommunityAIChatbotApplication.EXTRA_LOGIN,
+            AIChatbotApplication.EXTRA_LOGIN,
             LoginExtras::class.java
         )
 
@@ -43,7 +43,7 @@ class AfterLoginActivity : AppCompatActivity() {
         }
 
         binding.btnStartChat.setOnClickListener {
-            val intent = Intent(this, CommunityAIChatbotActivity::class.java)
+            val intent = Intent(this, AIChatbotActivity::class.java)
             startActivity(intent)
         }
 

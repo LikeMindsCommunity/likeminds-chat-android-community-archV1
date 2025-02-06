@@ -1,4 +1,4 @@
-package com.likeminds.community.ai.chatbot
+package com.likeminds.ai.chatbot
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -8,9 +8,9 @@ import com.likeminds.chatmm.LMChatCoreCallback
 import com.likeminds.chatmm.LMChatTheme
 import com.likeminds.chatmm.theme.model.LMChatAppearanceRequest
 import com.likeminds.chatmm.theme.model.LMFonts
-import com.likeminds.community.ai.chatbot.auth.util.AuthPreferences
+import com.likeminds.ai.chatbot.auth.util.AuthPreferences
 
-class CommunityAIChatbotApplication : Application(), LMChatCoreCallback {
+class AIChatbotApplication : Application(), LMChatCoreCallback {
 
     private lateinit var authPreferences: AuthPreferences
 
@@ -39,7 +39,7 @@ class CommunityAIChatbotApplication : Application(), LMChatCoreCallback {
 
         LMChatCore.setup(
             application = this,
-            theme = LMChatTheme.COMMUNITY_CHAT,
+            theme = LMChatTheme.AI_CHATBOT,
             lmChatCoreCallback = this,
             lmChatAppearanceRequest = lmChatAppearanceRequest,
             domain = deviceId(),

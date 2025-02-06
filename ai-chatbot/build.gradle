@@ -49,4 +49,4 @@ android {
     }
 }
 
-apply from: "community-ai-chatbot-dependencies.gradle"
+apply from: "ai-chatbot-dependencies.gradle"

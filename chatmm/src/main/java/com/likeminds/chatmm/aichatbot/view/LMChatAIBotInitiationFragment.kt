@@ -1,7 +1,7 @@
 package com.likeminds.chatmm.aichatbot.view
 
 import com.likeminds.chatmm.SDKApplication
-import com.likeminds.chatmm.aichatbot.util.LMChatAIChatBotPreferences
+import com.likeminds.chatmm.aichatbot.util.LMChatAIBotPreferences
 import com.likeminds.chatmm.aichatbot.viewmodel.LMChatAIBotViewModel
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
@@ -17,7 +17,7 @@ class LMChatAIBotInitiationFragment :
     BaseFragment<LmChatAiBotInitiationFragmentBinding, LMChatAIBotViewModel>() {
 
     @Inject
-    lateinit var aiChatBotPreferences: LMChatAIChatBotPreferences
+    lateinit var aiChatBotPreferences: LMChatAIBotPreferences
 
     override fun attachDagger() {
         super.attachDagger()

@@ -6,7 +6,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LMChatAIChatBotPreferences @Inject constructor(
+class LMChatAIBotPreferences @Inject constructor(
     context: Context
 ) : BasePreferences(AI_CHATBOT_PREFS, context) {
 

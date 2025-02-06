@@ -1,4 +1,4 @@
-package com.likeminds.community.ai.chatbot
+package com.likeminds.ai.chatbot
 
 import android.content.Intent
 import android.util.Log
@@ -7,14 +7,14 @@ import com.google.firebase.messaging.RemoteMessage
 import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.pushnotification.util.LMChatNotificationHandler
 
-class CommunityAIChatbotMessagingService : FirebaseMessagingService() {
+class AIChatbotMessagingService : FirebaseMessagingService() {
 
     private lateinit var mNotificationHandler: LMChatNotificationHandler
 
     override fun onCreate() {
         super.onCreate()
 
-        val launcherIntent = Intent(this, CommunityAIChatbotActivity::class.java).apply {
+        val launcherIntent = Intent(this, AIChatbotActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
