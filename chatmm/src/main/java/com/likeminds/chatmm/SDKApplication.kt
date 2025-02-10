@@ -85,7 +85,7 @@ class SDKApplication : LMChatSDKCallback {
         }
     }
 
-    fun initSDKApplication(
+    suspend fun initSDKApplication(
         application: Application,
         theme: LMChatTheme,
         lmChatCoreCallback: LMChatCoreCallback?,
