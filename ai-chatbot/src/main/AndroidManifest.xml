@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.likeminds.ai.chatbot">
+
+    <application
+        android:name="com.likeminds.ai.chatbot.AIChatbotApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/lm_chat_ic_launcher"
+        android:label="@string/lm_chat_app_name"
+        android:roundIcon="@mipmap/lm_chat_ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.LikeMindsAndroidCommunityAIChatbot"
+        tools:targetApi="31">
+        <activity
+            android:name="com.likeminds.ai.chatbot.AIChatbotActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.likeminds.ai.chatbot.auth.view.AuthActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="www.chatsampleapp.com"
+                    android:scheme="https" />
+                <data
+                    android:host="chatsampleapp.com"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.likeminds.ai.chatbot.auth.view.AfterLoginActivity"
+            android:exported="false" />
+
+        <service
+            android:name="com.likeminds.ai.chatbot.AIChatbotMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>

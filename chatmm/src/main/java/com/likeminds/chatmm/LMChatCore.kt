@@ -34,21 +34,23 @@ object LMChatCore {
         enablePushNotifications: Boolean = false,
         deviceId: String? = null,
     ) {
-        Log.d(SDKApplication.LOG_TAG, "LMChatCore setup called")
+        CoroutineScope(Dispatchers.IO).launch {
+            Log.d(SDKApplication.LOG_TAG, "LMChatCore setup called")
 
-        //create object of SDKApplication
-        val sdk = SDKApplication.getInstance()
+            //create object of SDKApplication
+            val sdk = SDKApplication.getInstance()
 
-        //call initSDKApplication to initialise sdk
-        sdk.initSDKApplication(
-            application,
-            theme,
-            lmChatCoreCallback,
-            lmChatAppearanceRequest,
-            domain,
-            enablePushNotifications,
-            deviceId
-        )
+            //call initSDKApplication to initialise sdk
+            sdk.initSDKApplication(
+                application,
+                theme,
+                lmChatCoreCallback,
+                lmChatAppearanceRequest,
+                domain,
+                enablePushNotifications,
+                deviceId
+            )
+        }
     }
 
     /**
@@ -83,6 +85,15 @@ object LMChatCore {
                     .build()
 
                 val response = lmChatClient.initiateUser(initiateUserRequest)
+
+                LMAnalytics.track(
+                    LMAnalytics.Events.SDK_INITIATE,
+                    mapOf(
+                        "success" to response.success.toString(),
+                        LMAnalytics.Keys.UUID to uuid
+                    )
+                )
+
                 if (response.success) {
                     success?.let { success ->
                         response.data?.let {

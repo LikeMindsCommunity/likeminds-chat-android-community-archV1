@@ -77,6 +77,9 @@ object LMAnalytics {
         //Third Party Share
         const val THIRD_PARTY_SHARING = "Third party sharing"
         const val THIRD_PARTY_ABANDONED = "Third party abandoned"
+
+        const val SDK_INITIATE = "SDK initiate"
+        const val DM_CHATROOM_CREATED = "DM Chatroom created"
     }
 
     object Keys {

@@ -81,6 +81,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/LMAppTheme.NoActionBar" />
 
+        <activity
+            android:name=".aichatbot.view.LMChatAIBotInitiationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/LMAppTheme.NoActionBar" />
+
         <service android:name=".utils.chrometabs.CustomTabService" />
 
         <service
