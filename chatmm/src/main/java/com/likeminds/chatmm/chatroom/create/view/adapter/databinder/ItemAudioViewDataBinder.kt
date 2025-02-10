@@ -41,20 +41,19 @@ class ItemAudioViewDataBinder @Inject constructor(
         position: Int
     ) {
         binding.apply {
-            val attachment = data
-            this.attachment = attachment
+            this.attachment = data
             this.position = position
-            parentConversation = attachment.parentConversation
-            parentChatRoom = attachment.parentChatroom
-            parentViewItemPosition = attachment.parentViewItemPosition
+            parentConversation = data.parentConversation
+            parentChatRoom = data.parentChatroom
+            parentViewItemPosition = data.parentViewItemPosition
 
             setListeners(this)
 
-            if (attachment.thumbnail != null) {
+            if (data.thumbnail != null) {
                 viewMask.show()
                 ImageBindingUtil.loadImage(
                     ivAudioCover,
-                    attachment.thumbnail,
+                    data.thumbnail,
                     placeholder = R.drawable.lm_chat_view_corner_radius_audio,
                     cornerRadius = 8
                 )
@@ -63,9 +62,9 @@ class ItemAudioViewDataBinder @Inject constructor(
                 ivAudioCover.setImageResource(R.drawable.lm_chat_view_corner_radius_audio)
             }
 
-            seekBar.max = attachment.meta?.duration ?: 100
+            seekBar.max = data.meta?.duration ?: 100
 
-            ChatroomConversationItemViewDataBinderUtil.initAudioItemView(this, attachment)
+            ChatroomConversationItemViewDataBinderUtil.initAudioItemView(this, data)
 
             val actionVisible = adapterListener?.isMediaActionVisible()
             val uploadFailed = adapterListener?.isMediaUploadFailed()
@@ -78,9 +77,9 @@ class ItemAudioViewDataBinder @Inject constructor(
                 playPauseGroup.show()
             }
 
-            if (attachment.parentConversation != null) {
-                val hasAnswer = attachment.parentConversation.hasAnswer()
-                val isLastItem = attachment.parentConversation.attachmentCount - 1 == position
+            if (data.parentConversation != null) {
+                val hasAnswer = data.parentConversation.hasAnswer()
+                val isLastItem = data.parentConversation.attachmentCount - 1 == position
                 if (hasAnswer || !isLastItem) {
                     setConstraintsForName(this, true)
                 } else {

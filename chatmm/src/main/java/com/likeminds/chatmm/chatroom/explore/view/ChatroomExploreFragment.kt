@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.likeminds.chatmm.LMAnalytics.Source.COMMUNITY_FEED
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.SDKApplication
-import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailResultExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
@@ -23,12 +22,15 @@ import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.overflowmenu.model.OverflowMenuItemViewData
 import com.likeminds.chatmm.overflowmenu.view.OverflowMenuPopup
 import com.likeminds.chatmm.overflowmenu.view.adapter.OverflowMenuAdapterListener
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.ValueUtils.isValidIndex
+import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
 import com.likeminds.chatmm.utils.customview.BaseFragment
 import com.likeminds.chatmm.utils.model.BaseViewType
+import com.likeminds.chatmm.utils.observeInLifecycle
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
@@ -306,11 +308,15 @@ class ChatroomExploreFragment :
                         chatroomViewDataBuilder?.header(chatroomDetailResultExtras.updatedChatroomName)
                 }
 
-                chatroomExploreAdapter.update(
-                    position, exploreViewData.toBuilder().chatroomViewData(
-                        chatroomViewDataBuilder?.build()
-                    ).build()
-                )
+                val updatedExploreViewData = exploreViewData.toBuilder()
+                    .followStatus(
+                        chatroomDetailResultExtras.updatedFollowStatus
+                            ?: exploreViewData.followStatus
+                    )
+                    .chatroomViewData(chatroomViewDataBuilder?.build())
+                    .build()
+
+                chatroomExploreAdapter.update(position, updatedExploreViewData)
                 break
             }
         }

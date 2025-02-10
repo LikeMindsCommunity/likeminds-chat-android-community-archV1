@@ -11,13 +11,13 @@ import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.utils.ExtrasUtil
 import com.likeminds.community.chat.CommunityChatActivity
 import com.likeminds.community.chat.CommunityChatApplication
-import com.likeminds.community.chat.databinding.ActivityAfterLoginBinding
 import com.likeminds.community.chat.auth.model.LoginExtras
 import com.likeminds.community.chat.auth.util.AuthPreferences
+import com.likeminds.community.chat.databinding.ActivityAfterLoginBinding
+import com.likeminds.likemindschat.LMChatClient
+import com.likeminds.likemindschat.user.model.EditUserProfileRequest
 import com.likeminds.likemindschat.user.model.LogoutRequest
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class AfterLoginActivity : AppCompatActivity() {
 
@@ -64,6 +64,25 @@ class AfterLoginActivity : AppCompatActivity() {
                 startActivity(intent)
             } else {
                 Log.e(LOG_TAG, "logout failed error: ${logoutResponse.errorMessage}")
+            }
+        }
+    }
+
+    fun editProfile() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val lmChatClient = LMChatClient.getInstance()
+
+            val editProfileRequest = EditUserProfileRequest.Builder()
+                .name("EDITED_NAME")
+                .imageUrl("NEW_IMAGE_URL")
+                .build()
+
+            val response = lmChatClient.editUserProfile(editProfileRequest)
+
+            if (response.success) {
+                //handle success of the edit profile request
+            } else {
+                //handle failure of the edit profile request
             }
         }
     }
