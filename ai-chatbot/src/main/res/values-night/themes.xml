@@ -1,0 +1,9 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.LikeMindsAndroidCommunityAIChatbot" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <item name="colorPrimary">@color/lm_chat_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/lm_chat_colorPrimaryDark</item>
+        <item name="colorAccent">@color/lm_chat_colorPrimary</item>
+    </style>
+</resources>

@@ -179,14 +179,11 @@ internal class ConversationSinglePdfItemViewDataBinder(
         conversation: ConversationViewData,
     ) {
         binding.apply {
-            val mediaUploadData = ChatroomConversationItemViewDataBinderUtil.initUploadMediaAction(
+            ChatroomConversationItemViewDataBinderUtil.initUploadMediaAction(
                 viewMediaUploadingActions,
                 conversation = conversation,
                 listener = adapterListener
             )
-            if (mediaUploadData.first != null) {
-                adapterListener.observeMediaUpload(mediaUploadData.first!!, conversation)
-            }
 
             val attachment = conversation.attachments?.get(0) ?: return
             tvPdfName.text = attachment.name ?: "Document"

@@ -267,18 +267,11 @@ internal class ConversationSingleVideoItemViewDataBinder @Inject constructor(
                     )
                 }
 
-                val mediaUploadData =
-                    ChatroomConversationItemViewDataBinderUtil.initUploadMediaAction(
-                        viewMediaUploadingActions,
-                        conversation = conversationViewData,
-                        listener = adapterListener
-                    )
-
-                if (mediaUploadData.first != null) {
-                    adapterListener.observeMediaUpload(
-                        mediaUploadData.first!!, conversationViewData
-                    )
-                }
+                ChatroomConversationItemViewDataBinderUtil.initUploadMediaAction(
+                    viewMediaUploadingActions,
+                    conversation = conversationViewData,
+                    listener = adapterListener
+                )
             } else {
                 ivSingleImage.visibility = View.GONE
                 ProgressHelper.hideProgress(binding.progressBar)

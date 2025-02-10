@@ -17,26 +17,23 @@ import kotlin.coroutines.resume
 
 class ConversationMediaUploadWorker(
     context: Context, workerParams: WorkerParameters
-) : MediaUploadWorker(context, workerParams) {
+) : ConversationWorker(context, workerParams) {
 
     private val conversationId by lazy { getStringParam(ARG_CONVERSATION_ID) }
 
     companion object {
         const val ARG_CONVERSATION_ID = "ARG_CONVERSATION_ID"
         const val ARG_IS_OTHER_USER_AI_BOT = "ARG_IS_OTHER_USER_AI_BOT"
-        const val ARG_LIST_OF_TAGGER_USERS = "ARG_LIST_OF_TAGGER_USERS"
 
         fun getInstance(
             conversationId: String,
-            isOtherUserAI: Boolean,
-            listOfterTaggerUsers: List<String>
+            isOtherUserAI: Boolean
         ): OneTimeWorkRequest {
             return OneTimeWorkRequestBuilder<ConversationMediaUploadWorker>()
                 .setInputData(
                     workDataOf(
                         ARG_CONVERSATION_ID to conversationId,
-                        ARG_IS_OTHER_USER_AI_BOT to isOtherUserAI,
-                        ARG_LIST_OF_TAGGER_USERS to listOfterTaggerUsers.toTypedArray()
+                        ARG_IS_OTHER_USER_AI_BOT to isOtherUserAI
                     )
                 )
                 .setConstraints(
@@ -64,7 +61,6 @@ class ConversationMediaUploadWorker(
             .build()
         val response = lmChatClient.getConversation(getConversationRequest)
         conversation = ViewDataConverter.convertConversation(response.data?.conversation) ?: return
-        listOfTaggerUsers = getStringArray(ARG_LIST_OF_TAGGER_USERS)
         isOtherUserAI = getBooleanParam(ARG_IS_OTHER_USER_AI_BOT)
     }
 
@@ -109,7 +105,7 @@ class ConversationMediaUploadWorker(
         totalFilesToUpload: Int,
         continuation: Continuation<Int>
     ) {
-        val awsFileResponse = uploadFile(request, conversation.uploadWorkerUUID)
+        val awsFileResponse = uploadFile(request, conversation.workerUUID)
         if (awsFileResponse != null) {
             UploadHelper.addAWSFileResponse(awsFileResponse)
             uploadAWSFile(awsFileResponse, totalFilesToUpload, continuation)
