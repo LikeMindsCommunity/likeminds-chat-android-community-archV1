@@ -104,6 +104,7 @@
     <color name="lm_chat_medium_grey">#888888</color>
     <color name="lm_chat_dark_red">#d50000</color>
     <color name="lm_chat_error_red">#b00020</color>
+    <color name="lm_chat_start_ai_chatbot_blue">#020D42</color>
 
     <!--Global profile image color-->
     <color name="lm_chat_blue">#2196F3</color>

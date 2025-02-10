@@ -2,8 +2,9 @@ package com.likeminds.chatmm.aichatbot
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.os.Build
 import android.util.AttributeSet
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.aichatbot.model.LMChatAIBotButtonProps
@@ -12,10 +13,9 @@ import com.likeminds.chatmm.aichatbot.view.LMChatAIBotInitiationActivity
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailFragment.Companion.SOURCE_AI_CHATBOT
-import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.ViewUtils
 
-class LMChatAIBotButton : MaterialButton {
+class LMChatAIBotButton : ExtendedFloatingActionButton {
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -34,8 +34,26 @@ class LMChatAIBotButton : MaterialButton {
     }
 
     private fun initialize() {
-        backgroundTintList = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
+        backgroundTintList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ColorStateList.valueOf(resources.getColor(R.color.lm_chat_start_ai_chatbot_blue, null))
+        } else {
+            ColorStateList.valueOf(context.resources.getColor(R.color.lm_chat_start_ai_chatbot_blue))
+        }
+
         text = context.getString(R.string.lm_chat_ai_bot)
+        textSize = 14f
+
+        val whiteColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ColorStateList.valueOf(resources.getColor(R.color.lm_chat_white, null))
+        } else {
+            ColorStateList.valueOf(context.resources.getColor(R.color.lm_chat_white))
+        }
+        setTextColor(whiteColor)
+
+        isExtended = true
+
+        setIconResource(R.drawable.lm_chat_ic_start_ai_chat_bot)
+        iconTint = whiteColor
     }
 
     private lateinit var chatAIButtonProps: LMChatAIBotButtonProps
