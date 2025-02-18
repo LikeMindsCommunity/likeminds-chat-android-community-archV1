@@ -20,6 +20,8 @@ import com.likeminds.chatmm.media.model.VOICE_NOTE
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
 import com.likeminds.chatmm.utils.file.util.FileUtil.size
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -336,6 +338,11 @@ class VoiceNoteUtils(
             retriever.release()
             return duration / 1000
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
         }
         return null

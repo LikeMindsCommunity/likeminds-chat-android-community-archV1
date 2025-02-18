@@ -122,6 +122,8 @@ import com.likeminds.chatmm.utils.recyclerview.SwipeControllerActions
 import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.chatmm.widget.model.WidgetViewData
 import com.likeminds.likemindschat.chatroom.model.ChatRequestState
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import com.likeminds.likemindschat.user.model.MemberBlockState
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.coroutines.flow.onEach
@@ -1830,6 +1832,11 @@ class ChatroomDetailFragment :
                     cameraPath = file.absolutePath
                     file
                 } catch (ex: IOException) {
+                    LMChatLogger.getInstance()?.handleException(
+                        ex.message ?: "",
+                        ex.stackTraceToString(),
+                        LMSeverity.EMERGENCY
+                    )
                     Log.e("errorCreateFile", "errorCreateFile", ex)
                     null
                 }
@@ -1848,6 +1855,11 @@ class ChatroomDetailFragment :
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         cameraLauncher.launch(takePictureIntent)
                     } catch (e: Exception) {
+                        LMChatLogger.getInstance()?.handleException(
+                            e.message ?: "",
+                            e.stackTraceToString(),
+                            LMSeverity.EMERGENCY
+                        )
                         ViewUtils.showShortToast(requireContext(), "Image not found")
                         Log.e(SDKApplication.LOG_TAG, "provider not found, ${e.localizedMessage}")
                     }
@@ -2834,6 +2846,11 @@ class ChatroomDetailFragment :
                 binding.inputBox.etAnswer.text?.toString()
             )
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             Log.e(TAG, e.toString())
         }
     }
@@ -4914,6 +4931,11 @@ class ChatroomDetailFragment :
                 "${requireContext().externalCacheDir?.absolutePath}/VOC_${System.currentTimeMillis()}.mp3"
             voiceRecorder.startRecording(voiceNoteFilePath ?: "")
         } catch (e: IllegalStateException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             voiceNoteUtils.stopVoiceNote(binding, RECORDING_RELEASED)
         }
     }

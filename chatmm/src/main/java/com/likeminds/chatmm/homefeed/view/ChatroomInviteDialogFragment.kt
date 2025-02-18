@@ -10,6 +10,8 @@ import com.likeminds.chatmm.utils.ErrorUtil
 import com.likeminds.chatmm.utils.ExtrasUtil
 import com.likeminds.chatmm.utils.customview.BaseDialogFragment
 import com.likeminds.likemindschat.chatroom.model.ChannelInviteStatus
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 class JoinChatroomInviteDialogFragment :
     BaseDialogFragment<DialogFragmentChatroomInviteBinding>() {
@@ -44,6 +46,11 @@ class JoinChatroomInviteDialogFragment :
         try {
             joinChatroomInviteDialogListener = parentFragment as JoinChatroomInviteDialogListener
         } catch (e: ClassCastException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             throw ClassCastException("Calling fragment must implement JoinChatroomInviteDialogListener interface")
         }
     }

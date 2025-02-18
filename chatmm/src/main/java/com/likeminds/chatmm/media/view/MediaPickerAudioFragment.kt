@@ -30,6 +30,8 @@ import com.likeminds.chatmm.media.viewmodel.MediaViewModel
 import com.likeminds.chatmm.search.util.LMChatCustomSearchBar
 import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.customview.BaseFragment
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 class MediaPickerAudioFragment :
     BaseFragment<FragmentMediaPickerAudioBinding, MediaViewModel>(),
@@ -240,6 +242,11 @@ class MediaPickerAudioFragment :
                 }
             }
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             Log.e(TAG, e.stackTrace.toString())
         }
     }
