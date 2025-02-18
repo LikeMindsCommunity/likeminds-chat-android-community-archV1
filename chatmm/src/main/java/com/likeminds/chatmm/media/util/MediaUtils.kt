@@ -17,6 +17,8 @@ import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.file.util.FileUtil
 import com.likeminds.chatmm.utils.file.util.FileUtil.isLargeFile
 import com.likeminds.chatmm.utils.file.util.MemoryUnitFormat
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import kotlinx.coroutines.*
 
 object MediaUtils {
@@ -63,6 +65,11 @@ object MediaUtils {
                 return FileUtil.getUriFromBitmapWithRandomName(context, bitmap)
             }
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
             Log.e(TAG, "getDocumentPreview", e)
         }
@@ -247,6 +254,11 @@ object MediaUtils {
             }
             glideBuilder.submit().get()
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             e.printStackTrace()
             null
         }

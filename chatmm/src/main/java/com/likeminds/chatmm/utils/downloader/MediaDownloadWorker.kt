@@ -11,6 +11,8 @@ import com.likeminds.chatmm.R
 import com.likeminds.chatmm.media.model.IMAGE
 import com.likeminds.chatmm.media.model.VIDEO
 import com.likeminds.chatmm.utils.ValueUtils.getMediaType
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import kotlinx.coroutines.TimeoutCancellationException
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -101,9 +103,19 @@ internal class MediaDownloadWorker(
                 getFailureResult(context.getString(R.string.lm_chat_unknown_error_occurred))
             }
         } catch (e: TimeoutCancellationException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             showFailedNotification(notificationBuilder, notificationManager)
             getFailureResult(context.getString(R.string.lm_chat_connection_timed_out))
         } catch (t: Throwable) {
+            LMChatLogger.getInstance()?.handleException(
+                t.message ?: "",
+                t.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             showFailedNotification(notificationBuilder, notificationManager)
             getFailureResult(context.getString(R.string.lm_chat_failed_to_connect))
         }

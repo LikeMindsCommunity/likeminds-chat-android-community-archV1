@@ -11,6 +11,8 @@ import com.likeminds.chatmm.utils.SDKPreferences
 import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.community.model.CommunitySetting
 import com.likeminds.likemindschat.community.model.ConfigurationType
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import com.likeminds.likemindschat.user.model.RegisterDeviceRequest
 import kotlinx.coroutines.*
 
@@ -61,6 +63,9 @@ class LMChatUserMetaData {
         pushToken()
         getCommunityConfiguration(context)
         saveCommunitySettings(communitySettings)
+
+        val lmChatLogger = LMChatLogger.getInstance()
+        lmChatLogger?.flushLogs()
     }
 
     //save community settings
@@ -135,6 +140,11 @@ class LMChatUserMetaData {
                     registerDevice(token, deviceId ?: "")
                 }
             } catch (e: Exception) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.EMERGENCY
+                )
                 Log.w(
                     SDKApplication.LOG_TAG,
                     "Please add firebase to your project to enable notifications"

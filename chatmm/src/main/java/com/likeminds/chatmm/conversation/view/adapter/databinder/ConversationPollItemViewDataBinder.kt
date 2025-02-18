@@ -20,6 +20,8 @@ import com.likeminds.chatmm.utils.ViewUtils.setVisible
 import com.likeminds.chatmm.utils.ViewUtils.show
 import com.likeminds.chatmm.utils.customview.ViewDataBinder
 import com.likeminds.chatmm.utils.model.ITEM_CONVERSATION_POLL
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 internal class ConversationPollItemViewDataBinder(
     private val userPreferences: UserPreferences,
@@ -178,6 +180,11 @@ internal class ConversationPollItemViewDataBinder(
         return try {
             (chatroomDetailAdapterListener.getBinding(conversationId))?.binding as? ItemConversationPollBinding
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             null
         }
     }

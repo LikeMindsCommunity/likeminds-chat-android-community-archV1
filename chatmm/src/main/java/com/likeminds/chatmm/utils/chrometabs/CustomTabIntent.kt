@@ -11,6 +11,8 @@ import com.google.gson.Gson
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.conversation.model.ReportLinkExtras
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 internal object CustomTabIntent {
 
@@ -68,6 +70,11 @@ internal object CustomTabIntent {
                 link
             ) { context, uri -> CustomTabHelper.openLinkViaBrowser(context, uri) }
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             Log.e(TAG, e.message.toString())
         }
     }
@@ -110,6 +117,11 @@ internal object CustomTabIntent {
             ) { context, uri -> CustomTabHelper.openLinkViaBrowser(context, uri) }
             return tabIntent!!.intent
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             Log.e(TAG, e.message.toString())
         }
         return null

@@ -25,10 +25,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "Integer", "APP_MAJOR", "$lm_chat_versions.app_version_major"
+            buildConfigField "Integer", "APP_MINOR", "$lm_chat_versions.app_version_minor"
+            buildConfigField "Integer", "APP_PATCH", "$lm_chat_versions.app_version_patch"
         }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "Integer", "APP_MAJOR", "$lm_chat_versions.app_version_major"
+            buildConfigField "Integer", "APP_MINOR", "$lm_chat_versions.app_version_minor"
+            buildConfigField "Integer", "APP_PATCH", "$lm_chat_versions.app_version_patch"
         }
     }
     buildFeatures {

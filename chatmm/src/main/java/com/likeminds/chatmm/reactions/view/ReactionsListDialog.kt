@@ -9,6 +9,8 @@ import com.likeminds.chatmm.reactions.util.ReactionUtil
 import com.likeminds.chatmm.reactions.view.adapter.ReactionsTabAdapter
 import com.likeminds.chatmm.utils.ExtrasUtil
 import com.likeminds.chatmm.utils.customview.BaseBottomSheetFragment
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 class ReactionsListDialog :
     BaseBottomSheetFragment<DialogReactionsListBinding, Nothing>(),
@@ -52,6 +54,11 @@ class ReactionsListDialog :
             reactionRemovedDialogListener =
                 parentFragment as ReactionRemovedDialogListener?
         } catch (e: ClassCastException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             throw ClassCastException("Calling fragment must implement MessageReactionRemovedDialogListener interface")
         }
         arguments?.let { bundle ->

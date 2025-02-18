@@ -26,6 +26,8 @@ import com.likeminds.chatmm.utils.file.util.FileUtil.isLargeFile
 import com.likeminds.chatmm.utils.file.util.FileUtil.isSmallFile
 import com.likeminds.chatmm.utils.model.ITEM_MEDIA_PICKER_AUDIO
 import com.likeminds.chatmm.utils.model.ITEM_MEDIA_PICKER_DOCUMENT
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.util.*
@@ -383,6 +385,11 @@ class MediaRepository @Inject constructor() {
                         )
                     }
                 } catch (e: Exception) {
+                    LMChatLogger.getInstance()?.handleException(
+                        e.message ?: "",
+                        e.stackTraceToString(),
+                        LMSeverity.EMERGENCY
+                    )
                     e.localizedMessage?.let { Log.e("SDK", it) }
                 }
             }
@@ -631,6 +638,11 @@ class MediaRepository @Inject constructor() {
                 retriever.release()
                 return duration / 1000
             } catch (e: Exception) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.CRITICAL
+                )
                 e.printStackTrace()
             }
         }
@@ -647,6 +659,11 @@ class MediaRepository @Inject constructor() {
                     return renderer.pageCount
                 }
             } catch (e: Exception) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.CRITICAL
+                )
                 e.printStackTrace()
             }
         }

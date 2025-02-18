@@ -28,4 +28,8 @@ interface LMChatCoreCallback {
         //implement to handle refresh token refresh
         return Pair(null, null)
     }
+
+    fun onErrorHandler(exception: String, trace: String) {
+        //implement to get callback whenever an error is handled
+    }
 }

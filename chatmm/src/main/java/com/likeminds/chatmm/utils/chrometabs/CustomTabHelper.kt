@@ -6,6 +6,8 @@ import android.graphics.Canvas
 import android.net.Uri
 import androidx.core.content.ContextCompat
 import com.likeminds.chatmm.utils.ViewUtils
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 internal object CustomTabHelper {
 
@@ -27,17 +29,11 @@ internal object CustomTabHelper {
         try {
             context.startActivity(Intent.createChooser(intent, "View link"))
         } catch (e: ActivityNotFoundException) {
-            e.printStackTrace()
-            ViewUtils.showShortToast(context, "No app to open the link")
-        }
-    }
-
-    fun openLinkViaBrowser(context: Context, link: String?) {
-        if (link.isNullOrEmpty()) return
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
-        try {
-            context.startActivity(Intent.createChooser(intent, "View link"))
-        } catch (e: ActivityNotFoundException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
             ViewUtils.showShortToast(context, "No app to open the link")
         }
@@ -61,6 +57,11 @@ internal object CustomTabHelper {
             chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(chooserIntent)
         } catch (e: ActivityNotFoundException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
             ViewUtils.showShortToast(context, "No app to share the link")
         }

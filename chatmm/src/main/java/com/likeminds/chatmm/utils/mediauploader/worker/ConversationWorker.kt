@@ -14,6 +14,8 @@ import com.likeminds.chatmm.utils.mediauploader.utils.WorkerUtil.getIntOrNull
 import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.conversation.model.PostConversationRequest
 import com.likeminds.likemindschat.conversation.model.UpdateConversationRequest
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -68,6 +70,11 @@ abstract class ConversationWorker(
             checkArgs()
             init()
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             e.printStackTrace()
             return Result.failure()
         }

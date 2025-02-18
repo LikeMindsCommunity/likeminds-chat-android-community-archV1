@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.exifinterface.media.ExifInterface
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -32,6 +34,11 @@ object FileHelper {
             }
             return file
         } catch (e: IOException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             Log.e(
                 TAG,
                 "IOException while trying to compress file: " + e.localizedMessage

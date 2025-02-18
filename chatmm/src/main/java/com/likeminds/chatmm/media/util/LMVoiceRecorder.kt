@@ -7,6 +7,8 @@ import android.net.Uri
 import com.likeminds.chatmm.media.model.SingleUriData
 import com.likeminds.chatmm.media.model.VOICE_NOTE
 import com.likeminds.chatmm.utils.file.util.FileUtil.size
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import java.io.File
 
 class LMVoiceRecorder {
@@ -95,6 +97,11 @@ class LMVoiceRecorder {
             retriever.release()
             return duration / 1000
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
         }
         return null

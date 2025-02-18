@@ -9,6 +9,8 @@ import com.likeminds.chatmm.media.customviews.WrappedDrawable
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.utils.file.model.LocalAppData
 import com.likeminds.chatmm.utils.file.util.FileUtil
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import kotlin.math.ceil
 
 object AndroidUtils {
@@ -32,6 +34,11 @@ object AndroidUtils {
         try {
             density = context.resources.displayMetrics.density
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
         }
     }
@@ -194,35 +201,13 @@ object AndroidUtils {
         try {
             context.startActivity(pdfIntent)
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
             ViewUtils.showShortToast(context, "No application found to open this document")
         }
     }
-
-    fun openPlayStore(context: Context) {
-        try {
-            val intent = Intent(
-                Intent.ACTION_VIEW,
-//                Uri.parse("https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}")
-            )
-            context.startActivity(intent)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ViewUtils.showShortToast(context, "No application found")
-        }
-    }
-
-    fun getJsonDataFromAsset(context: Context, fileName: String): String? {
-        val jsonString: String
-        try {
-            jsonString = context.assets.open(fileName).bufferedReader().use {
-                it.readText()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return null
-        }
-        return jsonString
-    }
-
 }

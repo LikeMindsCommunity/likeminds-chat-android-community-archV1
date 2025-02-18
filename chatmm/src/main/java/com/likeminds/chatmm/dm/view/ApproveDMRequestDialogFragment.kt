@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.fragment.app.FragmentManager
 import com.likeminds.chatmm.databinding.DialogFragmentApproveDmRequestBinding
 import com.likeminds.chatmm.utils.customview.BaseDialogFragment
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 class ApproveDMRequestDialogFragment :
     BaseDialogFragment<DialogFragmentApproveDmRequestBinding>() {
@@ -30,6 +32,11 @@ class ApproveDMRequestDialogFragment :
         try {
             approveDMRequestDialogListener = parentFragment as ApproveDMRequestDialogListener
         } catch (e: ClassCastException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             throw ClassCastException("Calling fragment must implement ApproveDMRequestDialogListener interface")
         }
     }

@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.fragment.app.FragmentManager
 import com.likeminds.chatmm.databinding.DialogFragmentSendDmRequestBinding
 import com.likeminds.chatmm.utils.customview.BaseDialogFragment
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 class SendDMRequestDialogFragment :
     BaseDialogFragment<DialogFragmentSendDmRequestBinding>() {
@@ -33,6 +35,11 @@ class SendDMRequestDialogFragment :
         try {
             sendDMRequestDialogListener = parentFragment as SendDMRequestDialogListener
         } catch (e: ClassCastException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             throw ClassCastException("Calling fragment must implement SendDMRequestDialogListener interface")
         }
     }

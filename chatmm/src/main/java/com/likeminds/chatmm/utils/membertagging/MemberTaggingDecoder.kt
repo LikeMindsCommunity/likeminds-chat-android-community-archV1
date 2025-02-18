@@ -8,6 +8,8 @@ import android.widget.EditText
 import android.widget.TextView
 import com.likeminds.chatmm.utils.membertagging.util.MemberTaggingClickableSpan
 import com.likeminds.chatmm.utils.membertagging.view.adapter.MemberTaggingDecoderListener
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 object MemberTaggingDecoder {
 
@@ -48,6 +50,11 @@ object MemberTaggingDecoder {
                                 ?: return@MemberTaggingClickableSpan
                             listener?.onTagClick(tagUri)
                         } catch (e: Exception) {
+                            LMChatLogger.getInstance()?.handleException(
+                                e.message ?: "",
+                                e.stackTraceToString(),
+                                LMSeverity.CRITICAL
+                            )
                             e.printStackTrace()
                         }
                     }, 0, memberName.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

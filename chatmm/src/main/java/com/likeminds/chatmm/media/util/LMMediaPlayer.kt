@@ -9,6 +9,8 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.likeminds.chatmm.utils.DateUtil
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 class LMMediaPlayer(
     private val context: Context,
@@ -100,6 +102,11 @@ class LMMediaPlayer(
 
                 handler?.postDelayed(runnable ?: Runnable { }, 1000)
             } catch (e: Exception) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.EMERGENCY
+                )
                 Log.e(TAG, e.stackTrace.toString())
             }
         }

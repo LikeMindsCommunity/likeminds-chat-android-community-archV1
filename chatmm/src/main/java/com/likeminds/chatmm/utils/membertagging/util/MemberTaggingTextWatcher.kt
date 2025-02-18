@@ -5,6 +5,8 @@ import android.text.SpannableString
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 internal class MemberTaggingTextWatcher(
     var taggingEnabled: Boolean,
@@ -149,6 +151,11 @@ internal class MemberTaggingTextWatcher(
             } catch (e: Exception) {
                 Log.e("onTextChanged", "e", e)
                 e.printStackTrace()
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.CRITICAL
+                )
                 resetGlobalPosition()
             }
         }
@@ -174,6 +181,11 @@ internal class MemberTaggingTextWatcher(
                 editText.text.insert(editText.selectionStart, " ")
             }
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
         }
     }

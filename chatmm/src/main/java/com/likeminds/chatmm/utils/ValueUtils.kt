@@ -8,6 +8,8 @@ import android.webkit.URLUtil
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.utils.file.util.FileUtil
 import com.likeminds.chatmm.utils.file.util.FileUtil.isLargeFile
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import java.io.File
 import java.util.*
 
@@ -121,6 +123,11 @@ object ValueUtils {
                 emails.first()
             } else null
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             return null
         }
     }
@@ -144,6 +151,11 @@ object ValueUtils {
                 links.first()
             } else null
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             return null
         }
     }

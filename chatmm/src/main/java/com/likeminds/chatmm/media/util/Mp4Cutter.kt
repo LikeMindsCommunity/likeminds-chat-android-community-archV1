@@ -13,6 +13,8 @@ import com.googlecode.mp4parser.authoring.tracks.CroppedTrack
 import com.likeminds.chatmm.media.customviews.interfaces.OnTrimVideoListener
 import com.likeminds.chatmm.media.model.VideoTrimExtras
 import com.likeminds.chatmm.utils.file.util.FileUtil
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
@@ -37,14 +39,24 @@ object Mp4Cutter {
                 // Trim the video using mp4Parser
                 val inputFilePath = FileUtil.getRealPath(context, srcUri).path
                 videoTrimmed = genVideoUsingMp4Parser(inputFilePath, destFile, startMs, endMs)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.EMERGENCY
+                )
             }
         }
         if (!videoTrimmed) {
             try {
                 // Trim the video using muxer
                 videoTrimmed = genVideoUsingMuxer(context, srcUri, destFile, startMs, endMs)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.EMERGENCY
+                )
             }
         }
         if (videoTrimmed) {
@@ -192,6 +204,11 @@ object Mp4Cutter {
             muxer.stop()
             return true
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             e.printStackTrace()
         } finally {
             muxer.release()

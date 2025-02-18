@@ -19,6 +19,8 @@ import com.likeminds.chatmm.utils.file.util.Constants.FileConstants.LOCAL_PROVID
 import com.likeminds.chatmm.utils.file.util.Constants.FileConstants.UNKNOWN_FILE_CHOOSER
 import com.likeminds.chatmm.utils.file.util.Paths.isCloudFile
 import com.likeminds.chatmm.utils.file.util.Paths.isUnknownProvider
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import java.io.*
 import java.net.URL
 import java.net.URLConnection
@@ -143,6 +145,11 @@ object FileUtil {
                 }
             }
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             file.deleteRecursively()
             e.printStackTrace()
             Log.e(TAG, "downloadFile", e)
@@ -201,6 +208,11 @@ object FileUtil {
             }
             newUri
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
             Log.e(TAG, "getSharedImageUri", e)
             null
@@ -234,6 +246,11 @@ object FileUtil {
                 inputStream.close()
                 newUri = Uri.fromFile(file)
             } catch (e: IOException) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.CRITICAL
+                )
                 Log.e(
                     "FileUtils",
                     "IOException while trying to copy audio from uri: " + e.localizedMessage
@@ -253,6 +270,11 @@ object FileUtil {
             BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options)
             Pair(options.outWidth, options.outHeight)
         } catch (e: FileNotFoundException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
             Pair(0, 0)
         }
@@ -272,6 +294,11 @@ object FileUtil {
                 null
             }
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
         } finally {
             mediaMetadataRetriever?.release()
@@ -310,10 +337,20 @@ object FileUtil {
                     file
                 )
             } catch (e: Exception) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.CRITICAL
+                )
                 Log.e("LikeMinds", "provider not found, ${e.localizedMessage}")
                 null
             }
         } catch (e: IOException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             Log.e(
                 "FileUtils",
                 "IOException while trying to get gif uri: " + e.localizedMessage
@@ -353,10 +390,20 @@ object FileUtil {
                         file
                     )
                 } catch (e: Exception) {
+                    LMChatLogger.getInstance()?.handleException(
+                        e.message ?: "",
+                        e.stackTraceToString(),
+                        LMSeverity.CRITICAL
+                    )
                     Log.e("LikeMinds", "provider not found, ${e.localizedMessage}")
                     null
                 }
             } catch (e: IOException) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.CRITICAL
+                )
                 Log.e(
                     "FileUtils",
                     "IOException while trying to copy gif from uri: " + e.localizedMessage
@@ -399,10 +446,20 @@ object FileUtil {
                     file
                 )
             } catch (e: Exception) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.CRITICAL
+                )
                 Log.e("LikeMinds", "provider not found, ${e.localizedMessage}")
                 null
             }
         } catch (e: IOException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             Log.e(
                 "FileUtils",
                 "IOException while trying to copy pdf from uri: " + e.localizedMessage
@@ -437,6 +494,11 @@ object FileUtil {
                 inputStream.close()
                 newUri = Uri.fromFile(file)
             } catch (e: IOException) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.CRITICAL
+                )
                 Log.e(
                     "FileUtils",
                     "IOException while trying to copy video from uri: " + e.localizedMessage
@@ -455,6 +517,11 @@ object FileUtil {
             mediaMetadataRetriever.setDataSource(videoUri.toString(), HashMap())
             bitmap = mediaMetadataRetriever.getFrameAtTime(1, MediaMetadataRetriever.OPTION_CLOSEST)
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
         } finally {
             mediaMetadataRetriever?.release()
@@ -484,6 +551,11 @@ object FileUtil {
                 bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor)
                 parcelFileDescriptor.close()
             } catch (e: IOException) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.EMERGENCY
+                )
                 Log.e(
                     "FileUtils",
                     "IOException while trying to get bitmap from uri: " + e.localizedMessage
@@ -529,11 +601,21 @@ object FileUtil {
                         file
                     )
                 } catch (e: Exception) {
+                    LMChatLogger.getInstance()?.handleException(
+                        e.message ?: "",
+                        e.stackTraceToString(),
+                        LMSeverity.CRITICAL
+                    )
                     Log.e("LikeMinds", "provider not found, ${e.localizedMessage}")
                     null
                 }
             }
         } catch (e: IOException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             Log.e(
                 TAG,
                 "IOException while trying to write file for sharing: " + e.localizedMessage

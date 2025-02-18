@@ -4,6 +4,8 @@ import android.text.TextPaint
 import android.text.style.ClickableSpan
 import android.view.View
 import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 class MemberTaggingClickableSpan(
     val color: Int,
@@ -18,6 +20,11 @@ class MemberTaggingClickableSpan(
             ds.color = color
             ds.isUnderlineText = underLineText
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
         }
     }

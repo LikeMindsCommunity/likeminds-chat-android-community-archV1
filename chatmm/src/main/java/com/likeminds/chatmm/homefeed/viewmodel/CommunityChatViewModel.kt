@@ -17,6 +17,8 @@ import com.likeminds.chatmm.utils.coroutine.launchIO
 import com.likeminds.chatmm.utils.model.BaseViewType
 import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.chatroom.model.*
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import com.likeminds.likemindschat.homefeed.util.HomeChatroomListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -184,6 +186,11 @@ class CommunityChatViewModel @Inject constructor(
             }
             homeEventChannel.send(HomeEvent.UpdateChatrooms)
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             Log.e(SDKApplication.LOG_TAG, "updateChatroomChanges ${e.localizedMessage}")
         }
     }

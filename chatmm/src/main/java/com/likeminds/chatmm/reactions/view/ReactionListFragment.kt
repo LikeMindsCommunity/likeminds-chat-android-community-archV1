@@ -10,6 +10,8 @@ import com.likeminds.chatmm.reactions.model.ReactionViewData
 import com.likeminds.chatmm.reactions.view.adapter.ReactionsTabAdapter
 import com.likeminds.chatmm.utils.customview.BaseFragment
 import com.likeminds.chatmm.utils.model.BaseViewType
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import javax.inject.Inject
 
 class ReactionListFragment : BaseFragment<FragmentReactionListBinding, Nothing>(),
@@ -44,6 +46,11 @@ class ReactionListFragment : BaseFragment<FragmentReactionListBinding, Nothing>(
             reactionRemovedFragmentListener =
                 parentFragment as ReactionRemovedFragmentListener?
         } catch (e: ClassCastException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             throw ClassCastException("Calling fragment must implement MessageReactionRemovedFragmentListener interface")
         }
         SDKApplication.getInstance().reactionsComponent()?.inject(this)

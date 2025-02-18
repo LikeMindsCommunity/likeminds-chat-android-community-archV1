@@ -12,6 +12,8 @@ import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.theme.util.ThemeUtil
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import com.vanniktech.emoji.EmojiEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -82,6 +84,11 @@ internal class LikeMindsEmojiEditText @JvmOverloads constructor(
                 try {
                     inputContentInfo.requestPermission()
                 } catch (e: Exception) {
+                    LMChatLogger.getInstance()?.handleException(
+                        e.message ?: "",
+                        e.stackTraceToString(),
+                        LMSeverity.CRITICAL
+                    )
                     return false
                 }
             }
