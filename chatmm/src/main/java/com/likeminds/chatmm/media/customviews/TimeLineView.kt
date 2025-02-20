@@ -14,6 +14,8 @@ import com.likeminds.chatmm.R
 import com.likeminds.chatmm.media.customviews.interfaces.OnVideoTimelineListener
 import com.likeminds.chatmm.media.util.BackgroundExecutor
 import com.likeminds.chatmm.media.util.UiThreadExecutor
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import kotlin.math.ceil
 
 internal class TimeLineView @JvmOverloads constructor(
@@ -88,6 +90,11 @@ internal class TimeLineView @JvmOverloads constructor(
                                     bitmap =
                                         Bitmap.createBitmap(bitmap, 0, 0, cropWidth, bitmap.height)
                                 } catch (e: Exception) {
+                                    LMChatLogger.getInstance()?.handleException(
+                                        e.message ?: "",
+                                        e.stackTraceToString(),
+                                        LMSeverity.CRITICAL
+                                    )
                                     e.printStackTrace()
                                 }
                                 thumbnailList.put(i.toLong(), bitmap)
@@ -97,6 +104,11 @@ internal class TimeLineView @JvmOverloads constructor(
                     mediaMetadataRetriever.release()
                     returnBitmaps(thumbnailList, videoUri)
                 } catch (e: Exception) {
+                    LMChatLogger.getInstance()?.handleException(
+                        e.message ?: "",
+                        e.stackTraceToString(),
+                        LMSeverity.CRITICAL
+                    )
                     e.printStackTrace()
                 }
             }

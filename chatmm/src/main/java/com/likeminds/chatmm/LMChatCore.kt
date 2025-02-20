@@ -33,6 +33,7 @@ object LMChatCore {
         domain: String? = null,
         enablePushNotifications: Boolean = false,
         deviceId: String? = null,
+        shareLogsWithLM: Boolean = true
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             Log.d(SDKApplication.LOG_TAG, "LMChatCore setup called")
@@ -48,7 +49,8 @@ object LMChatCore {
                 lmChatAppearanceRequest,
                 domain,
                 enablePushNotifications,
-                deviceId
+                deviceId,
+                shareLogsWithLM
             )
         }
     }

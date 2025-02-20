@@ -4,6 +4,8 @@ import android.content.*
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 open class ConnectivityBroadcastReceiver : BroadcastReceiver() {
 
@@ -41,6 +43,12 @@ open class ConnectivityBroadcastReceiver : BroadcastReceiver() {
                     }
                 }
             } catch (e: Exception) {
+
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.EMERGENCY
+                )
                 e.printStackTrace()
             }
             return result

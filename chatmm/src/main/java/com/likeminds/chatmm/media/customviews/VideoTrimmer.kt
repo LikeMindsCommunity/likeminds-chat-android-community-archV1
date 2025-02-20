@@ -29,6 +29,8 @@ import com.likeminds.chatmm.media.util.Mp4Cutter
 import com.likeminds.chatmm.media.util.TrimVideoUtils
 import com.likeminds.chatmm.media.util.UiThreadExecutor
 import com.likeminds.chatmm.utils.file.util.FileUtil
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -212,6 +214,11 @@ internal class VideoTrimmer @JvmOverloads constructor(
                 try {
                     extractor.setDataSource(srcFilePath)
                 } catch (e: Exception) {
+                    LMChatLogger.getInstance()?.handleException(
+                        e.message ?: "",
+                        e.stackTraceToString(),
+                        LMSeverity.CRITICAL
+                    )
                     e.printStackTrace()
                 } finally {
                     extractor.release()
@@ -229,6 +236,11 @@ internal class VideoTrimmer @JvmOverloads constructor(
                             videoTrimExtras
                         )
                     } catch (e: Exception) {
+                        LMChatLogger.getInstance()?.handleException(
+                            e.message ?: "",
+                            e.stackTraceToString(),
+                            LMSeverity.CRITICAL
+                        )
                         Log.e("VideoTrimmer", "onSaveClicked startTrim ${e.localizedMessage}")
                         e.printStackTrace()
                         mOnTrimVideoListener?.onFailed(videoTrimExtras)
@@ -238,6 +250,11 @@ internal class VideoTrimmer @JvmOverloads constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e("VideoTrimmer", "onSaveClicked ${e.localizedMessage}")
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             mOnTrimVideoListener?.onFailed(videoTrimExtras)
         }
     }
