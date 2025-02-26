@@ -1112,9 +1112,6 @@ class ChatroomDetailFragment :
                     if (isFirstTime) {
                         startBackgroundSync()
                     }
-
-                    //we should observe the live conversation once, sync is complete to avoid duplicate conversation
-                    viewModel.observeLiveConversations(requireContext(), chatroomId)
                 }
 
                 WorkInfo.State.CANCELLED -> {
@@ -6383,6 +6380,11 @@ class ChatroomDetailFragment :
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        viewModel.subscribeChatroom()
+    }
+
     override fun onPause() {
         super.onPause()
         if (inAppVideoPlayerPopup?.isShowing == true) {
@@ -6396,6 +6398,7 @@ class ChatroomDetailFragment :
             isVoiceNoteLocked = false
             voiceNoteUtils.stopVoiceNote(binding, RECORDING_LOCK_DONE)
         }
+        viewModel.unsubscribeChatroom()
         super.onStop()
     }
 
