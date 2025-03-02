@@ -544,7 +544,6 @@ object ChatroomConversationItemViewDataBinderUtil {
         if (chatroom == null && conversation == null) {
             return Pair(null, false)
         }
-        val attachmentCount = conversation?.attachmentCount ?: 0
         val workerUUID = conversation?.workerUUID
         val transferUtility by lazy { SDKApplication.getInstance().transferUtility }
         var uuid: UUID? = null
@@ -563,7 +562,13 @@ object ChatroomConversationItemViewDataBinderUtil {
 
             tvRetry.setOnClickListener {
                 if (conversation?.id != null) {
-                    listener?.onRetryConversationMediaUpload(conversation.id, attachmentCount)
+                    var remainingAttachments = 0
+                    conversation.attachments?.forEach { attachment ->
+                        if (!attachment.isUploaded) {
+                            remainingAttachments++
+                        }
+                    }
+                    listener?.onRetryConversationMediaUpload(conversation.id, remainingAttachments)
                 }
             }
 

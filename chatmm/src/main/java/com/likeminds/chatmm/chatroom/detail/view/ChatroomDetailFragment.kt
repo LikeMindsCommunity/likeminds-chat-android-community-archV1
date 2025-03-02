@@ -2263,7 +2263,7 @@ class ChatroomDetailFragment :
                                     val updatedConversation = oldConversation.toBuilder()
                                         .attachments(
                                             oldConversation.attachments?.map { attachment ->
-                                                if (indexList.contains(attachment.index ?: -1)) {
+                                                if (indexList.contains(attachment.index ?: -1) || !attachment.isUploaded) {
                                                     attachment
                                                 } else {
                                                     attachment.toBuilder()
