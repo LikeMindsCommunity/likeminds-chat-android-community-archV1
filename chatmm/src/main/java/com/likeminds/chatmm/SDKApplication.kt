@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.amazonaws.mobile.client.*
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
+import com.google.android.exoplayer2.util.Log
 import com.likeminds.chatmm.di.DaggerLikeMindsChatComponent
 import com.likeminds.chatmm.di.LikeMindsChatComponent
 import com.likeminds.chatmm.di.aichatbot.AIChatbotComponent
@@ -23,6 +24,7 @@ import com.likeminds.chatmm.theme.model.LMChatAppearanceRequest
 import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.LMChatSDKCallback
+import com.likeminds.likemindschat.conversation.model.ConversationState
 import com.likeminds.likemindschat.helper.model.LMChatInitiateLoggerRequest
 import com.likeminds.likemindschat.helper.model.LMSeverity
 import com.likeminds.likemindschat.user.model.InitiateUserRequest
@@ -95,7 +97,8 @@ class SDKApplication : LMChatSDKCallback {
         domain: String? = null,
         enablePushNotifications: Boolean = false,
         deviceId: String? = null,
-        shareLogsWithLM: Boolean
+        shareLogsWithLM: Boolean,
+        excludeConversationStates: List<ConversationState> = emptyList()
     ) {
         val initiateLoggerRequest = if (shareLogsWithLM) {
             LMChatInitiateLoggerRequest.Builder()
@@ -110,9 +113,15 @@ class SDKApplication : LMChatSDKCallback {
             null
         }
 
+        Log.d(
+            "PUI",
+            "excludeConversationStates received in SDKApplication: ${excludeConversationStates.map { it.value }}"
+        )
+
         mChatClient = LMChatClient.Builder(application)
             .lmChatSDKCallback(this)
             .initiateLoggerRequest(initiateLoggerRequest)
+            .excludedConversationStates(excludeConversationStates)
             .build()
 
         selectedTheme = theme
