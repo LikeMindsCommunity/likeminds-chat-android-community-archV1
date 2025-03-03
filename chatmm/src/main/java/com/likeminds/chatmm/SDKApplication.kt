@@ -113,11 +113,6 @@ class SDKApplication : LMChatSDKCallback {
             null
         }
 
-        Log.d(
-            "PUI",
-            "excludeConversationStates received in SDKApplication: ${excludeConversationStates.map { it.value }}"
-        )
-
         mChatClient = LMChatClient.Builder(application)
             .lmChatSDKCallback(this)
             .initiateLoggerRequest(initiateLoggerRequest)
