@@ -35,8 +35,11 @@ import com.likeminds.chatmm.member.util.MemberImageUtil
 import com.likeminds.chatmm.polls.model.*
 import com.likeminds.chatmm.polls.view.PollViewListener
 import com.likeminds.chatmm.reactions.model.ReactionsGridViewData
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.*
+import com.likeminds.chatmm.utils.AndroidUtils
+import com.likeminds.chatmm.utils.DateUtil
+import com.likeminds.chatmm.utils.Route
 import com.likeminds.chatmm.utils.ValueUtils.getValidTextForLinkify
 import com.likeminds.chatmm.utils.ValueUtils.isValidYoutubeLink
 import com.likeminds.chatmm.utils.ViewUtils.hide
@@ -129,6 +132,7 @@ object ChatroomConversationItemViewDataBinderUtil {
         imageViewStatus: ImageView? = null,
         imageViewFailed: ImageView? = null,
     ) {
+        val context = clRoot.context
         val set = ConstraintSet()
         set.clone(clRoot)
         set.clear(clConversationBubble.id, ConstraintSet.RIGHT)
@@ -155,6 +159,9 @@ object ChatroomConversationItemViewDataBinderUtil {
             if (conversationViewData?.isFailed() == true) {
                 imageViewStatus?.visibility = View.GONE
                 imageViewFailed?.visibility = View.VISIBLE
+                conversationViewData.workerUUID?.let { workerUUID ->
+                    WorkManager.getInstance(context).cancelWorkById(UUID.fromString(workerUUID))
+                }
             } else {
                 imageViewFailed?.visibility = View.GONE
             }
@@ -338,7 +345,7 @@ object ChatroomConversationItemViewDataBinderUtil {
             tvConversation,
             trimmedText,
             true,
-            LMTheme.getTextLinkColor()
+            LMChatAppearance.getTextLinkColor()
         ) {
             adapterListener?.onMemberTagClicked(it)
         }
@@ -526,22 +533,21 @@ object ChatroomConversationItemViewDataBinderUtil {
         conversation: ConversationViewData? = null,
         chatroom: ChatroomViewData? = null,
         listener: ChatroomDetailAdapterListener? = null,
-    ): Triple<UUID?, Boolean, String?> {
+    ): Pair<UUID?, Boolean> {
         if (chatroom == null && conversation == null) {
-            return Triple(null, false, null)
+            return Pair(null, false)
         }
         val attachmentCount = conversation?.attachmentCount ?: 0
-        val uploadWorkerUUID = conversation?.uploadWorkerUUID
+        val workerUUID = conversation?.workerUUID
         val transferUtility by lazy { SDKApplication.getInstance().transferUtility }
         var uuid: UUID? = null
         var isInProgress = false
         var mediaActionsVisible = false
-        var workerState = ""
 
         binding.apply {
             ivCancel.setOnClickListener {
                 uuid?.let {
-                    UploadHelper.getAWSFileResponses(uploadWorkerUUID).forEach { response ->
+                    UploadHelper.getAWSFileResponses(workerUUID).forEach { response ->
                         transferUtility.pause(response.transferObserver?.id ?: 0)
                     }
                     WorkManager.getInstance(root.context).cancelWorkById(it)
@@ -555,14 +561,13 @@ object ChatroomConversationItemViewDataBinderUtil {
             }
 
             when {
-                //When worker is present for this media action
-                !uploadWorkerUUID.isNullOrEmpty() -> {
-                    uuid = UUID.fromString(uploadWorkerUUID)
+                //When attachments are not uploaded for this conversation
+                (!workerUUID.isNullOrEmpty() && conversation.attachmentsUploaded != true) -> {
+                    uuid = UUID.fromString(workerUUID)
                     val workInfo = WorkManager.getInstance(root.context)
-                        .getWorkInfoById(uuid!!).get() ?: return Triple(
+                        .getWorkInfoById(uuid!!).get() ?: return Pair(
                         null,
-                        mediaActionsVisible,
-                        null
+                        mediaActionsVisible
                     )
                     when (workInfo.state) {
                         WorkInfo.State.ENQUEUED, WorkInfo.State.BLOCKED, WorkInfo.State.RUNNING -> {
@@ -586,22 +591,6 @@ object ChatroomConversationItemViewDataBinderUtil {
                     }
                 }
 
-                conversation?.isFailed() == true -> {
-                    workerState = "failed"
-                    groupMediaUploading.visibility = View.GONE
-                }
-
-                conversation?.isSending() == true -> {
-                    workerState = "sending"
-                    groupMediaUploading.visibility = View.VISIBLE
-                    tvRetry.visibility = View.GONE
-                }
-
-                (conversation?.isTemporaryConversation() == false && conversation.isSending()) -> {
-                    tvRetry.visibility = View.VISIBLE
-                    groupMediaUploading.visibility = View.GONE
-                }
-
                 else -> {
                     groupMediaUploading.visibility = View.GONE
                     tvRetry.visibility = View.GONE
@@ -612,9 +601,9 @@ object ChatroomConversationItemViewDataBinderUtil {
         }
 
         return if (isInProgress) {
-            Triple(uuid, mediaActionsVisible, workerState)
+            Pair(uuid, mediaActionsVisible)
         } else {
-            Triple(null, mediaActionsVisible, workerState)
+            Pair(null, mediaActionsVisible)
         }
     }
 
@@ -633,7 +622,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                     if (attachment.meta != null) {
                         tvDuration.apply {
                             show()
-                            text = if (!attachment.currentDuration.equals("00:00")) {
+                            text = if (attachment.currentDuration != "00:00") {
                                 attachment.currentDuration
                             } else if (attachment.meta.duration == 0) {
                                 DateUtil.formatSeconds(
@@ -854,16 +843,14 @@ object ChatroomConversationItemViewDataBinderUtil {
                     replyConversation != null -> {
                         ChatReplyUtil.getConversationReplyData(
                             replyConversation,
-                            currentMemberId,
-                            root.context
+                            currentMemberId
                         )
                     }
 
                     replyChatRoom != null -> {
                         ChatReplyUtil.getChatRoomReplyData(
                             replyChatRoom,
-                            currentMemberId,
-                            root.context
+                            currentMemberId
                         )
                     }
 
@@ -889,20 +876,12 @@ object ChatroomConversationItemViewDataBinderUtil {
                         )
                     }
 
-                    when {
-                        replyData.isMessageDeleted -> {
-                            tvConversation.text = replyData.deleteMessage
-                        }
-
-                        else -> {
-                            MemberTaggingDecoder.decode(
-                                tvConversation,
-                                replyData.conversationText,
-                                false,
-                                LMTheme.getTextLinkColor()
-                            )
-                        }
-                    }
+                    MemberTaggingDecoder.decode(
+                        tvConversation,
+                        replyData.conversationText,
+                        false,
+                        LMChatAppearance.getTextLinkColor()
+                    )
 
                     if (replyData.drawable != null && binding.tvConversation.editableText != null) {
                         tvConversation.editableText.setSpan(
@@ -1174,9 +1153,9 @@ object ChatroomConversationItemViewDataBinderUtil {
                 attachmentViewDataList =
                     attachmentViewDataList.subList(0, 4)
                         .mapIndexed { index, attachmentViewData ->
-                            val viewType = when {
-                                attachmentViewData.type == VIDEO -> ITEM_VIDEO
-                                attachmentViewData.type == PDF -> ITEM_PDF
+                            val viewType = when (attachmentViewData.type) {
+                                VIDEO -> ITEM_VIDEO
+                                PDF -> ITEM_PDF
                                 else -> ITEM_IMAGE
                             }
                             if (index == 3) {
@@ -1202,9 +1181,9 @@ object ChatroomConversationItemViewDataBinderUtil {
             else -> {
                 attachmentViewDataList =
                     attachmentViewDataList.map { attachmentViewData ->
-                        val viewType = when {
-                            attachmentViewData.type == VIDEO -> ITEM_VIDEO
-                            attachmentViewData.type == PDF -> ITEM_PDF
+                        val viewType = when (attachmentViewData.type) {
+                            VIDEO -> ITEM_VIDEO
+                            PDF -> ITEM_PDF
                             else -> ITEM_IMAGE
                         }
                         return@map attachmentViewData.toBuilder()
@@ -1344,7 +1323,7 @@ object ChatroomConversationItemViewDataBinderUtil {
                     )
                 } else {
                     backgroundTintList =
-                        ColorStateList.valueOf(LMTheme.getButtonsColor())
+                        ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
                 }
             }
         }
@@ -1382,9 +1361,9 @@ object ChatroomConversationItemViewDataBinderUtil {
             return
         }
         btnSubmitVote.apply {
-            iconTint = ColorStateList.valueOf(LMTheme.getButtonsColor())
-            setTextColor(LMTheme.getButtonsColor())
-            strokeColor = ColorStateList.valueOf(LMTheme.getButtonsColor())
+            iconTint = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
+            setTextColor(LMChatAppearance.getButtonsColor())
+            strokeColor = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
             tag = "POLL_CLICK_ENABLED"
             isEnabled = true
         }

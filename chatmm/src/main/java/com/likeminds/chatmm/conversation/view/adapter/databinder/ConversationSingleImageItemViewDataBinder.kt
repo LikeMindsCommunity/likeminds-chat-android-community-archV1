@@ -13,7 +13,7 @@ import com.likeminds.chatmm.media.view.MediaActivity
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.reactions.util.ReactionUtil
 import com.likeminds.chatmm.reactions.util.ReactionsPreferences
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.ProgressHelper
 import com.likeminds.chatmm.utils.customview.ViewDataBinder
 import com.likeminds.chatmm.utils.databinding.ImageBindingUtil
@@ -42,8 +42,8 @@ internal class ConversationSingleImageItemViewDataBinder(
     ) {
         binding.apply {
 
-            buttonColor = LMTheme.getButtonsColor()
-            viewReply.buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
+            viewReply.buttonColor = LMChatAppearance.getButtonsColor()
             conversation = data as ConversationViewData
             itemPosition = position
 
@@ -246,18 +246,11 @@ internal class ConversationSingleImageItemViewDataBinder(
                         attachmentViewData
                     )
 
-                    val uploadData =
-                        ChatroomConversationItemViewDataBinderUtil.initUploadMediaAction(
-                            viewMediaUploadingActions,
-                            conversation = conversationViewData,
-                            listener = adapterListener
-                        )
-
-                    if (uploadData.first != null) {
-                        adapterListener.observeMediaUpload(
-                            uploadData.first!!, conversationViewData
-                        )
-                    }
+                    ChatroomConversationItemViewDataBinderUtil.initUploadMediaAction(
+                        viewMediaUploadingActions,
+                        conversation = conversationViewData,
+                        listener = adapterListener
+                    )
                 } else {
                     ivSingleImage.visibility = View.GONE
                     ProgressHelper.showProgress(progressBar, false)

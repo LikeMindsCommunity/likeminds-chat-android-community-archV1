@@ -9,6 +9,8 @@
     <string name="lm_chat_something_went_wrong">Something went wrong!</string>
     <string name="lm_chat_empty_api_key">Empty API Key</string>
     <string name="lm_chat_community">Community</string>
+    <string name="lm_chat_community_hybrid">Community Hybrid</string>
+    <string name="lm_chat_networking">Networking</string>
     <string name="lm_chat_access_denied">Access denied!</string>
     <string name="lm_chat_oops_you_don_t_seem_to_have_access_to_the_community">Oops! You don’t seem to have access to the community.</string>
     <string name="lm_chat_explore">Explore</string>
@@ -306,4 +308,5 @@
     <string name="lm_chat_invitation_rejected">Invitation Rejected</string>
     <string name="lm_chat_ai_bot">AI Bot</string>
     <string name="lm_chat_vote">Vote</string>
+    <string name="lm_chat_setting_up_ai_chatbot">Setting up AI chatbot…</string>
 </resources>

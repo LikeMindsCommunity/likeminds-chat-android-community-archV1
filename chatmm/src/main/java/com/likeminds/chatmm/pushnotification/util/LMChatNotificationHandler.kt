@@ -21,7 +21,7 @@ import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.media.util.MediaUtils
 import com.likeminds.chatmm.pushnotification.model.*
 import com.likeminds.chatmm.pushnotification.viewmodel.LMNotificationViewModel
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.Route
 import com.likeminds.chatmm.utils.ValueUtils
 import com.likeminds.chatmm.utils.file.util.FileUtil
@@ -244,7 +244,7 @@ class LMChatNotificationHandler {
 
         notificationIcon = R.drawable.lm_chat_ic_notification
 
-        notificationTextColor = LMTheme.getButtonsColor()
+        notificationTextColor = LMChatAppearance.getButtonsColor()
 
         LMChatNotificationHandler.launcherIntent = launcherIntent
 

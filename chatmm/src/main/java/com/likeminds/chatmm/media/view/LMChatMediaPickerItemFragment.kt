@@ -16,7 +16,7 @@ import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.media.view.adapter.MediaPickerAdapter
 import com.likeminds.chatmm.media.view.adapter.MediaPickerAdapterListener
 import com.likeminds.chatmm.media.viewmodel.MediaViewModel
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.actionmode.ActionModeCallback
 import com.likeminds.chatmm.utils.actionmode.ActionModeListener
 import com.likeminds.chatmm.utils.customview.BaseFragment
@@ -104,8 +104,8 @@ class LMChatMediaPickerItemFragment :
         binding.toolbar.title = ""
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
 
-        binding.toolbarColor = LMTheme.getToolbarColor()
-        binding.headerColor = LMTheme.getHeaderColor()
+        binding.toolbarColor = LMChatAppearance.getToolbarColor()
+        binding.headerColor = LMChatAppearance.getHeaderColor()
 
         binding.tvToolbarTitle.text = mediaPickerItemExtras.folderTitle
 

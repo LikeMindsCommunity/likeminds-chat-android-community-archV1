@@ -12,7 +12,7 @@ import com.likeminds.chatmm.databinding.ItemConversationBinding
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.reactions.util.ReactionUtil
 import com.likeminds.chatmm.reactions.util.ReactionsPreferences
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
 import com.likeminds.chatmm.utils.customview.ViewDataBinder
@@ -48,8 +48,8 @@ internal class ConversationItemViewDataBinder constructor(
         position: Int,
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
-            viewReply.buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
+            viewReply.buttonColor = LMChatAppearance.getButtonsColor()
             conversation = data as ConversationViewData
             ChatroomConversationItemViewDataBinderUtil.initConversationBubbleView(
                 clConversationRoot,

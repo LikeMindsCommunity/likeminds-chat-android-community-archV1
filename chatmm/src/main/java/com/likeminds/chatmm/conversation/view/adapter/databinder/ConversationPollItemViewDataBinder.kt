@@ -14,7 +14,7 @@ import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.polls.view.PollViewListener
 import com.likeminds.chatmm.reactions.util.ReactionUtil
 import com.likeminds.chatmm.reactions.util.ReactionsPreferences
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.setVisible
 import com.likeminds.chatmm.utils.ViewUtils.show
@@ -42,8 +42,8 @@ internal class ConversationPollItemViewDataBinder(
         position: Int,
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
-            viewReply.buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
+            viewReply.buttonColor = LMChatAppearance.getButtonsColor()
 
             conversation = data
             ChatroomConversationItemViewDataBinderUtil.initConversationBubbleView(
@@ -285,7 +285,7 @@ internal class ConversationPollItemViewDataBinder(
             }
 
             if (memberViewData.sdkClientInfo.uuid == userPreferences.getUUID()) {
-                btnAddOption.strokeColor = ColorStateList.valueOf(LMTheme.getButtonsColor())
+                btnAddOption.strokeColor = ColorStateList.valueOf(LMChatAppearance.getButtonsColor())
             } else {
                 btnAddOption.setStrokeColorResource(R.color.lm_chat_cloudy_blue)
             }

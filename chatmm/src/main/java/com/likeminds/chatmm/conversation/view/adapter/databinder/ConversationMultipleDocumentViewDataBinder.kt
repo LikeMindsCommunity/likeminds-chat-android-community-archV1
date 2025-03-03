@@ -11,7 +11,7 @@ import com.likeminds.chatmm.conversation.model.ConversationViewData
 import com.likeminds.chatmm.databinding.ItemConversationMultipleDocumentBinding
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.reactions.util.ReactionUtil
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.ViewUtils.hide
 import com.likeminds.chatmm.utils.ViewUtils.show
@@ -44,9 +44,9 @@ internal class ConversationMultipleDocumentViewDataBinder(
         position: Int,
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
-            textLinkColor = LMTheme.getTextLinkColor()
-            viewReply.buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
+            textLinkColor = LMChatAppearance.getTextLinkColor()
+            viewReply.buttonColor = LMChatAppearance.getButtonsColor()
             conversation = data as ConversationViewData
             itemPosition = position
 
@@ -202,12 +202,6 @@ internal class ConversationMultipleDocumentViewDataBinder(
             )
 
             mediaActionVisible = mediaUploadData.second
-
-            if (mediaUploadData.first != null) {
-                chatroomDetailAdapterListener.observeMediaUpload(
-                    mediaUploadData.first!!, conversation
-                )
-            }
 
             binding.tvShowMore.setOnClickListener {
                 chatroomDetailAdapterListener.onMultipleItemsExpanded(conversation, position)

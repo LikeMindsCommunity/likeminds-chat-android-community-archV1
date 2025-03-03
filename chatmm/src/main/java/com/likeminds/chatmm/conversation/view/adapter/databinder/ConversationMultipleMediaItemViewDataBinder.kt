@@ -3,7 +3,7 @@ package com.likeminds.chatmm.conversation.view.adapter.databinder
 import android.view.*
 import androidx.recyclerview.widget.GridLayoutManager
 import com.likeminds.chatmm.LMAnalytics
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.create.view.adapter.ChatroomItemAdapter
 import com.likeminds.chatmm.chatroom.create.view.adapter.ChatroomItemAdapterListener
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomConversationItemViewDataBinderUtil
@@ -39,8 +39,8 @@ internal class ConversationMultipleMediaItemViewDataBinder @Inject constructor(
         position: Int,
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
-            viewReply.buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
+            viewReply.buttonColor = LMChatAppearance.getButtonsColor()
             conversation = data as ConversationViewData
             itemPosition = position
             ChatroomConversationItemViewDataBinderUtil.initConversationBubbleView(
@@ -180,12 +180,6 @@ internal class ConversationMultipleMediaItemViewDataBinder @Inject constructor(
             )
 
             mediaActionVisible = mediaUploadData.second
-
-            if (mediaUploadData.first != null) {
-                adapterListener.observeMediaUpload(
-                    mediaUploadData.first!!, conversationViewData
-                )
-            }
 
             ivAddReaction.setOnClickListener {
                 adapterListener.onLongPressConversation(

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.SDKApplication
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEditTextListener
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.create.view.adapter.ImageAdapter
 import com.likeminds.chatmm.chatroom.create.view.adapter.ImageAdapterListener
 import com.likeminds.chatmm.chatroom.detail.viewmodel.HelperViewModel
@@ -295,7 +295,7 @@ class ConversationAudioSendEditFragment :
                 .editText(binding.etConversation)
                 .darkMode(true)
                 .color(
-                    LMTheme.getTextLinkColor()
+                    LMChatAppearance.getTextLinkColor()
                 ).build()
         )
 
@@ -313,7 +313,7 @@ class ConversationAudioSendEditFragment :
         MemberTaggingDecoder.decode(
             binding.etConversation,
             mediaExtras.text,
-            LMTheme.getTextLinkColor()
+            LMChatAppearance.getTextLinkColor()
         )
 
         memberTagging.taggingEnabled = mediaExtras.isTaggingEnabled
@@ -410,7 +410,7 @@ class ConversationAudioSendEditFragment :
     }
 
     private fun setTheme() {
-        binding.buttonColor = LMTheme.getButtonsColor()
+        binding.buttonColor = LMChatAppearance.getButtonsColor()
     }
 
     private fun initRichEditorSupport() {

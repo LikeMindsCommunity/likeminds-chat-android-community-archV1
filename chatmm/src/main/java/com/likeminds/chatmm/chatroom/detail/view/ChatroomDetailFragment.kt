@@ -82,7 +82,7 @@ import com.likeminds.chatmm.search.view.LMChatSearchActivity
 import com.likeminds.chatmm.search.view.LMChatSearchActivity.Companion.LM_CHAT_SEARCH_RESULT
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEditTextListener
 import com.likeminds.chatmm.theme.customview.edittext.LikeMindsEmojiEditText
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.*
 import com.likeminds.chatmm.utils.Route.getNullableQueryParameter
 import com.likeminds.chatmm.utils.ValueUtils.getEmailIfExist
@@ -104,8 +104,9 @@ import com.likeminds.chatmm.utils.chrometabs.CustomTabIntent
 import com.likeminds.chatmm.utils.customview.*
 import com.likeminds.chatmm.utils.databinding.ImageBindingUtil
 import com.likeminds.chatmm.utils.file.util.FileUtil
-import com.likeminds.chatmm.utils.mediauploader.worker.MediaUploadWorker
-import com.likeminds.chatmm.utils.mediauploader.worker.MediaUploadWorker.Companion.ARG_WORKER_RESULT_TAGGED_USER
+import com.likeminds.chatmm.utils.mediauploader.worker.ConversationWorker
+import com.likeminds.chatmm.utils.mediauploader.worker.ConversationWorker.Companion.ARG_MEDIA_INDEX_LIST
+import com.likeminds.chatmm.utils.mediauploader.worker.ConversationWorker.Companion.OUTPUT_POST_CONVERSATION_RESPONSE
 import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
 import com.likeminds.chatmm.utils.membertagging.model.MemberTaggingExtras
 import com.likeminds.chatmm.utils.membertagging.model.TagViewData
@@ -118,9 +119,9 @@ import com.likeminds.chatmm.utils.observer.ChatEvent
 import com.likeminds.chatmm.utils.permissions.*
 import com.likeminds.chatmm.utils.recyclerview.LMSwipeController
 import com.likeminds.chatmm.utils.recyclerview.SwipeControllerActions
+import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.chatmm.widget.model.WidgetViewData
 import com.likeminds.likemindschat.chatroom.model.ChatRequestState
-import com.likeminds.likemindschat.conversation.worker.CreateConversationWorker
 import com.likeminds.likemindschat.user.model.MemberBlockState
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.coroutines.flow.onEach
@@ -435,6 +436,7 @@ class ChatroomDetailFragment :
 
         const val SCREEN_RECORD = "screen_record"
         const val SOURCE_HOME_FEED = "home_feed"
+        const val SOURCE_AI_CHATBOT = "ai_chatbot"
         const val SOURCE_TAGGED_AUTO_FOLLOWED = "tagged_auto_followed"
 
         const val MUTE_ACTION_TITLE = "Mute notifications"
@@ -568,8 +570,8 @@ class ChatroomDetailFragment :
     // initializes the toolbar
     private fun initToolbar() {
         binding.apply {
-            toolbarColor = LMTheme.getToolbarColor()
-            buttonColor = LMTheme.getButtonsColor()
+            toolbarColor = LMChatAppearance.getToolbarColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
 
             (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
@@ -1874,7 +1876,7 @@ class ChatroomDetailFragment :
                 MemberTaggingExtras.Builder()
                     .editText(binding.inputBox.etAnswer)
                     .maxHeightInPercentage(0.4f)
-                    .color(LMTheme.getTextLinkColor())
+                    .color(LMChatAppearance.getTextLinkColor())
                     .build()
             )
             memberTagging.addListener(object : MemberTaggingViewListener {
@@ -2117,21 +2119,24 @@ class ChatroomDetailFragment :
                     replyChatData = inputBox.viewReply.chatReplyData
                 }
 
+                val conversationCreatedEpoch = System.currentTimeMillis()
+                val temporaryId = "-$conversationCreatedEpoch"
+
                 val uuidString = viewModel.postConversation(
                     requireContext(),
                     updatedConversation,
+                    conversationCreatedEpoch,
                     fileUris,
                     shareTextLink,
                     replyConversationId,
                     replyChatRoomId,
-                    memberTagging.getTaggedMembers(),
-                    replyChatData,
                     metadata
                 )
 
                 uuidString?.let { uuid ->
                     observeCreateConversationWorker(
                         uuid,
+                        temporaryId,
                         replyChatData,
                         replyConversationId,
                         replyChatRoomId
@@ -2139,7 +2144,6 @@ class ChatroomDetailFragment :
                 }
 
                 clearEditTextAnswer()
-                updateDmMessaged()
                 if (isLinkViewVisible() || isReplyViewVisible()) {
                     setChatInputBoxViewType(CHAT_BOX_NORMAL)
                 }
@@ -2155,6 +2159,7 @@ class ChatroomDetailFragment :
     //observes workinfo and related to create conversation worker
     private fun observeCreateConversationWorker(
         uuid: String,
+        conversationId: String,
         replyChatData: ChatReplyViewData?,
         replyConversationId: String?,
         replyChatRoomId: String?
@@ -2171,27 +2176,51 @@ class ChatroomDetailFragment :
                         WorkInfo.State.SUCCEEDED -> {
                             //get output data
                             val successResponseString =
-                                workInfo.outputData.getString(CreateConversationWorker.OUTPUT_POST_CONVERSATION_RESPONSE)
+                                workInfo.outputData.getString(OUTPUT_POST_CONVERSATION_RESPONSE)
 
                             successResponseString?.let {
                                 //convert to LMResponse
                                 val successResponse =
                                     viewModel.parseCreateConversationResponse(it)
 
-                                //get data 
-                                val data = successResponse?.data
+                                //get data
+                                val data = successResponse.data
                                 if (data != null) {
                                     //get conversation
                                     val createdConversation = data.conversation
+                                    val conversationViewData =
+                                        ViewDataConverter.convertConversation(createdConversation)
 
                                     //send analytics
-                                    viewModel.sendCreateConversationAnalytics(
-                                        createdConversation,
-                                        memberTagging.getTaggedMembers(),
-                                        replyChatData,
-                                        replyConversationId,
-                                        replyChatRoomId
-                                    )
+                                    conversationViewData?.let { conversation ->
+                                        viewModel.sendCreateConversationAnalytics(
+                                            conversation,
+                                            memberTagging.getTaggedMembers(),
+                                            replyChatData,
+                                            replyConversationId,
+                                            replyChatRoomId
+                                        )
+
+                                        //send analytics
+                                        val chatReplyData = binding.inputBox.viewReply.chatReplyData
+
+                                        if (chatReplyData != null) {
+                                            viewModel.sendMessageReplyEvent(
+                                                conversation,
+                                                chatReplyData.repliedMemberId,
+                                                chatReplyData.repliedMemberState,
+                                                conversation.replyConversation?.id,
+                                                chatReplyData.type
+                                            )
+                                        }
+                                        viewModel.sendChatroomResponded(
+                                            memberTagging.getTaggedMembers().map { it.name },
+                                            conversation
+                                        )
+                                        if (ChatroomUtil.getConversationType(conversation) == VOICE_NOTE) {
+                                            viewModel.sendVoiceNoteSent(conversation.id)
+                                        }
+                                    }
 
                                     //clear old values
                                     memberTagging.clearTaggedMembers()
@@ -2203,7 +2232,7 @@ class ChatroomDetailFragment :
                         WorkInfo.State.FAILED -> {
                             //get output data
                             val errorResponseString =
-                                workInfo.outputData.getString(CreateConversationWorker.OUTPUT_POST_CONVERSATION_RESPONSE)
+                                workInfo.outputData.getString(OUTPUT_POST_CONVERSATION_RESPONSE)
 
                             errorResponseString?.let {
                                 // convert to LMResponse
@@ -2213,12 +2242,72 @@ class ChatroomDetailFragment :
                                 //show error toast
                                 ViewUtils.showErrorMessageToast(
                                     requireContext(),
-                                    errorResponse?.errorMessage
+                                    errorResponse.errorMessage
                                 )
+                            }
+
+                            val failedMediaIndex =
+                                workInfo.outputData.getIntArray(ARG_MEDIA_INDEX_LIST)
+
+                            failedMediaIndex?.let { indexList ->
+                                val position = getIndexOfConversation(conversationId)
+                                if (position >= 0) {
+                                    val oldConversation = chatroomDetailAdapter[position]
+                                            as? ConversationViewData
+                                        ?: return@observe
+
+                                    val updatedConversation = oldConversation.toBuilder()
+                                        .attachments(
+                                            oldConversation.attachments?.map { attachment ->
+                                                if (indexList.contains(attachment.index ?: -1)) {
+                                                    attachment
+                                                } else {
+                                                    attachment.toBuilder()
+                                                        .awsFolderPath("")
+                                                        .build()
+                                                }
+                                            } as ArrayList<AttachmentViewData>?)
+                                        .build()
+                                    chatroomDetailAdapter.update(position, updatedConversation)
+                                }
+                            }
+                        }
+
+                        WorkInfo.State.CANCELLED -> {
+                            val position = getIndexOfConversation(conversationId)
+                            if (position >= 0) {
+                                chatroomDetailAdapter.notifyItemChanged(position)
                             }
                         }
 
                         else -> {
+                            val progress =
+                                ConversationWorker.getProgress(workInfo) ?: return@observe
+                            val position = getIndexOfConversation(conversationId)
+                            if (position.isValidIndex()) {
+                                val oldConversation = chatroomDetailAdapter[position]
+                                        as? ConversationViewData
+                                    ?: return@observe
+
+                                val updatedConversation =
+                                    if ((progress.first / (progress.second * 1.0)) == 1.0) {
+                                        oldConversation.toBuilder()
+                                            .attachmentsUploaded(true)
+                                            .attachmentUploadProgress(null)
+                                            .attachments(
+                                                oldConversation.attachments?.map { attachment ->
+                                                    attachment.toBuilder()
+                                                        .awsFolderPath("")
+                                                        .build()
+                                                } as ArrayList<AttachmentViewData>?)
+                                            .build()
+                                    } else {
+                                        oldConversation.toBuilder()
+                                            .attachmentUploadProgress(progress)
+                                            .build()
+                                    }
+                                chatroomDetailAdapter.update(position, updatedConversation)
+                            }
                             Log.i(
                                 TAG,
                                 "create conversation worker - state - ${workInfo.state}"
@@ -2276,7 +2365,6 @@ class ChatroomDetailFragment :
                     }
                 }
                 clearEditTextAnswer()
-                updateDmMessaged()
                 if (isReplyViewVisible()) {
                     setChatInputBoxViewType(CHAT_BOX_NORMAL)
                 }
@@ -2287,10 +2375,6 @@ class ChatroomDetailFragment :
                 )
             }
         }
-    }
-
-    private fun updateDmMessaged() {
-        // todo:
     }
 
     /**
@@ -2610,7 +2694,7 @@ class ChatroomDetailFragment :
                             tvChatroom,
                             topic.answer,
                             false,
-                            LMTheme.getTextLinkColor()
+                            LMChatAppearance.getTextLinkColor()
                         )
                     }
                 }
@@ -2675,7 +2759,7 @@ class ChatroomDetailFragment :
                     tvChatroom,
                     chatroom.title,
                     false,
-                    LMTheme.getTextLinkColor()
+                    LMChatAppearance.getTextLinkColor()
                 )
             }
         }
@@ -2973,6 +3057,30 @@ class ChatroomDetailFragment :
         viewModel.paginatedData.observe(viewLifecycleOwner) { data ->
             when (data.scrollState) {
                 SCROLL_UP -> {
+                    var lastDate: String? = null
+
+                    // Find the date of the last item to be added in the adapter list
+                    for (i in data.data.size - 1 downTo 0) {
+                        val viewData = data.data[i]
+                        if (viewData is ConversationViewData) {
+                            lastDate = viewData.date
+                            break
+                        }
+
+                        if (viewData is ChatroomDateViewData) {
+                            lastDate = viewData.date
+                            break
+                        }
+                    }
+
+                    if (!lastDate.isNullOrEmpty()) {
+                        // Find the index of the lastDate and remove it from the adapter if it is present, as it will be added again!
+                        val dateIndex = getIndexOfDate(lastDate)
+                        if (dateIndex != -1) {
+                            chatroomDetailAdapter.removeIndex(dateIndex)
+                        }
+                    }
+
                     chatroomDetailAdapter.addAll(0, data.data)
                     binding.rvChatroom.post {
                         chatroomScrollListener.topLoadingDone()
@@ -3091,7 +3199,6 @@ class ChatroomDetailFragment :
 
                 is ChatroomDetailViewModel.ConversationEvent.NewConversation -> {
                     //Observe for any new conversations triggered by the database callback
-                    val isAddedBelow: Boolean
                     val conversations =
                         getNonPresentConversations(response.conversations).toMutableList()
 
@@ -3190,7 +3297,7 @@ class ChatroomDetailFragment :
                         }
 
                         // adds the date view only if the [lastInsertedDate] is different from the current conversation date and updates [lastInsertedDate]
-                        if (!lastInsertedDate.equals(response.conversation.date)) {
+                        if (lastInsertedDate?.trim() != response.conversation.date?.trim()) {
                             lastInsertedDate = response.conversation.date
                             chatroomDetailAdapter.add(viewModel.getDateView(response.conversation.date))
                         }
@@ -3349,10 +3456,6 @@ class ChatroomDetailFragment :
     // updates the header name on chatroom
     private fun updateHeader(header: String, isSecretChatRoom: Boolean) {
         binding.apply {
-            val isAIBot = viewModel.isOtherUserAIBot()
-            tvAiBot.isVisible = isAIBot
-            tvAiBot.setBackgroundColor(LMTheme.getButtonsColor())
-
             if (viewModel.isDmChatroom()) {
                 tvToolbarSubTitle.hide()
                 val member = viewModel.getOtherDmMember() ?: return
@@ -4290,7 +4393,6 @@ class ChatroomDetailFragment :
     ) {
         if (!highlightConversation(repliedConversationId)) {
             viewModel.fetchRepliedConversationOnClick(
-                conversation,
                 repliedConversationId,
                 chatroomDetailAdapter.items()
             )
@@ -4566,22 +4668,28 @@ class ChatroomDetailFragment :
         )
     }
 
-    override fun observeMediaUpload(uuid: UUID, conversation: ConversationViewData) {
-        if (!workersMap.contains(uuid)) {
-            workersMap.add(uuid)
-            WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(uuid)
-                .observe(viewLifecycleOwner) { workInfo ->
-                    observeConversationWorkerLiveData(workInfo, conversation)
-                }
-        }
-    }
-
     override fun onRetryConversationMediaUpload(conversationId: String, attachmentCount: Int) {
-        viewModel.createRetryConversationMediaWorker(
+        val uuid = viewModel.createRetryConversationMediaWorker(
             requireContext(),
             conversationId,
             attachmentCount
         )
+
+        if (uuid.isNotEmpty()) {
+            val conversation = getIndexedConversation(conversationId)?.second ?: return
+            val chatReplyViewData = ChatReplyUtil.getConversationReplyData(
+                conversation,
+                userPreferences.getUUID()
+            )
+
+            observeCreateConversationWorker(
+                uuid,
+                conversationId,
+                chatReplyViewData,
+                conversation.replyConversation?.id,
+                conversation.replyChatroomId
+            )
+        }
     }
 
     override fun onFailedConversationClick(
@@ -4772,7 +4880,7 @@ class ChatroomDetailFragment :
                 )
             )
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                ?.setTextColor(LMTheme.getButtonsColor())
+                ?.setTextColor(LMChatAppearance.getButtonsColor())
         }
         alertDialog.show()
     }
@@ -5013,6 +5121,19 @@ class ChatroomDetailFragment :
         return chatroomDetailAdapter.items().indexOfFirst {
             it is ConversationViewData && it.id == id
         }
+    }
+
+    /**
+     * Returns the current index of the date if exists from the recyclerview
+     * @param date Date string
+     */
+    private fun getIndexOfDate(date: String): Int {
+        chatroomDetailAdapter.items().forEachIndexed { index, item ->
+            if (item is ChatroomDateViewData && item.date == date) {
+                return index
+            }
+        }
+        return -1
     }
 
     /**
@@ -5329,103 +5450,6 @@ class ChatroomDetailFragment :
         inAppVideoPlayerPopup = null
     }
 
-    private fun observeConversationWorkerLiveData(
-        workInfo: WorkInfo,
-        conversation: ConversationViewData,
-    ) {
-        when (workInfo.state) {
-            WorkInfo.State.SUCCEEDED -> {
-                val position = getIndexOfConversation(conversation.id)
-                if (position >= 0) {
-                    val oldConversation = chatroomDetailAdapter[position]
-                            as? ConversationViewData
-                        ?: return
-                    val updatedConversation = oldConversation.toBuilder()
-                        .attachmentsUploaded(true)
-                        .uploadWorkerUUID("")
-                        .attachmentUploadProgress(null)
-                        .attachments(
-                            oldConversation.attachments?.map { attachment ->
-                                attachment.toBuilder()
-                                    .awsFolderPath("")
-                                    .build()
-                            } as ArrayList<AttachmentViewData>?)
-                        .build()
-
-
-                    //send analytics
-                    val chatReplyData = binding.inputBox.viewReply.chatReplyData
-                    val listOfTaggedUser =
-                        workInfo.outputData.getStringArray(ARG_WORKER_RESULT_TAGGED_USER)?.toList()
-
-                    if (chatReplyData != null) {
-                        viewModel.sendMessageReplyEvent(
-                            updatedConversation,
-                            chatReplyData.repliedMemberId,
-                            chatReplyData.repliedMemberState,
-                            conversation.replyConversation?.id,
-                            chatReplyData.type
-                        )
-                    }
-                    viewModel.sendChatroomResponded(
-                        listOfTaggedUser ?: emptyList(),
-                        updatedConversation
-                    )
-                    if (ChatroomUtil.getConversationType(updatedConversation) == VOICE_NOTE) {
-                        viewModel.sendVoiceNoteSent(updatedConversation.id)
-                    }
-
-                    chatroomDetailAdapter.update(position, updatedConversation)
-                }
-            }
-
-            WorkInfo.State.FAILED -> {
-                val position = getIndexOfConversation(conversation.id)
-                if (position >= 0) {
-                    val oldConversation = chatroomDetailAdapter[position]
-                            as? ConversationViewData
-                        ?: return
-                    val indexList = workInfo.outputData.getIntArray(
-                        MediaUploadWorker.ARG_MEDIA_INDEX_LIST
-                    )
-                    val updatedConversation = oldConversation.toBuilder()
-                        .attachments(
-                            oldConversation.attachments?.map { attachment ->
-                                if (indexList?.contains(attachment.index ?: -1) == true) {
-                                    attachment
-                                } else {
-                                    attachment.toBuilder()
-                                        .awsFolderPath("")
-                                        .build()
-                                }
-                            } as ArrayList<AttachmentViewData>?)
-                        .build()
-                    chatroomDetailAdapter.update(position, updatedConversation)
-                }
-            }
-
-            WorkInfo.State.CANCELLED -> {
-                val position = getIndexOfConversation(conversation.id)
-                if (position >= 0) {
-                    chatroomDetailAdapter.notifyItemChanged(position)
-                }
-            }
-
-            else -> {
-                val progress = MediaUploadWorker.getProgress(workInfo) ?: return
-                val position = getIndexOfConversation(conversation.id)
-                if (position.isValidIndex()) {
-                    val oldConversation = chatroomDetailAdapter[position]
-                            as? ConversationViewData ?: return
-                    val updatedConversation = oldConversation.toBuilder()
-                        .attachmentUploadProgress(progress)
-                        .build()
-                    chatroomDetailAdapter.update(position, updatedConversation)
-                }
-            }
-        }
-    }
-
     private fun showFailedConversationMenu(
         conversation: ConversationViewData,
         position: Int,
@@ -5458,19 +5482,19 @@ class ChatroomDetailFragment :
             .build()
 
         val workerUUID = viewModel.postFailedConversation(requireContext(), updatedConversation)
-        workerUUID?.let { uuid ->
-            val chatReplyViewData = ChatReplyUtil.getConversationReplyData(
-                conversation,
-                userPreferences.getUUID(),
-                requireContext()
-            )
-            observeCreateConversationWorker(
-                uuid,
-                chatReplyViewData,
-                conversation.replyConversation?.id,
-                conversation.replyChatroomId
-            )
-        }
+        val chatReplyViewData = ChatReplyUtil.getConversationReplyData(
+            conversation,
+            userPreferences.getUUID()
+        )
+
+        observeCreateConversationWorker(
+            workerUUID,
+            conversation.id,
+            chatReplyViewData,
+            conversation.replyConversation?.id,
+            conversation.replyChatroomId
+        )
+
         chatroomDetailAdapter.update(index, updatedConversation)
     }
 
@@ -5490,7 +5514,6 @@ class ChatroomDetailFragment :
             val replyData = ChatReplyUtil.getConversationReplyData(
                 conversation,
                 userPreferences.getUUID(),
-                requireContext(),
                 type = type
             )
             setReplyViewData(replyData)
@@ -5508,7 +5531,6 @@ class ChatroomDetailFragment :
             val replyData = ChatReplyUtil.getChatRoomReplyData(
                 chatRoom,
                 userPreferences.getUUID(),
-                requireContext(),
                 type = type
             )
             setReplyViewData(replyData)
@@ -5546,7 +5568,7 @@ class ChatroomDetailFragment :
                         tvConversation,
                         replyData.conversationText,
                         false,
-                        LMTheme.getTextLinkColor()
+                        LMChatAppearance.getTextLinkColor()
                     )
                 }
             }
@@ -5652,12 +5674,12 @@ class ChatroomDetailFragment :
                 viewReply.tvConversation,
                 editData.conversationText,
                 false,
-                LMTheme.getTextLinkColor()
+                LMChatAppearance.getTextLinkColor()
             )
             MemberTaggingDecoder.decode(
                 etAnswer,
                 editData.conversationText,
-                LMTheme.getTextLinkColor()
+                LMChatAppearance.getTextLinkColor()
             )
             etAnswer.setSelection(etAnswer.text?.length ?: 0)
             ViewUtils.showKeyboard(requireContext(), etAnswer)
@@ -6043,7 +6065,7 @@ class ChatroomDetailFragment :
 
         val searchMenuItem = actionsMenu?.findItem(R.id.menu_item_search)
         searchMenuItem?.isVisible = true
-        searchMenuItem?.icon?.setTint(LMTheme.getToolbarColor())
+        searchMenuItem?.icon?.setTint(LMChatAppearance.getToolbarColor())
 
         viewModel.getChatroomActions()?.forEach { chatroomActionViewData ->
             when (chatroomActionViewData.id) {
@@ -6059,7 +6081,7 @@ class ChatroomDetailFragment :
                     item?.title = chatroomActionViewData.title
                     val item2 = actionsMenu?.findItem(R.id.share_chatroom_icon)
                     item2?.isVisible = true
-                    item2?.icon?.setTint(LMTheme.getToolbarColor())
+                    item2?.icon?.setTint(LMChatAppearance.getToolbarColor())
                 }
 
                 "4", "9" -> {
@@ -6210,7 +6232,7 @@ class ChatroomDetailFragment :
                     LMChatSearchResult::class.java
                 ) ?: return@registerForActivityResult
 
-                val searchConversationId = resultExtras.conversationId;
+                val searchConversationId = resultExtras.conversationId
                 if (!searchConversationId.isNullOrEmpty()) {
                     scrolledConversationPosition =
                         getIndexOfConversation(searchConversationId)
@@ -6338,7 +6360,7 @@ class ChatroomDetailFragment :
             ShareUtils.shareChatroom(
                 requireContext(),
                 (viewModel.chatroomDetail.chatroom?.id ?: ""),
-                ShareUtils.domain
+                LMChatUserMetaData.getInstance().domain ?: ShareUtils.DOMAIN
             )
             viewModel.sendChatroomShared()
         }

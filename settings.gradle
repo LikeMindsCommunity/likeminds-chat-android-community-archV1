@@ -21,5 +21,8 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "LikeMinds-Android-Chat-MM"
-include ':app'
+include ':community-hybrid-chat'
 include ':chatmm'
+include ':community-chat'
+include ':networking-chat'
+include ':ai-chatbot'

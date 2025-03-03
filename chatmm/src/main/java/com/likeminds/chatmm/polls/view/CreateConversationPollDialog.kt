@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.SDKApplication
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.create.view.adapter.ChatroomItemAdapter
 import com.likeminds.chatmm.chatroom.create.view.adapter.CreatePollItemAdapterListener
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
@@ -125,7 +125,7 @@ class CreateConversationPollDialog :
                     intArrayOf(-android.R.attr.state_enabled)
                 ),
                 intArrayOf(
-                    LMTheme.getButtonsColor(),
+                    LMChatAppearance.getButtonsColor(),
                     requireContext().fetchColor(R.color.lm_chat_black_14)
                 )
             )

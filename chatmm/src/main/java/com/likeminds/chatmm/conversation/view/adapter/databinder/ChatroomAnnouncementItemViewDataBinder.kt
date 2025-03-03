@@ -1,7 +1,7 @@
 package com.likeminds.chatmm.conversation.view.adapter.databinder
 
 import android.view.*
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomViewData
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomConversationItemViewDataBinderUtil
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ChatroomDetailAdapterListener
@@ -31,7 +31,7 @@ class ChatroomAnnouncementItemViewDataBinder constructor(
         position: Int,
     ) {
         binding.apply {
-            buttonColor = LMTheme.getButtonsColor()
+            buttonColor = LMChatAppearance.getButtonsColor()
             chatroomViewData = data as ChatroomViewData
             tvAboutCommunityTitle.visibility = View.VISIBLE
             ChatroomConversationItemViewDataBinderUtil.initChatRoomBubbleView(

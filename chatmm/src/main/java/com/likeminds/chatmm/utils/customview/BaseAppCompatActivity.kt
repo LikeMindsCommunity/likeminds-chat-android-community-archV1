@@ -13,7 +13,7 @@ import android.view.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMTheme
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.connectivity.ConnectivityBroadcastReceiver
 import com.likeminds.chatmm.utils.connectivity.ConnectivityReceiverListener
 import com.likeminds.chatmm.utils.permissions.*
@@ -72,7 +72,7 @@ open class BaseAppCompatActivity : ConnectivityReceiverListener, AppCompatActivi
 
     override fun onStart() {
         super.onStart()
-        setStatusBarColor(LMTheme.getHeaderColor())
+        setStatusBarColor(LMChatAppearance.getHeaderColor())
     }
 
     override fun onPause() {
