@@ -17,6 +17,7 @@ import com.likeminds.chatmm.chatroom.detail.model.*
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil.getTypeName
 import com.likeminds.chatmm.conversation.model.*
+import com.likeminds.chatmm.conversation.model.ConversationState
 import com.likeminds.chatmm.media.MediaRepository
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.member.model.*

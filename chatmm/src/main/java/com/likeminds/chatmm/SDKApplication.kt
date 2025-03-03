@@ -275,10 +275,13 @@ class SDKApplication : LMChatSDKCallback {
             runBlocking {
                 val user = mChatClient.getLoggedInUser().data?.user
                 if (user != null) {
+                    val userMetaData = LMChatUserMetaData.getInstance()
+
                     val initiateUserRequest = InitiateUserRequest.Builder()
                         .apiKey(apiKey)
                         .userName(user.name)
                         .userId(user.sdkClientInfo?.uuid)
+                        .deviceId(userMetaData.deviceId)
                         .build()
                     val response = mChatClient.initiateUser(initiateUserRequest)
 
