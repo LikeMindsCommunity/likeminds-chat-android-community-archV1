@@ -46,7 +46,9 @@ class CommunityHybridChatApplication : Application(), LMChatCoreCallback {
             deviceId = deviceId(),
             shareLogsWithLM = true,
             excludeConversationStates = listOf(
-                ConversationState.NORMAL
+                ConversationState.MEMBER_LEFT_OPEN_CHATROOM,
+                ConversationState.MEMBER_JOINED_OPEN_CHATROOM,
+                ConversationState.MEMBER_ADDED_TO_CHATROOM
             )
         )
     }

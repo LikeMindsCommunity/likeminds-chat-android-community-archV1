@@ -2261,7 +2261,10 @@ class ChatroomDetailFragment :
                                     val updatedConversation = oldConversation.toBuilder()
                                         .attachments(
                                             oldConversation.attachments?.map { attachment ->
-                                                if (indexList.contains(attachment.index ?: -1) || !attachment.isUploaded) {
+                                                if (indexList.contains(
+                                                        attachment.index ?: -1
+                                                    ) || !attachment.isUploaded
+                                                ) {
                                                     attachment
                                                 } else {
                                                     attachment.toBuilder()
@@ -6405,7 +6408,7 @@ class ChatroomDetailFragment :
 
     override fun onStart() {
         super.onStart()
-        viewModel.subscribeChatroom()
+        viewModel.subscribeChatroom(chatroomDetailExtras.chatroomId)
     }
 
     override fun onPause() {
@@ -6421,7 +6424,7 @@ class ChatroomDetailFragment :
             isVoiceNoteLocked = false
             voiceNoteUtils.stopVoiceNote(binding, RECORDING_LOCK_DONE)
         }
-        viewModel.unsubscribeChatroom()
+        viewModel.unsubscribeChatroom(chatroomDetailExtras.chatroomId)
         super.onStop()
     }
 

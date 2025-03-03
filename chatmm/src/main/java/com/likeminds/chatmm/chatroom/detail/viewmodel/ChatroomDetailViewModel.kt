@@ -17,7 +17,6 @@ import com.likeminds.chatmm.chatroom.detail.model.*
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil.getTypeName
 import com.likeminds.chatmm.conversation.model.*
-import com.likeminds.chatmm.conversation.model.ConversationState
 import com.likeminds.chatmm.media.MediaRepository
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.member.model.*
@@ -2177,10 +2176,8 @@ class ChatroomDetailViewModel @Inject constructor(
     }
 
     // connect to chatroom websockets
-    fun subscribeChatroom() {
+    fun subscribeChatroom(chatroomId: String) {
         viewModelScope.launchIO {
-            val chatroomId = chatroomDetail.chatroom?.id ?: return@launchIO
-
             val request = SubscribeChatroomRequest.Builder()
                 .chatroomId(chatroomId)
                 .build()
@@ -2190,9 +2187,8 @@ class ChatroomDetailViewModel @Inject constructor(
     }
 
     // disconnect to chatroom websocket
-    fun unsubscribeChatroom() {
+    fun unsubscribeChatroom(chatroomId: String) {
         viewModelScope.launchIO {
-            val chatroomId = chatroomDetail.chatroom?.id ?: return@launchIO
             val request = SubscribeChatroomRequest.Builder()
                 .chatroomId(chatroomId)
                 .build()
