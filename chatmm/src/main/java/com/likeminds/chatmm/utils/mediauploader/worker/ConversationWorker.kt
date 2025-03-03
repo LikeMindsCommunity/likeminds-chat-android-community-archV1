@@ -93,6 +93,7 @@ abstract class ConversationWorker(
                         val updateConversationRequest = UpdateConversationRequest.Builder()
                             .conversation(ViewDataConverter.convertConversation(conversation))
                             .build()
+
                         lmChatClient.updateConversation(updateConversationRequest)
                     }
 
@@ -228,11 +229,12 @@ abstract class ConversationWorker(
         return awsFileRequestList
     }
 
-    protected fun postConversation(
+    protected fun updateAttachmentUploaded(
         response: AWSFileResponse,
         urls: Pair<String?, String?>,
         totalFileCount: Int,
-        continuation: Continuation<Int>
+        continuation: Continuation<Int>,
+        isThumbnail: Boolean?
     ) {
         //updateConversation
         val attachments = conversation.attachments ?: return
@@ -242,11 +244,27 @@ abstract class ConversationWorker(
         }
 
         var attachment = attachments[index]
-        attachment = attachment.toBuilder()
+
+        // if the uploaded item is a thumbnail then we reset its aws folder path otherwise keep it the same
+        val thumbnailAWSFolderPath = if (isThumbnail == true) {
+            ""
+        } else {
+            attachment.thumbnailAWSFolderPath
+        }
+
+        val attachmentBuilder = attachment.toBuilder()
             .url(urls.first)
             .uri(Uri.parse(urls.first))
             .thumbnail(urls.second)
-            .build()
+            .thumbnailAWSFolderPath(thumbnailAWSFolderPath)
+
+        // if the current uploaded media is not a thumbnail that means our attachment has been uploaded successfully
+        if (isThumbnail != true) {
+            attachmentBuilder.isUploaded(true)
+        }
+
+        attachment = attachmentBuilder.build()
+
         attachments[index] = attachment
 
         conversation = conversation.toBuilder()

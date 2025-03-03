@@ -187,7 +187,7 @@ class ConversationViewData private constructor(
     }
 
     fun attachmentsToUpload() = attachments?.filter {
-        !it.awsFolderPath.isNullOrEmpty()
+        !it.isUploaded
     }
 
     fun thumbnailsToUpload() = attachments?.filter {

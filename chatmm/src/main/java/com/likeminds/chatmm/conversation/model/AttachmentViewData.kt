@@ -44,19 +44,23 @@ class AttachmentViewData private constructor(
     val createdAt: Long?,
     val updatedAt: Long?,
     val mediaLeft: Int?,
-    val dynamicType: Int?
+    val dynamicType: Int?,
+    val isUploaded: Boolean
 ) : BaseViewType, Parcelable {
     override val viewType: Int
         get() = dynamicType ?: when (type) {
             VIDEO -> {
                 ITEM_CHATROOM_VIDEO
             }
+
             PDF -> {
                 ITEM_CHATROOM_PDF
             }
+
             AUDIO -> {
                 ITEM_CREATE_CHATROOM_AUDIO
             }
+
             else -> {
                 ITEM_CHATROOM_IMAGE
             }
@@ -91,49 +95,123 @@ class AttachmentViewData private constructor(
         private var updatedAt: Long? = null
         private var mediaLeft: Int? = null
         private var dynamicType: Int? = null
+        private var isUploaded: Boolean = false
 
-        fun id(id: String?) = apply { this.id = id }
-        fun name(name: String?) = apply { this.name = name }
-        fun url(url: String?) = apply { this.url = url }
-        fun uri(uri: Uri) = apply { this.uri = uri }
-        fun type(type: String) = apply { this.type = type }
-        fun index(index: Int?) = apply { this.index = index }
-        fun width(width: Int?) = apply { this.width = width }
-        fun height(height: Int?) = apply { this.height = height }
-        fun title(title: String?) = apply { this.title = title }
-        fun subTitle(subTitle: String?) = apply { this.subTitle = subTitle }
-        fun attachments(attachments: List<AttachmentViewData>?) =
-            apply { this.attachments = attachments }
+        fun id(id: String?) = apply {
+            this.id = id
+        }
 
-        fun parentConversation(parentConversation: ConversationViewData?) =
-            apply { this.parentConversation = parentConversation }
+        fun name(name: String?) = apply {
+            this.name = name
+        }
 
-        fun parentChatroom(parentChatroom: ChatroomViewData?) =
-            apply { this.parentChatroom = parentChatroom }
+        fun url(url: String?) = apply {
+            this.url = url
+        }
 
-        fun parentViewItemPosition(parentViewItemPosition: Int?) =
-            apply { this.parentViewItemPosition = parentViewItemPosition }
+        fun uri(uri: Uri) = apply {
+            this.uri = uri
+        }
 
-        fun awsFolderPath(awsFolderPath: String?) = apply { this.awsFolderPath = awsFolderPath }
-        fun localFilePath(localFilePath: String?) = apply { this.localFilePath = localFilePath }
-        fun thumbnail(thumbnail: String?) = apply { this.thumbnail = thumbnail }
-        fun thumbnailAWSFolderPath(thumbnailAWSFolderPath: String?) =
-            apply { this.thumbnailAWSFolderPath = thumbnailAWSFolderPath }
+        fun type(type: String) = apply {
+            this.type = type
+        }
 
-        fun thumbnailLocalFilePath(thumbnailLocalFilePath: String?) =
-            apply { this.thumbnailLocalFilePath = thumbnailLocalFilePath }
+        fun index(index: Int?) = apply {
+            this.index = index
+        }
 
-        fun meta(meta: AttachmentMetaViewData?) = apply { this.meta = meta }
-        fun progress(progress: Int?) = apply { this.progress = progress }
-        fun currentDuration(currentDuration: String) =
-            apply { this.currentDuration = currentDuration }
+        fun width(width: Int?) = apply {
+            this.width = width
+        }
 
-        fun mediaState(mediaState: String) = apply { this.mediaState = mediaState }
-        fun communityId(communityId: Int?) = apply { this.communityId = communityId }
-        fun createdAt(createdAt: Long?) = apply { this.createdAt = createdAt }
-        fun updatedAt(updatedAt: Long?) = apply { this.updatedAt = updatedAt }
-        fun mediaLeft(mediaLeft: Int?) = apply { this.mediaLeft = mediaLeft }
-        fun dynamicType(dynamicType: Int?) = apply { this.dynamicType = dynamicType }
+        fun height(height: Int?) = apply {
+            this.height = height
+        }
+
+        fun title(title: String?) = apply {
+            this.title = title
+        }
+
+        fun subTitle(subTitle: String?) = apply {
+            this.subTitle = subTitle
+        }
+
+        fun attachments(attachments: List<AttachmentViewData>?) = apply {
+            this.attachments = attachments
+        }
+
+        fun parentConversation(parentConversation: ConversationViewData?) = apply {
+            this.parentConversation = parentConversation
+        }
+
+        fun parentChatroom(parentChatroom: ChatroomViewData?) = apply {
+            this.parentChatroom = parentChatroom
+        }
+
+        fun parentViewItemPosition(parentViewItemPosition: Int?) = apply {
+            this.parentViewItemPosition = parentViewItemPosition
+        }
+
+        fun awsFolderPath(awsFolderPath: String?) = apply {
+            this.awsFolderPath = awsFolderPath
+        }
+
+        fun localFilePath(localFilePath: String?) = apply {
+            this.localFilePath = localFilePath
+        }
+
+        fun thumbnail(thumbnail: String?) = apply {
+            this.thumbnail = thumbnail
+        }
+
+        fun thumbnailAWSFolderPath(thumbnailAWSFolderPath: String?) = apply {
+            this.thumbnailAWSFolderPath = thumbnailAWSFolderPath
+        }
+
+        fun thumbnailLocalFilePath(thumbnailLocalFilePath: String?) = apply {
+            this.thumbnailLocalFilePath = thumbnailLocalFilePath
+        }
+
+        fun meta(meta: AttachmentMetaViewData?) = apply {
+            this.meta = meta
+        }
+
+        fun progress(progress: Int?) = apply {
+            this.progress = progress
+        }
+
+        fun currentDuration(currentDuration: String) = apply {
+            this.currentDuration = currentDuration
+        }
+
+        fun mediaState(mediaState: String) = apply {
+            this.mediaState = mediaState
+        }
+
+        fun communityId(communityId: Int?) = apply {
+            this.communityId = communityId
+        }
+
+        fun createdAt(createdAt: Long?) = apply {
+            this.createdAt = createdAt
+        }
+
+        fun updatedAt(updatedAt: Long?) = apply {
+            this.updatedAt = updatedAt
+        }
+
+        fun mediaLeft(mediaLeft: Int?) = apply {
+            this.mediaLeft = mediaLeft
+        }
+
+        fun dynamicType(dynamicType: Int?) = apply {
+            this.dynamicType = dynamicType
+        }
+
+        fun isUploaded(isUploaded: Boolean) = apply {
+            this.isUploaded = isUploaded
+        }
 
         fun build() = AttachmentViewData(
             id,
@@ -163,7 +241,8 @@ class AttachmentViewData private constructor(
             createdAt,
             updatedAt,
             mediaLeft,
-            dynamicType
+            dynamicType,
+            isUploaded
         )
     }
 
@@ -196,5 +275,6 @@ class AttachmentViewData private constructor(
             .updatedAt(updatedAt)
             .mediaLeft(mediaLeft)
             .dynamicType(dynamicType)
+            .isUploaded(isUploaded)
     }
 }
