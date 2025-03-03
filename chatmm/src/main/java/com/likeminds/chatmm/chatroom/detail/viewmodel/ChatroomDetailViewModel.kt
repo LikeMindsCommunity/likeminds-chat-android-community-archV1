@@ -2159,15 +2159,18 @@ class ChatroomDetailViewModel @Inject constructor(
      */
     private val subscribeChatroomCallbackImpl = object : LMChatSubscribeChatroomCallback {
         override fun onError(errorMessage: String) {
-            Log.d("PUI", "on error in view model: $errorMessage")
+            Log.d(
+                TAG,
+                "Error in websocket in chatroomId:${chatroomDetail.chatroom?.id}, error: $errorMessage"
+            )
         }
 
         override fun onSocketConnectionClosed() {
-            Log.d("PUI", "on close in view model")
+            Log.d(TAG, "Socket closed in chatroomId:${chatroomDetail.chatroom?.id}")
         }
 
         override fun onSocketConnectionOpen() {
-            Log.d("PUI", "on open in view model")
+            Log.d(TAG, "Socket opened in chatroomId:${chatroomDetail.chatroom?.id}")
         }
     }
 
