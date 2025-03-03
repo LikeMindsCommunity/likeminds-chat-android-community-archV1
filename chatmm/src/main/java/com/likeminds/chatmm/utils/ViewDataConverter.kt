@@ -641,7 +641,7 @@ object ViewDataConverter {
             .chatroomId(chatroomId)
             .communityId(communityId)
             .answer(request.text)
-            .state(STATE_NORMAL)
+            .state(ConversationState.NORMAL.value)
             .createdEpoch(conversationCreatedEpoch)
             .memberId(uuid)
             .createdAt(TimeUtil.generateCreatedAt(conversationCreatedEpoch))

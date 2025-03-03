@@ -17,6 +17,7 @@ import com.likeminds.chatmm.chatroom.detail.model.*
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil.getTypeName
 import com.likeminds.chatmm.conversation.model.*
+import com.likeminds.chatmm.conversation.model.ConversationState
 import com.likeminds.chatmm.media.MediaRepository
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.member.model.*
@@ -37,6 +38,8 @@ import com.likeminds.likemindschat.chatroom.model.*
 import com.likeminds.likemindschat.community.model.GetMemberRequest
 import com.likeminds.likemindschat.conversation.model.*
 import com.likeminds.likemindschat.conversation.util.ConversationChangeListener
+import com.likeminds.likemindschat.conversation.util.ConversationStateUtil
+import com.likeminds.likemindschat.conversation.util.ConversationStateUtil.getConversationState
 import com.likeminds.likemindschat.dm.model.*
 import com.likeminds.likemindschat.helper.model.DecodeUrlRequest
 import com.likeminds.likemindschat.helper.model.DecodeUrlResponse
@@ -328,7 +331,7 @@ class ChatroomDetailViewModel @Inject constructor(
     //get first normal or poll conversation for list
     fun getFirstNormalOrPollConversation(items: List<BaseViewType>): ConversationViewData? {
         return items.firstOrNull {
-            it is ConversationViewData && ConversationState.isPollOrNormal(it.state)
+            it is ConversationViewData && ConversationStateUtil.isNormalOrPollConversation(it.state.getConversationState())
         } as? ConversationViewData
     }
 
@@ -661,7 +664,7 @@ class ChatroomDetailViewModel @Inject constructor(
             (aboveConversationsViewData + medianViewData + belowConversationsViewData)
 
         if (aboveConversationsViewData.size < CONVERSATIONS_LIMIT
-            || aboveConversationsViewData.firstOrNull()?.state == STATE_HEADER
+            || aboveConversationsViewData.firstOrNull()?.state == ConversationState.FIRST_CONVERSATION.value
         ) {
             dataList.add(chatroomViewData)
             val headerConversation = getHeaderConversation(conversations)
@@ -771,13 +774,6 @@ class ChatroomDetailViewModel @Inject constructor(
                 .listener(conversationChangeListener)
                 .build()
             lmChatClient.observeConversations(observeConversationsRequest)
-        }
-    }
-
-    // starts observing live conversations
-    fun observeLiveConversations(context: Context, chatroomId: String) {
-        viewModelScope.launchIO {
-            lmChatClient.observeLiveConversations(context, chatroomId)
         }
     }
 
@@ -1028,7 +1024,7 @@ class ChatroomDetailViewModel @Inject constructor(
         conversations: List<BaseViewType>,
     ): ConversationViewData? {
         return conversations.firstOrNull { item ->
-            item is ConversationViewData && item.state == STATE_HEADER
+            item is ConversationViewData && item.state == ConversationState.FIRST_CONVERSATION.value
         } as? ConversationViewData
     }
 
@@ -2157,6 +2153,51 @@ class ChatroomDetailViewModel @Inject constructor(
             } else {
                 errorEventChannel.send(ErrorMessageEvent.BlockMember(response.errorMessage))
             }
+        }
+    }
+
+    /**
+     * Realtime block
+     */
+    private val subscribeChatroomCallbackImpl = object : LMChatSubscribeChatroomCallback {
+        override fun onError(errorMessage: String) {
+            Log.d(
+                TAG,
+                "Error in websocket in chatroomId:${chatroomDetail.chatroom?.id}, error: $errorMessage"
+            )
+        }
+
+        override fun onSocketConnectionClosed() {
+            Log.d(TAG, "Socket closed in chatroomId:${chatroomDetail.chatroom?.id}")
+        }
+
+        override fun onSocketConnectionOpen() {
+            Log.d(TAG, "Socket opened in chatroomId:${chatroomDetail.chatroom?.id}")
+        }
+    }
+
+    // connect to chatroom websockets
+    fun subscribeChatroom() {
+        viewModelScope.launchIO {
+            val chatroomId = chatroomDetail.chatroom?.id ?: return@launchIO
+
+            val request = SubscribeChatroomRequest.Builder()
+                .chatroomId(chatroomId)
+                .build()
+
+            lmChatClient.subscribeChatroom(request, subscribeChatroomCallbackImpl)
+        }
+    }
+
+    // disconnect to chatroom websocket
+    fun unsubscribeChatroom() {
+        viewModelScope.launchIO {
+            val chatroomId = chatroomDetail.chatroom?.id ?: return@launchIO
+            val request = SubscribeChatroomRequest.Builder()
+                .chatroomId(chatroomId)
+                .build()
+
+            lmChatClient.unsubscribeChatroom(request, subscribeChatroomCallbackImpl)
         }
     }
 

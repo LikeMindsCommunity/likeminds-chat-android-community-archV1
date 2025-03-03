@@ -122,6 +122,7 @@ import com.likeminds.chatmm.utils.recyclerview.SwipeControllerActions
 import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.chatmm.widget.model.WidgetViewData
 import com.likeminds.likemindschat.chatroom.model.ChatRequestState
+import com.likeminds.likemindschat.conversation.model.ConversationState
 import com.likeminds.likemindschat.helper.LMChatLogger
 import com.likeminds.likemindschat.helper.model.LMSeverity
 import com.likeminds.likemindschat.user.model.MemberBlockState
@@ -1114,9 +1115,6 @@ class ChatroomDetailFragment :
                     if (isFirstTime) {
                         startBackgroundSync()
                     }
-
-                    //we should observe the live conversation once, sync is complete to avoid duplicate conversation
-                    viewModel.observeLiveConversations(requireContext(), chatroomId)
                 }
 
                 WorkInfo.State.CANCELLED -> {
@@ -1773,7 +1771,7 @@ class ChatroomDetailFragment :
         val conversationIndex =
             chatroomDetailAdapter.items()
                 .indexOfLast { chatroomItem ->
-                    (chatroomItem is ConversationViewData && chatroomItem.state == STATE_DM_REJECTED)
+                    (chatroomItem is ConversationViewData && chatroomItem.state == ConversationState.DM_REQUEST_REJECTED.value)
                 }
 
         val conversationViewData =
@@ -2685,7 +2683,7 @@ class ChatroomDetailFragment :
                         }
                     }
 
-                    topic.state == STATE_POLL -> {
+                    topic.state == ConversationState.POLL.value -> {
                         setTopViewMemberImage(topic.memberViewData)
 
                         val answer = ChatroomUtil.getTopicMediaData(requireContext(), topic)
@@ -2806,7 +2804,7 @@ class ChatroomDetailFragment :
                         }
                     }
 
-                    topic.state == STATE_POLL -> {
+                    topic.state == ConversationState.POLL.value -> {
                         topicImage.visibility = View.GONE
                     }
 
@@ -3212,7 +3210,7 @@ class ChatroomDetailFragment :
                         getNonPresentConversations(response.conversations).toMutableList()
 
                     val indexOfHeaderConversation = conversations.indexOfFirst { conversation ->
-                        conversation.state == STATE_HEADER
+                        conversation.state == ConversationState.FIRST_CONVERSATION.value
                     }
                     if (
                         indexOfHeaderConversation.isValidIndex() &&
@@ -3272,7 +3270,7 @@ class ChatroomDetailFragment :
                         }
 
                         //last new conversation DM REJECTED conversation
-                        if (lastNewConversation.state == STATE_DM_REJECTED
+                        if (lastNewConversation.state == ConversationState.DM_REQUEST_REJECTED.value
                             && viewModel.getLoggedInMemberId() ==
                             viewModel.getChatroomViewData()?.chatRequestedById
                         ) {
@@ -3343,7 +3341,7 @@ class ChatroomDetailFragment :
                         }
 
                         //add tap to undo if dm is rejected and the logged in member has rejected the DM request
-                        if (response.conversation.state == STATE_DM_REJECTED
+                        if (response.conversation.state == ConversationState.DM_REQUEST_REJECTED.value
                             && viewModel.getLoggedInMemberId() ==
                             viewModel.getChatroomViewData()?.chatRequestedById
                         ) {
@@ -3754,7 +3752,7 @@ class ChatroomDetailFragment :
 
             val conversation =
                 viewModel.createTemporaryAutoFollowAndTopicConversation(
-                    STATE_TOPIC, answer
+                    ConversationState.TOPIC_CHANGED.value, answer
                 )
 
             val indexToAdd = getIndexOfAnyGraphicItem()
@@ -6405,6 +6403,11 @@ class ChatroomDetailFragment :
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        viewModel.subscribeChatroom()
+    }
+
     override fun onPause() {
         super.onPause()
         if (inAppVideoPlayerPopup?.isShowing == true) {
@@ -6418,6 +6421,7 @@ class ChatroomDetailFragment :
             isVoiceNoteLocked = false
             voiceNoteUtils.stopVoiceNote(binding, RECORDING_LOCK_DONE)
         }
+        viewModel.unsubscribeChatroom()
         super.onStop()
     }
 
