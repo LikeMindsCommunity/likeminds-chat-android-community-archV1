@@ -2174,6 +2174,7 @@ class ChatroomDetailViewModel @Inject constructor(
         }
     }
 
+    // connect to chatroom websockets
     fun subscribeChatroom() {
         viewModelScope.launchIO {
             val chatroomId = chatroomDetail.chatroom?.id ?: return@launchIO
@@ -2186,6 +2187,7 @@ class ChatroomDetailViewModel @Inject constructor(
         }
     }
 
+    // disconnect to chatroom websocket
     fun unsubscribeChatroom() {
         viewModelScope.launchIO {
             val chatroomId = chatroomDetail.chatroom?.id ?: return@launchIO
