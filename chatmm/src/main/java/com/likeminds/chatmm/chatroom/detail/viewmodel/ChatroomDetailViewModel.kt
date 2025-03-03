@@ -38,6 +38,8 @@ import com.likeminds.likemindschat.chatroom.model.*
 import com.likeminds.likemindschat.community.model.GetMemberRequest
 import com.likeminds.likemindschat.conversation.model.*
 import com.likeminds.likemindschat.conversation.util.ConversationChangeListener
+import com.likeminds.likemindschat.conversation.util.ConversationStateUtil
+import com.likeminds.likemindschat.conversation.util.ConversationStateUtil.getConversationState
 import com.likeminds.likemindschat.dm.model.*
 import com.likeminds.likemindschat.helper.model.DecodeUrlRequest
 import com.likeminds.likemindschat.helper.model.DecodeUrlResponse
@@ -329,7 +331,7 @@ class ChatroomDetailViewModel @Inject constructor(
     //get first normal or poll conversation for list
     fun getFirstNormalOrPollConversation(items: List<BaseViewType>): ConversationViewData? {
         return items.firstOrNull {
-            it is ConversationViewData && ConversationState.isPollOrNormal(it.state)
+            it is ConversationViewData && ConversationStateUtil.isNormalOrPollConversation(it.state.getConversationState())
         } as? ConversationViewData
     }
 
@@ -662,7 +664,7 @@ class ChatroomDetailViewModel @Inject constructor(
             (aboveConversationsViewData + medianViewData + belowConversationsViewData)
 
         if (aboveConversationsViewData.size < CONVERSATIONS_LIMIT
-            || aboveConversationsViewData.firstOrNull()?.state == STATE_HEADER
+            || aboveConversationsViewData.firstOrNull()?.state == ConversationState.FIRST_CONVERSATION.value
         ) {
             dataList.add(chatroomViewData)
             val headerConversation = getHeaderConversation(conversations)
@@ -1022,7 +1024,7 @@ class ChatroomDetailViewModel @Inject constructor(
         conversations: List<BaseViewType>,
     ): ConversationViewData? {
         return conversations.firstOrNull { item ->
-            item is ConversationViewData && item.state == STATE_HEADER
+            item is ConversationViewData && item.state == ConversationState.FIRST_CONVERSATION.value
         } as? ConversationViewData
     }
 

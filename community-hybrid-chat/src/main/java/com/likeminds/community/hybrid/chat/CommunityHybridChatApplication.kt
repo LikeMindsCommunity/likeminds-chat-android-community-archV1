@@ -3,15 +3,11 @@ package com.likeminds.community.hybrid.chat
 import android.annotation.SuppressLint
 import android.app.Application
 import android.provider.Settings
-import android.util.Log
-import com.likeminds.chatmm.LMChatCore
-import com.likeminds.chatmm.LMChatCoreCallback
-import com.likeminds.chatmm.LMChatTheme
+import com.likeminds.chatmm.*
 import com.likeminds.chatmm.theme.model.LMChatAppearanceRequest
 import com.likeminds.chatmm.theme.model.LMFonts
 import com.likeminds.community.hybrid.chat.auth.util.AuthPreferences
-import com.likeminds.likemindschat.helper.model.LMChatInitiateLoggerRequest
-import com.likeminds.likemindschat.helper.model.LMSeverity
+import com.likeminds.likemindschat.conversation.model.ConversationState
 
 class CommunityHybridChatApplication : Application(), LMChatCoreCallback {
 
@@ -47,7 +43,11 @@ class CommunityHybridChatApplication : Application(), LMChatCoreCallback {
             lmChatAppearanceRequest = lmChatAppearanceRequest,
             domain = deviceId(),
             enablePushNotifications = true,
-            deviceId = deviceId()
+            deviceId = deviceId(),
+            shareLogsWithLM = true,
+            excludeConversationStates = listOf(
+                ConversationState.NORMAL
+            )
         )
     }
 
