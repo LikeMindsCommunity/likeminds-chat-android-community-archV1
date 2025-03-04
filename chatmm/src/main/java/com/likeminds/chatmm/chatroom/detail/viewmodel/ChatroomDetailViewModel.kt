@@ -325,13 +325,6 @@ class ChatroomDetailViewModel @Inject constructor(
         return ViewDataConverter.convertMember(lmChatClient.getMember(memberRequest).data?.member)
     }
 
-    //get first normal or poll conversation for list
-    fun getFirstNormalOrPollConversation(items: List<BaseViewType>): ConversationViewData? {
-        return items.firstOrNull {
-            it is ConversationViewData && ConversationState.isPollOrNormal(it.state)
-        } as? ConversationViewData
-    }
-
     fun fetchUriDetails(
         context: Context,
         uris: List<Uri>,
