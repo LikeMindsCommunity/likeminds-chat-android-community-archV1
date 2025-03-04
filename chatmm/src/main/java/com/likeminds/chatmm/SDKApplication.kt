@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import com.amazonaws.mobile.client.*
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
-import com.google.android.exoplayer2.util.Log
 import com.likeminds.chatmm.di.DaggerLikeMindsChatComponent
 import com.likeminds.chatmm.di.LikeMindsChatComponent
 import com.likeminds.chatmm.di.aichatbot.AIChatbotComponent
