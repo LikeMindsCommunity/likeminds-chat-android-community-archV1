@@ -776,6 +776,13 @@ class ChatroomDetailViewModel @Inject constructor(
         }
     }
 
+    // starts observing live conversations
+    fun observeLiveConversations(context: Context, chatroomId: String) {
+        viewModelScope.launchIO {
+            lmChatClient.observeLiveConversations(context, chatroomId)
+        }
+    }
+
 
     /**
      * Send updates to UI using live data
@@ -2152,48 +2159,6 @@ class ChatroomDetailViewModel @Inject constructor(
             } else {
                 errorEventChannel.send(ErrorMessageEvent.BlockMember(response.errorMessage))
             }
-        }
-    }
-
-    /**
-     * Realtime block
-     */
-    private val subscribeChatroomCallbackImpl = object : LMChatSubscribeChatroomCallback {
-        override fun onError(errorMessage: String) {
-            Log.d(
-                TAG,
-                "Error in websocket in chatroomId:${chatroomDetail.chatroom?.id}, error: $errorMessage"
-            )
-        }
-
-        override fun onSocketConnectionClosed() {
-            Log.d(TAG, "Socket closed in chatroomId:${chatroomDetail.chatroom?.id}")
-        }
-
-        override fun onSocketConnectionOpen() {
-            Log.d(TAG, "Socket opened in chatroomId:${chatroomDetail.chatroom?.id}")
-        }
-    }
-
-    // connect to chatroom websockets
-    fun subscribeChatroom(chatroomId: String) {
-        viewModelScope.launchIO {
-            val request = SubscribeChatroomRequest.Builder()
-                .chatroomId(chatroomId)
-                .build()
-
-            lmChatClient.subscribeChatroom(request, subscribeChatroomCallbackImpl)
-        }
-    }
-
-    // disconnect to chatroom websocket
-    fun unsubscribeChatroom(chatroomId: String) {
-        viewModelScope.launchIO {
-            val request = SubscribeChatroomRequest.Builder()
-                .chatroomId(chatroomId)
-                .build()
-
-            lmChatClient.unsubscribeChatroom(request, subscribeChatroomCallbackImpl)
         }
     }
 
