@@ -10,6 +10,8 @@ import androidx.browser.customtabs.CustomTabsCallback
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsSession
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 
 internal class CustomTabUtil : CustomTabServiceConnectionCallback {
@@ -42,14 +44,23 @@ internal class CustomTabUtil : CustomTabServiceConnectionCallback {
                 customTabsIntent.intent.setPackage(PACKAGE_NAME)
                 customTabsIntent.launchUrl(context, uri)
             } catch (e: ActivityNotFoundException) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.CRITICAL
+                )
                 e.printStackTrace()
                 fallback?.openUri(context, uri)
             } catch (e: Exception) {
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.CRITICAL
+                )
                 e.printStackTrace()
                 Log.e(TAG, e.message.toString())
             }
         }
-
     }
 
     fun getSession(): CustomTabsSession? {

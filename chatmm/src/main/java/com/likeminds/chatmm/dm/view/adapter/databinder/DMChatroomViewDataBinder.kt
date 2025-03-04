@@ -8,9 +8,7 @@ import android.widget.TextView
 import androidx.core.text.util.LinkifyCompat
 import androidx.core.view.isVisible
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil
-import com.likeminds.chatmm.conversation.model.*
 import com.likeminds.chatmm.databinding.ItemDmChatroomBinding
 import com.likeminds.chatmm.dm.view.adapter.DMAdapterListener
 import com.likeminds.chatmm.homefeed.model.HomeFeedItemViewData
@@ -18,13 +16,15 @@ import com.likeminds.chatmm.member.model.MemberViewData
 import com.likeminds.chatmm.member.model.STATE_ADMIN
 import com.likeminds.chatmm.member.util.MemberImageUtil
 import com.likeminds.chatmm.member.util.UserPreferences
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.ViewUtils.fetchColor
 import com.likeminds.chatmm.utils.customview.ViewDataBinder
 import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
 import com.likeminds.chatmm.utils.model.BaseViewType
 import com.likeminds.chatmm.utils.model.ITEM_DIRECT_MESSAGE
+import com.likeminds.likemindschat.conversation.model.ConversationState
 
-class DMChatroomViewDataBinder constructor(
+class DMChatroomViewDataBinder(
     private val dmAdapterListener: DMAdapterListener,
     private val userPreferences: UserPreferences
 ) : ViewDataBinder<ItemDmChatroomBinding, BaseViewType>() {
@@ -85,8 +85,8 @@ class DMChatroomViewDataBinder constructor(
                 setLastConversation(data, this, it)
             }
 
-            if (data.lastConversation?.state == STATE_DM_MEMBER_REMOVED_OR_LEFT ||
-                data.lastConversation?.state == STATE_DM_CM_BECOMES_MEMBER_DISABLE
+            if (data.lastConversation?.state == ConversationState.DM_MEMBER_REMOVED_LEFT.value ||
+                data.lastConversation?.state == ConversationState.DM_CM_BECOMES_MEMBER_DISABLE.value
             ) {
                 tvMemberName.alpha = 0.2f
                 tvCommunityName.setTextColor(context.fetchColor(R.color.lm_chat_brown_grey))
@@ -116,23 +116,23 @@ class DMChatroomViewDataBinder constructor(
                 showDMText(this, memberToBeShown)
                 return
             }
-            if (lastConversation.state == STATE_HEADER) {
+            if (lastConversation.state == ConversationState.FIRST_CONVERSATION.value) {
                 showDMText(this, memberToBeShown)
                 return
             }
-            if (lastConversation.state == STATE_DM_MEMBER_REMOVED_OR_LEFT ||
-                lastConversation.state == STATE_DM_CM_BECOMES_MEMBER_DISABLE ||
-                lastConversation.state == STATE_DM_MEMBER_BECOMES_CM ||
-                lastConversation.state == STATE_DM_CM_BECOMES_MEMBER_ENABLE ||
-                lastConversation.state == STATE_DM_MEMBER_BECOMES_CM_ENABLE ||
-                lastConversation.state == STATE_DM_ACCEPTED ||
-                lastConversation.state == STATE_DM_REJECTED
+            if (lastConversation.state == ConversationState.DM_MEMBER_REMOVED_LEFT.value ||
+                lastConversation.state == ConversationState.DM_CM_BECOMES_MEMBER_DISABLE.value ||
+                lastConversation.state == ConversationState.DM_MEMBER_BECOME_CM.value ||
+                lastConversation.state == ConversationState.DM_CM_BECOMES_MEMBER_ENABLE.value ||
+                lastConversation.state == ConversationState.DM_MEMBER_BECOMES_CM_ENABLE.value ||
+                lastConversation.state == ConversationState.DM_REQUEST_ACCEPTED.value ||
+                lastConversation.state == ConversationState.DM_REQUEST_REJECTED.value
             ) {
                 tvLastConversationPersonName.visibility = View.GONE
                 tvLastConversation.visibility = View.VISIBLE
                 val isDisabled =
-                    lastConversation.state == STATE_DM_MEMBER_REMOVED_OR_LEFT
-                            || lastConversation.state == STATE_DM_CM_BECOMES_MEMBER_DISABLE
+                    lastConversation.state == ConversationState.DM_MEMBER_REMOVED_LEFT.value
+                            || lastConversation.state == ConversationState.DM_CM_BECOMES_MEMBER_DISABLE.value
                 val taggingColor = if (isDisabled) {
                     context.fetchColor(R.color.lm_chat_brown_grey)
                 } else {

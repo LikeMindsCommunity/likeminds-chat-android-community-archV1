@@ -19,6 +19,7 @@ import com.likeminds.chatmm.media.model.VOICE_NOTE
 import com.likeminds.chatmm.member.model.MemberState
 import com.likeminds.chatmm.member.model.MemberViewData
 import com.likeminds.chatmm.member.util.MemberUtil
+import com.likeminds.likemindschat.conversation.model.ConversationState
 
 object ChatReplyUtil {
 
@@ -47,7 +48,7 @@ object ChatReplyUtil {
             currentMemberId,
             conversation.attachments,
             conversation.ogTags,
-            conversationState = conversation.state,
+            conversationStateViewData = conversation.state,
             type = type
         )
     }
@@ -58,7 +59,7 @@ object ChatReplyUtil {
         currentMemberId: String,
         attachments: MutableList<AttachmentViewData>? = null,
         linkOgTags: LinkOGTagsViewData? = null,
-        @ConversationState conversationState: Int? = null,
+        conversationStateViewData: Int? = null,
         type: String?
     ): ChatReplyViewData {
         val memberName = MemberUtil.getMemberNameForDisplay(memberViewData, currentMemberId)
@@ -95,7 +96,7 @@ object ChatReplyUtil {
             gifsCount,
             videosCount,
             pdfsCount,
-            conversationState,
+            conversationStateViewData,
             audiosCount,
             voiceNoteCount
         )
@@ -167,13 +168,13 @@ object ChatReplyUtil {
         gifsCount: Int,
         videosCount: Int,
         pdfsCount: Int,
-        @ConversationState conversationState: Int?,
+        conversationStateViewData: Int?,
         audiosCount: Int,
         voiceNoteCount: Int,
     ): Int? {
         val hasLink = linkViewData != null
         return when {
-            conversationState == STATE_POLL -> {
+            conversationStateViewData == ConversationState.POLL.value -> {
                 R.drawable.lm_chat_ic_poll_room_header
             }
 
