@@ -10,6 +10,7 @@ import com.likeminds.chatmm.utils.sharedpreferences.LMChatMasterPrefUtils
 import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.LMResponse
+import com.likeminds.likemindschat.conversation.model.ConversationState
 import com.likeminds.likemindschat.user.model.*
 import kotlinx.coroutines.*
 
@@ -24,6 +25,8 @@ object LMChatCore {
      * @param domain: domain request from client
      * @param enablePushNotifications: enable/disable push notifications
      * @param deviceId: device id
+     * @param shareLogsWithLM: share logs with LM
+     * @param excludeConversationStates: list of [ConversationState] to be excluded in chatroom
      **/
     fun setup(
         application: Application,
@@ -33,6 +36,8 @@ object LMChatCore {
         domain: String? = null,
         enablePushNotifications: Boolean = false,
         deviceId: String? = null,
+        shareLogsWithLM: Boolean = true,
+        excludeConversationStates: List<ConversationState> = emptyList()
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             Log.d(SDKApplication.LOG_TAG, "LMChatCore setup called")
@@ -48,7 +53,9 @@ object LMChatCore {
                 lmChatAppearanceRequest,
                 domain,
                 enablePushNotifications,
-                deviceId
+                deviceId,
+                shareLogsWithLM,
+                excludeConversationStates
             )
         }
     }

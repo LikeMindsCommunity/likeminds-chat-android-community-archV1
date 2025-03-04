@@ -477,6 +477,7 @@ object ViewDataConverter {
             .thumbnailAWSFolderPath(attachment.thumbnailAWSFolderPath)
             .thumbnailLocalFilePath(attachment.thumbnailLocalFilePath)
             .meta(attachmentMeta)
+            .isUploaded(attachment.isUploaded)
             .build()
     }
 
@@ -640,7 +641,7 @@ object ViewDataConverter {
             .chatroomId(chatroomId)
             .communityId(communityId)
             .answer(request.text)
-            .state(STATE_NORMAL)
+            .state(ConversationState.NORMAL.value)
             .createdEpoch(conversationCreatedEpoch)
             .memberId(uuid)
             .createdAt(TimeUtil.generateCreatedAt(conversationCreatedEpoch))
@@ -782,6 +783,8 @@ object ViewDataConverter {
             .index(attachmentViewData.index)
             .width(attachmentViewData.width)
             .height(attachmentViewData.height)
+            .awsFolderPath(attachmentViewData.awsFolderPath)
+            .thumbnailAWSFolderPath(attachmentViewData.thumbnailAWSFolderPath)
             .localFilePath(attachmentViewData.localFilePath)
             .thumbnailUrl(attachmentViewData.thumbnail.toString())
             .thumbnailLocalFilePath(attachmentViewData.thumbnailLocalFilePath.toString())
@@ -792,6 +795,7 @@ object ViewDataConverter {
                     .size(attachmentViewData.meta?.size)
                     .build()
             )
+            .isUploaded(attachmentViewData.isUploaded)
             .build()
     }
 
@@ -880,6 +884,7 @@ object ViewDataConverter {
             .width(attachment.width)
             .name(attachment.name)
             .meta(createAttachmentMetaFromNotification(attachment.meta))
+            .isUploaded(attachment.isUploaded)
             .build()
     }
 

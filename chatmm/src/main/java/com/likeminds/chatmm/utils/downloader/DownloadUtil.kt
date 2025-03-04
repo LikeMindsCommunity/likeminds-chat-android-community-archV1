@@ -18,6 +18,8 @@ import com.likeminds.chatmm.media.model.IMAGE
 import com.likeminds.chatmm.media.model.InternalMediaType
 import com.likeminds.chatmm.media.model.VIDEO
 import com.likeminds.chatmm.utils.ValueUtils.getMimeType
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -83,6 +85,11 @@ object DownloadUtil {
         return try {
             Uri.parse(url)
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             null
         }
     }
