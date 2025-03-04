@@ -16,6 +16,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.likeminds.chatmm.R
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import javax.inject.Inject
 
 abstract class BaseBottomSheetFragment<B : ViewBinding, VM : ViewModel> :
@@ -62,6 +64,12 @@ abstract class BaseBottomSheetFragment<B : ViewBinding, VM : ViewModel> :
                 ) as FrameLayout
                 BottomSheetBehavior.from(bottomSheet).state = state
             } catch (e: Exception) {
+
+                LMChatLogger.getInstance()?.handleException(
+                    e.message ?: "",
+                    e.stackTraceToString(),
+                    LMSeverity.CRITICAL
+                )
                 e.printStackTrace()
             }
         }

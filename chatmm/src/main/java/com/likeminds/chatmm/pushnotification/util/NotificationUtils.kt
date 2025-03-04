@@ -5,6 +5,8 @@ import android.content.Context
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.likeminds.chatmm.pushnotification.util.LMChatNotificationHandler.Companion.NOTIFICATION_UNREAD_CONVERSATION_GROUP_ID
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 object NotificationUtils {
 
@@ -26,6 +28,11 @@ object NotificationUtils {
         try {
             removeConversationGroupNotification(context)
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             Log.e("Error", "${e.stackTrace}")
         }
     }

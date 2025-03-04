@@ -199,11 +199,12 @@ class ConversationMediaUploadWorker(
                         }
 
                         urls = thumbnailMediaMap[response.index] ?: return
-                        postConversation(
+                        updateAttachmentUploaded(
                             response,
                             urls,
                             totalFilesToUpload,
                             continuation,
+                            response.isThumbnail
                         )
                     } else {
                         if (response.isThumbnail == true) {
@@ -213,11 +214,12 @@ class ConversationMediaUploadWorker(
                         }
                     }
                 } else {
-                    postConversation(
+                    updateAttachmentUploaded(
                         response,
                         Pair(uploadUrl, null),
                         totalFilesToUpload,
                         continuation,
+                        response.isThumbnail
                     )
                 }
             }

@@ -14,6 +14,8 @@ import com.likeminds.chatmm.polls.util.AddPollOptionListener
 import com.likeminds.chatmm.utils.ExtrasUtil
 import com.likeminds.chatmm.utils.ViewUtils.fetchColor
 import com.likeminds.chatmm.utils.customview.BaseBottomSheetFragment
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 class AddPollOptionDialog :
     BaseBottomSheetFragment<DialogAddPollOptionBinding, Nothing>() {
@@ -54,6 +56,11 @@ class AddPollOptionDialog :
         try {
             addPollOptionListener = parentFragment as AddPollOptionListener?
         } catch (e: ClassCastException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             throw ClassCastException("Calling fragment must implement AddPollOptionListener interface")
         }
     }

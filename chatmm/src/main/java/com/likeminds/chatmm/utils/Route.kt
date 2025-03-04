@@ -9,6 +9,8 @@ import com.likeminds.chatmm.LMAnalytics
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.chatroom.detail.view.ChatroomDetailActivity
 import com.likeminds.chatmm.member.model.MemberViewData
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 object Route {
     private const val ROUTE_SCHEME = "route"
@@ -41,6 +43,11 @@ object Route {
         return try {
             Uri.parse(route)?.getQueryParameter(param)
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             null
         }
     }

@@ -8,6 +8,7 @@ import com.likeminds.chatmm.polls.model.PollInfoData
 import com.likeminds.chatmm.reactions.model.ReactionViewData
 import com.likeminds.chatmm.utils.model.*
 import com.likeminds.chatmm.widget.model.WidgetViewData
+import com.likeminds.likemindschat.conversation.model.ConversationState
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -48,27 +49,27 @@ class ConversationViewData private constructor(
 ) : BaseViewType, Parcelable {
     override val viewType: Int
         get() = when (state) {
-            STATE_HEADER,
-            STATE_FOLLOWED,
-            STATE_UN_FOLLOWED,
-            STATE_EDIT_COMMUNITY_PURPOSE,
-            STATE_GUEST_FOLLOWED,
-            STATE_CHATROOM_ADD_PARTICIPANT,
-            STATE_LEAVE_CHATROOM,
-            STATE_REMOVED_FROM_CHATROOM,
-            STATE_ADD_MEMBERS,
-            STATE_TOPIC,
-            STATE_DM_MEMBER_REMOVED_OR_LEFT,
-            STATE_DM_CM_BECOMES_MEMBER_DISABLE,
-            STATE_DM_MEMBER_BECOMES_CM,
-            STATE_DM_CM_BECOMES_MEMBER_ENABLE,
-            STATE_DM_MEMBER_BECOMES_CM_ENABLE,
-            STATE_DM_ACCEPTED,
-            STATE_DM_REJECTED -> {
+            ConversationState.FIRST_CONVERSATION.value,
+            ConversationState.MEMBER_JOINED_OPEN_CHATROOM.value,
+            ConversationState.MEMBER_LEFT_OPEN_CHATROOM.value,
+            ConversationState.COMMUNITY_PURPOSE_EDITED.value,
+            ConversationState.GUEST_USER_FOLLOWED.value,
+            ConversationState.MEMBER_ADDED_TO_CHATROOM.value,
+            ConversationState.MEMBER_LEFT_SECRET_CHATROOM.value,
+            ConversationState.MEMBER_REMOVED_FROM_CHATROOM.value,
+            ConversationState.ALL_MEMBERS_ADDED.value,
+            ConversationState.TOPIC_CHANGED.value,
+            ConversationState.DM_MEMBER_REMOVED_LEFT.value,
+            ConversationState.DM_CM_BECOMES_MEMBER_DISABLE.value,
+            ConversationState.DM_MEMBER_BECOME_CM.value,
+            ConversationState.DM_CM_BECOMES_MEMBER_ENABLE.value,
+            ConversationState.DM_MEMBER_BECOMES_CM_ENABLE.value,
+            ConversationState.DM_REQUEST_REJECTED.value,
+            ConversationState.DM_REQUEST_ACCEPTED.value -> {
                 ITEM_CONVERSATION_ACTION
             }
 
-            STATE_POLL -> {
+            ConversationState.POLL.value -> {
                 ITEM_CONVERSATION_POLL
             }
 
@@ -186,7 +187,7 @@ class ConversationViewData private constructor(
     }
 
     fun attachmentsToUpload() = attachments?.filter {
-        !it.awsFolderPath.isNullOrEmpty()
+        !it.isUploaded
     }
 
     fun thumbnailsToUpload() = attachments?.filter {

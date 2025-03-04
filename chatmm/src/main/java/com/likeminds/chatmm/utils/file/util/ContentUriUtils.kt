@@ -2,6 +2,8 @@ package com.likeminds.chatmm.utils.file.util
 
 import android.content.ContentResolver
 import android.net.Uri
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 
 object ContentUriUtils {
 
@@ -33,6 +35,11 @@ object ContentUriUtils {
                     }
                 }
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.EMERGENCY
+            )
             e.message?.let {
                 //Checks whether the exception message does not contain the following string.
                 if (!it.contains("column '$column' does not exist")) {
