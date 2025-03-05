@@ -23,6 +23,9 @@ import com.likeminds.chatmm.theme.model.LMChatAppearanceRequest
 import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.LMChatSDKCallback
+import com.likeminds.likemindschat.conversation.model.ConversationState
+import com.likeminds.likemindschat.helper.model.LMChatInitiateLoggerRequest
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import com.likeminds.likemindschat.user.model.InitiateUserRequest
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.google.GoogleEmojiProvider
@@ -93,9 +96,26 @@ class SDKApplication : LMChatSDKCallback {
         domain: String? = null,
         enablePushNotifications: Boolean = false,
         deviceId: String? = null,
+        shareLogsWithLM: Boolean,
+        excludeConversationStates: List<ConversationState> = emptyList()
     ) {
+        val initiateLoggerRequest = if (shareLogsWithLM) {
+            LMChatInitiateLoggerRequest.Builder()
+                .shareLogsWithLM(true)
+                .coreVersion("${BuildConfig.APP_MAJOR}.${BuildConfig.APP_MINOR}.${BuildConfig.APP_PATCH}")
+                .logLevel(LMSeverity.INFO)
+                .onErrorHandler { exception, trace ->
+                    lmChatCoreCallback?.onErrorHandler(exception, trace)
+                }
+                .build()
+        } else {
+            null
+        }
+
         mChatClient = LMChatClient.Builder(application)
             .lmChatSDKCallback(this)
+            .initiateLoggerRequest(initiateLoggerRequest)
+            .excludedConversationStates(excludeConversationStates)
             .build()
 
         selectedTheme = theme
@@ -275,10 +295,13 @@ class SDKApplication : LMChatSDKCallback {
             runBlocking {
                 val user = mChatClient.getLoggedInUser().data?.user
                 if (user != null) {
+                    val userMetaData = LMChatUserMetaData.getInstance()
+
                     val initiateUserRequest = InitiateUserRequest.Builder()
                         .apiKey(apiKey)
                         .userName(user.name)
                         .userId(user.sdkClientInfo?.uuid)
+                        .deviceId(userMetaData.deviceId)
                         .build()
                     val response = mChatClient.initiateUser(initiateUserRequest)
 

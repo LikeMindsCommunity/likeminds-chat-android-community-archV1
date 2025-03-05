@@ -122,6 +122,9 @@ import com.likeminds.chatmm.utils.recyclerview.SwipeControllerActions
 import com.likeminds.chatmm.utils.user.LMChatUserMetaData
 import com.likeminds.chatmm.widget.model.WidgetViewData
 import com.likeminds.likemindschat.chatroom.model.ChatRequestState
+import com.likeminds.likemindschat.conversation.model.ConversationState
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import com.likeminds.likemindschat.user.model.MemberBlockState
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.coroutines.flow.onEach
@@ -1779,7 +1782,7 @@ class ChatroomDetailFragment :
         val conversationIndex =
             chatroomDetailAdapter.items()
                 .indexOfLast { chatroomItem ->
-                    (chatroomItem is ConversationViewData && chatroomItem.state == STATE_DM_REJECTED)
+                    (chatroomItem is ConversationViewData && chatroomItem.state == ConversationState.DM_REQUEST_REJECTED.value)
                 }
 
         val conversationViewData =
@@ -1838,6 +1841,11 @@ class ChatroomDetailFragment :
                     cameraPath = file.absolutePath
                     file
                 } catch (ex: IOException) {
+                    LMChatLogger.getInstance()?.handleException(
+                        ex.message ?: "",
+                        ex.stackTraceToString(),
+                        LMSeverity.EMERGENCY
+                    )
                     Log.e("errorCreateFile", "errorCreateFile", ex)
                     null
                 }
@@ -1856,6 +1864,11 @@ class ChatroomDetailFragment :
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         cameraLauncher.launch(takePictureIntent)
                     } catch (e: Exception) {
+                        LMChatLogger.getInstance()?.handleException(
+                            e.message ?: "",
+                            e.stackTraceToString(),
+                            LMSeverity.EMERGENCY
+                        )
                         ViewUtils.showShortToast(requireContext(), "Image not found")
                         Log.e(SDKApplication.LOG_TAG, "provider not found, ${e.localizedMessage}")
                     }
@@ -2259,7 +2272,10 @@ class ChatroomDetailFragment :
                                     val updatedConversation = oldConversation.toBuilder()
                                         .attachments(
                                             oldConversation.attachments?.map { attachment ->
-                                                if (indexList.contains(attachment.index ?: -1)) {
+                                                if (indexList.contains(
+                                                        attachment.index ?: -1
+                                                    ) || !attachment.isUploaded
+                                                ) {
                                                     attachment
                                                 } else {
                                                     attachment.toBuilder()
@@ -2681,7 +2697,7 @@ class ChatroomDetailFragment :
                         }
                     }
 
-                    topic.state == STATE_POLL -> {
+                    topic.state == ConversationState.POLL.value -> {
                         setTopViewMemberImage(topic.memberViewData)
 
                         val answer = ChatroomUtil.getTopicMediaData(requireContext(), topic)
@@ -2802,7 +2818,7 @@ class ChatroomDetailFragment :
                         }
                     }
 
-                    topic.state == STATE_POLL -> {
+                    topic.state == ConversationState.POLL.value -> {
                         topicImage.visibility = View.GONE
                     }
 
@@ -2842,6 +2858,11 @@ class ChatroomDetailFragment :
                 binding.inputBox.etAnswer.text?.toString()
             )
         } catch (e: Exception) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             Log.e(TAG, e.toString())
         }
     }
@@ -3203,7 +3224,7 @@ class ChatroomDetailFragment :
                         getNonPresentConversations(response.conversations).toMutableList()
 
                     val indexOfHeaderConversation = conversations.indexOfFirst { conversation ->
-                        conversation.state == STATE_HEADER
+                        conversation.state == ConversationState.FIRST_CONVERSATION.value
                     }
                     if (
                         indexOfHeaderConversation.isValidIndex() &&
@@ -3263,7 +3284,7 @@ class ChatroomDetailFragment :
                         }
 
                         //last new conversation DM REJECTED conversation
-                        if (lastNewConversation.state == STATE_DM_REJECTED
+                        if (lastNewConversation.state == ConversationState.DM_REQUEST_REJECTED.value
                             && viewModel.getLoggedInMemberId() ==
                             viewModel.getChatroomViewData()?.chatRequestedById
                         ) {
@@ -3334,7 +3355,7 @@ class ChatroomDetailFragment :
                         }
 
                         //add tap to undo if dm is rejected and the logged in member has rejected the DM request
-                        if (response.conversation.state == STATE_DM_REJECTED
+                        if (response.conversation.state == ConversationState.DM_REQUEST_REJECTED.value
                             && viewModel.getLoggedInMemberId() ==
                             viewModel.getChatroomViewData()?.chatRequestedById
                         ) {
@@ -3745,7 +3766,7 @@ class ChatroomDetailFragment :
 
             val conversation =
                 viewModel.createTemporaryAutoFollowAndTopicConversation(
-                    STATE_TOPIC, answer
+                    ConversationState.TOPIC_CHANGED.value, answer
                 )
 
             val indexToAdd = getIndexOfAnyGraphicItem()
@@ -4922,6 +4943,11 @@ class ChatroomDetailFragment :
                 "${requireContext().externalCacheDir?.absolutePath}/VOC_${System.currentTimeMillis()}.mp3"
             voiceRecorder.startRecording(voiceNoteFilePath ?: "")
         } catch (e: IllegalStateException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             voiceNoteUtils.stopVoiceNote(binding, RECORDING_RELEASED)
         }
     }

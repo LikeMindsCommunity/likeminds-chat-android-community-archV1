@@ -36,24 +36,61 @@ class GenericFileRequest private constructor(
         private var hasThumbnail: Boolean? = null
         private var meta: AttachmentMetaViewData? = null
 
-        fun name(name: String?) = apply { this.name = name }
-        fun fileUri(fileUri: Uri?) = apply { this.fileUri = fileUri }
-        fun fileType(fileType: String) = apply { this.fileType = fileType }
-        fun awsFolderPath(awsFolderPath: String) = apply { this.awsFolderPath = awsFolderPath }
-        fun localFilePath(localFilePath: String?) = apply { this.localFilePath = localFilePath }
-        fun index(index: Int) = apply { this.index = index }
-        fun width(width: Int?) = apply { this.width = width }
-        fun height(height: Int?) = apply { this.height = height }
-        fun thumbnailUri(thumbnailUri: Uri?) = apply { this.thumbnailUri = thumbnailUri }
-        fun thumbnailAWSFolderPath(thumbnailAWSFolderPath: String?) =
-            apply { this.thumbnailAWSFolderPath = thumbnailAWSFolderPath }
+        fun name(name: String?) = apply {
+            this.name = name
+        }
 
-        fun thumbnailLocalFilePath(thumbnailLocalFilePath: String?) =
-            apply { this.thumbnailLocalFilePath = thumbnailLocalFilePath }
+        fun fileUri(fileUri: Uri?) = apply {
+            this.fileUri = fileUri
+        }
 
-        fun isThumbnail(isThumbnail: Boolean?) = apply { this.isThumbnail = isThumbnail }
-        fun hasThumbnail(hasThumbnail: Boolean?) = apply { this.hasThumbnail = hasThumbnail }
-        fun meta(meta: AttachmentMetaViewData?) = apply { this.meta = meta }
+        fun fileType(fileType: String) = apply {
+            this.fileType = fileType
+        }
+
+        fun awsFolderPath(awsFolderPath: String) = apply {
+            this.awsFolderPath = awsFolderPath
+        }
+
+        fun localFilePath(localFilePath: String?) = apply {
+            this.localFilePath = localFilePath
+        }
+
+        fun index(index: Int) = apply {
+            this.index = index
+        }
+
+        fun width(width: Int?) = apply {
+            this.width = width
+        }
+
+        fun height(height: Int?) = apply {
+            this.height = height
+        }
+
+        fun thumbnailUri(thumbnailUri: Uri?) = apply {
+            this.thumbnailUri = thumbnailUri
+        }
+
+        fun thumbnailAWSFolderPath(thumbnailAWSFolderPath: String?) = apply {
+            this.thumbnailAWSFolderPath = thumbnailAWSFolderPath
+        }
+
+        fun thumbnailLocalFilePath(thumbnailLocalFilePath: String?) = apply {
+            this.thumbnailLocalFilePath = thumbnailLocalFilePath
+        }
+
+        fun isThumbnail(isThumbnail: Boolean?) = apply {
+            this.isThumbnail = isThumbnail
+        }
+
+        fun hasThumbnail(hasThumbnail: Boolean?) = apply {
+            this.hasThumbnail = hasThumbnail
+        }
+
+        fun meta(meta: AttachmentMetaViewData?) = apply {
+            this.meta = meta
+        }
 
         fun build() = GenericFileRequest(
             name,

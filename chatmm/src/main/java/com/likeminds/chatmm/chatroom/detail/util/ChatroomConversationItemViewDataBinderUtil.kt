@@ -50,6 +50,8 @@ import com.likeminds.chatmm.utils.link.LMLinkMovementMethod
 import com.likeminds.chatmm.utils.mediauploader.worker.UploadHelper
 import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
 import com.likeminds.chatmm.utils.model.*
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import java.util.UUID
 
 object ChatroomConversationItemViewDataBinderUtil {
@@ -460,6 +462,11 @@ object ChatroomConversationItemViewDataBinderUtil {
                     try {
                         ActivityCompat.startActivity(tvConversation.context, intent, null)
                     } catch (e: Exception) {
+                        LMChatLogger.getInstance()?.handleException(
+                            e.message ?: "",
+                            e.stackTraceToString(),
+                            LMSeverity.CRITICAL
+                        )
                         e.printStackTrace()
                     }
                 }
@@ -537,7 +544,6 @@ object ChatroomConversationItemViewDataBinderUtil {
         if (chatroom == null && conversation == null) {
             return Pair(null, false)
         }
-        val attachmentCount = conversation?.attachmentCount ?: 0
         val workerUUID = conversation?.workerUUID
         val transferUtility by lazy { SDKApplication.getInstance().transferUtility }
         var uuid: UUID? = null
@@ -556,7 +562,13 @@ object ChatroomConversationItemViewDataBinderUtil {
 
             tvRetry.setOnClickListener {
                 if (conversation?.id != null) {
-                    listener?.onRetryConversationMediaUpload(conversation.id, attachmentCount)
+                    var remainingAttachments = 0
+                    conversation.attachments?.forEach { attachment ->
+                        if (!attachment.isUploaded) {
+                            remainingAttachments++
+                        }
+                    }
+                    listener?.onRetryConversationMediaUpload(conversation.id, remainingAttachments)
                 }
             }
 

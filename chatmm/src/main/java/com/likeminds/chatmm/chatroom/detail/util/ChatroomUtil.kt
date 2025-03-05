@@ -14,7 +14,8 @@ import com.likeminds.chatmm.R
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomViewData
 import com.likeminds.chatmm.chatroom.detail.model.TYPE_ANNOUNCEMENT
 import com.likeminds.chatmm.chatroom.detail.view.YouTubeVideoPlayerPopup
-import com.likeminds.chatmm.conversation.model.*
+import com.likeminds.chatmm.conversation.model.AttachmentViewData
+import com.likeminds.chatmm.conversation.model.ConversationViewData
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.utils.ValueUtils.containsUrl
 import com.likeminds.chatmm.utils.ViewUtils
@@ -22,6 +23,7 @@ import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
 import com.likeminds.chatmm.utils.model.ITEM_CHAT_ROOM
 import com.likeminds.chatmm.utils.model.ITEM_CHAT_ROOM_ANNOUNCEMENT
 import com.likeminds.likemindschat.chatroom.model.Chatroom
+import com.likeminds.likemindschat.conversation.model.ConversationState
 
 object ChatroomUtil {
 
@@ -223,7 +225,7 @@ object ChatroomUtil {
                 Pair(R.drawable.lm_chat_ic_link_header, 1)
             }
 
-            conversation?.state == STATE_POLL -> {
+            conversation?.state == ConversationState.POLL.value -> {
                 Pair(R.drawable.lm_chat_ic_micro_poll, 1)
             }
 

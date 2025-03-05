@@ -13,7 +13,7 @@ import androidx.databinding.DataBindingUtil
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.chatroom.detail.model.TYPE_DIRECT_MESSAGE
 import com.likeminds.chatmm.chatroom.detail.view.adapter.ChatroomDetailAdapterListener
-import com.likeminds.chatmm.conversation.model.*
+import com.likeminds.chatmm.conversation.model.ConversationViewData
 import com.likeminds.chatmm.databinding.ItemConversationActionBinding
 import com.likeminds.chatmm.member.util.UserPreferences
 import com.likeminds.chatmm.utils.customview.ViewDataBinder
@@ -21,6 +21,7 @@ import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
 import com.likeminds.chatmm.utils.membertagging.util.MemberTaggingClickableSpan
 import com.likeminds.chatmm.utils.model.BaseViewType
 import com.likeminds.chatmm.utils.model.ITEM_CONVERSATION_ACTION
+import com.likeminds.likemindschat.conversation.model.ConversationState
 import com.likeminds.likemindschat.user.model.MemberBlockState
 
 class ConversationActionItemViewDataBinder(
@@ -79,16 +80,16 @@ class ConversationActionItemViewDataBinder(
             val loggedInMemberId = userPreferences.getMemberId()
 
             spans.reversed().forEach { span ->
-                if (conversation.state != STATE_DM_MEMBER_REMOVED_OR_LEFT ||
-                    conversation.state != STATE_DM_CM_BECOMES_MEMBER_DISABLE ||
-                    conversation.state != STATE_DM_MEMBER_BECOMES_CM ||
-                    conversation.state != STATE_DM_CM_BECOMES_MEMBER_ENABLE ||
-                    conversation.state != STATE_DM_MEMBER_BECOMES_CM_ENABLE
+                if (conversation.state != ConversationState.DM_MEMBER_REMOVED_LEFT.value ||
+                    conversation.state != ConversationState.DM_CM_BECOMES_MEMBER_DISABLE.value ||
+                    conversation.state != ConversationState.DM_MEMBER_BECOME_CM.value ||
+                    conversation.state != ConversationState.DM_CM_BECOMES_MEMBER_ENABLE.value ||
+                    conversation.state != ConversationState.DM_MEMBER_BECOMES_CM_ENABLE.value
                 ) {
                     if ((span.getMemberUUID() == loggedInMemberUUID) || (span.getMemberUUID() == loggedInMemberId)) {
                         val startIndex = editable.getSpanStart(span)
                         val endIndex = editable.getSpanEnd(span)
-                        if (chatroomDetailAdapterListener?.getChatRoomType() == TYPE_DIRECT_MESSAGE && conversation.state == STATE_HEADER) {
+                        if (chatroomDetailAdapterListener?.getChatRoomType() == TYPE_DIRECT_MESSAGE && conversation.state == ConversationState.FIRST_CONVERSATION.value) {
                             editable.replace(startIndex, endIndex, "")
                         } else {
                             editable.replace(startIndex, endIndex, "You")

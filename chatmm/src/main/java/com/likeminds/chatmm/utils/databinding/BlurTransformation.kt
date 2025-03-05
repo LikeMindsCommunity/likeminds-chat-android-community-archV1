@@ -11,6 +11,8 @@ import androidx.annotation.ColorInt
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapResource
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
+import com.likeminds.likemindschat.helper.LMChatLogger
+import com.likeminds.likemindschat.helper.model.LMSeverity
 import java.security.MessageDigest
 
 internal class BlurTransformation(private val context: Context) : BitmapTransformation() {
@@ -56,6 +58,11 @@ internal class BlurTransformation(private val context: Context) : BitmapTransfor
         return try {
             blur(context, bitmap)
         } catch (e: RSRuntimeException) {
+            LMChatLogger.getInstance()?.handleException(
+                e.message ?: "",
+                e.stackTraceToString(),
+                LMSeverity.CRITICAL
+            )
             e.printStackTrace()
             bitmap
         }
