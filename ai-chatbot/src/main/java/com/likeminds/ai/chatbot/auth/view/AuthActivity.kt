@@ -7,15 +7,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog
 import com.github.dhaval2404.colorpicker.model.ColorShape
 import com.github.dhaval2404.colorpicker.model.ColorSwatch
+import com.likeminds.ai.chatbot.AIChatbotApplication
+import com.likeminds.ai.chatbot.auth.model.LoginExtras
+import com.likeminds.ai.chatbot.auth.util.AuthPreferences
 import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.theme.model.LMChatAppearanceRequest
 import com.likeminds.chatmm.theme.model.LMFonts
 import com.likeminds.chatmm.utils.Route
 import com.likeminds.chatmm.utils.ViewUtils
-import com.likeminds.ai.chatbot.AIChatbotApplication
 import com.likeminds.community.ai.chatbot.R
-import com.likeminds.ai.chatbot.auth.model.LoginExtras
-import com.likeminds.ai.chatbot.auth.util.AuthPreferences
 import com.likeminds.community.ai.chatbot.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {
@@ -38,6 +38,9 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Call before the DecorView is accessed in setContentView
+        theme.applyStyle(com.likeminds.chatmm.R.style.OptOutEdgeToEdgeEnforcement, /* force */ false)
 
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)

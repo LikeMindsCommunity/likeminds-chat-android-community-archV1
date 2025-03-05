@@ -39,6 +39,9 @@ class ChatroomExploreActivity : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Call before the DecorView is accessed in setContentView
+        theme.applyStyle(R.style.OptOutEdgeToEdgeEnforcement, /* force */ false)
+
         binding = ActivityChatroomExploreBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

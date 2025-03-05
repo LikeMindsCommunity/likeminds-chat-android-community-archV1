@@ -55,6 +55,9 @@ class LMChatMediaPickerActivity : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Call before the DecorView is accessed in setContentView
+        theme.applyStyle(R.style.OptOutEdgeToEdgeEnforcement, /* force */ false)
+
         setContentView(R.layout.lm_chat_activity_media_picker)
         val extras = ExtrasUtil.getParcelable(
             intent.extras,

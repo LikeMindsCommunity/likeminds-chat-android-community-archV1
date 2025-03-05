@@ -14,9 +14,9 @@ import com.likeminds.chatmm.utils.Route
 import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.community.chat.CommunityChatApplication
 import com.likeminds.community.chat.R
-import com.likeminds.community.chat.databinding.ActivityAuthBinding
 import com.likeminds.community.chat.auth.model.LoginExtras
 import com.likeminds.community.chat.auth.util.AuthPreferences
+import com.likeminds.community.chat.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {
 
@@ -38,6 +38,9 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Call before the DecorView is accessed in setContentView
+        theme.applyStyle(com.likeminds.chatmm.R.style.OptOutEdgeToEdgeEnforcement, /* force */ false)
 
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
