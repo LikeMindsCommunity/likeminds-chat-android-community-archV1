@@ -3,7 +3,6 @@ package com.likeminds.community.chat
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.likeminds.chatmm.LMChatCore
-import com.likeminds.chatmm.chat.view.CommunityHybridChatFragment
 import com.likeminds.chatmm.homefeed.view.CommunityChatFragment
 import com.likeminds.chatmm.member.model.UserResponse
 import com.likeminds.community.chat.auth.util.AuthPreferences
@@ -16,6 +15,10 @@ class CommunityChatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Call before the DecorView is accessed in setContentView
+        theme.applyStyle(com.likeminds.chatmm.R.style.OptOutEdgeToEdgeEnforcement, /* force */ false)
+
         setContentView(R.layout.activity_community_chat)
 
         val successCallback = { userResponse: UserResponse ->

@@ -55,6 +55,10 @@ class LMChatSearchActivity : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         SDKApplication.getInstance().searchComponent()?.inject(this)
         super.onCreate(savedInstanceState)
+
+        // Call before the DecorView is accessed in setContentView
+        theme.applyStyle(R.style.OptOutEdgeToEdgeEnforcement, /* force */ false)
+
         binding = LmChatActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

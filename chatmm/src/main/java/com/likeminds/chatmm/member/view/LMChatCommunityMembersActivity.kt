@@ -51,6 +51,9 @@ class LMChatCommunityMembersActivity : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Call before the DecorView is accessed in setContentView
+        theme.applyStyle(R.style.OptOutEdgeToEdgeEnforcement, /* force */ false)
+
         binding = LmChatActivityCommunityMembersBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

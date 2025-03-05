@@ -15,6 +15,10 @@ class CommunityHybridChatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Call before the DecorView is accessed in setContentView
+        theme.applyStyle(com.likeminds.chatmm.R.style.OptOutEdgeToEdgeEnforcement, /* force */ false)
+
         setContentView(R.layout.activity_community_hybrid_chat)
 
         val successCallback = { userResponse: UserResponse ->
