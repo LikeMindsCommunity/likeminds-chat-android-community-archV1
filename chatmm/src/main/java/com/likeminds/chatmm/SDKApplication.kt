@@ -2,6 +2,7 @@ package com.likeminds.chatmm
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import com.amazonaws.mobile.client.*
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.likeminds.chatmm.di.DaggerLikeMindsChatComponent
@@ -74,6 +75,7 @@ class SDKApplication : LMChatSDKCallback {
         @JvmStatic
         fun getInstance(): SDKApplication {
             if (sdkApplicationInstance == null) {
+                Log.d("PUI","SDKApplication instance created")
                 sdkApplicationInstance = SDKApplication()
             }
             return sdkApplicationInstance!!
@@ -88,7 +90,7 @@ class SDKApplication : LMChatSDKCallback {
         }
     }
 
-    suspend fun initSDKApplication(
+    fun initSDKApplication(
         application: Application,
         theme: LMChatTheme,
         lmChatCoreCallback: LMChatCoreCallback?,
@@ -100,6 +102,7 @@ class SDKApplication : LMChatSDKCallback {
         excludeConversationStates: List<ConversationState> = emptyList()
     ) {
         val initiateLoggerRequest = if (shareLogsWithLM) {
+            Log.d("PUI","logger created")
             LMChatInitiateLoggerRequest.Builder()
                 .shareLogsWithLM(true)
                 .coreVersion("${BuildConfig.APP_MAJOR}.${BuildConfig.APP_MINOR}.${BuildConfig.APP_PATCH}")
@@ -109,6 +112,7 @@ class SDKApplication : LMChatSDKCallback {
                 }
                 .build()
         } else {
+            Log.d("PUI","logger not created")
             null
         }
 
