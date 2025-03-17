@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -32,7 +31,6 @@ import com.likeminds.chatmm.homefeed.viewmodel.CommunityChatViewModel
 import com.likeminds.chatmm.member.model.MemberViewData
 import com.likeminds.chatmm.member.util.MemberImageUtil
 import com.likeminds.chatmm.member.util.UserPreferences
-import com.likeminds.chatmm.pushnotification.viewmodel.LMNotificationViewModel
 import com.likeminds.chatmm.search.view.LMChatSearchActivity
 import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.ValueUtils.isValidIndex
@@ -60,9 +58,6 @@ class CommunityChatFragment : BaseFragment<FragmentCommunityChatBinding, Communi
 
     @Inject
     lateinit var snackBar: CustomSnackBar
-
-    @Inject
-    lateinit var lmNotificationViewModel: LMNotificationViewModel
 
     @Inject
     lateinit var userPreferences: UserPreferences
