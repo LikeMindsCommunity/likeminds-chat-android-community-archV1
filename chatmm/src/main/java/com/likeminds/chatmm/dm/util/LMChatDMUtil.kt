@@ -9,6 +9,12 @@ object LMChatDMUtil {
 
     const val TAG = "LMChatDMUtil"
 
+    /**
+     * Creates or gets existing DM chatroom
+     * @param userUUID: UUID of the user with whom DM chatroom is to be created
+     *
+     * @return Pair<String?, String?> -> first -> chatroomId, second -> errorMessage
+     */
     suspend fun createOrGetExistingDMChatroom(userUUID: String): Pair<String?, String?> {
         val lmChatClient = LMChatClient.getInstance()
 
