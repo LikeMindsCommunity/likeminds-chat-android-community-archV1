@@ -49,7 +49,6 @@ class AfterLoginActivity : AppCompatActivity() {
             val intent = Intent(this, CommunityHybridChatActivity::class.java)
             startActivity(intent)
         }
-
     }
 
     private fun logout() {
