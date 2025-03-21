@@ -9,15 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.likeminds.chatmm.LMChatCore
 import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.utils.ExtrasUtil
+import com.likeminds.community.hybrid.chat.CommunityHybridChatActivity
 import com.likeminds.community.hybrid.chat.CommunityHybridChatApplication
 import com.likeminds.community.hybrid.chat.auth.model.LoginExtras
 import com.likeminds.community.hybrid.chat.auth.util.AuthPreferences
 import com.likeminds.community.hybrid.chat.databinding.ActivityAfterLoginBinding
-import com.likeminds.community.hybrid.chat.CommunityHybridChatActivity
 import com.likeminds.likemindschat.user.model.LogoutRequest
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class AfterLoginActivity : AppCompatActivity() {
 
@@ -46,7 +44,6 @@ class AfterLoginActivity : AppCompatActivity() {
             val intent = Intent(this, CommunityHybridChatActivity::class.java)
             startActivity(intent)
         }
-
     }
 
     private fun logout() {
