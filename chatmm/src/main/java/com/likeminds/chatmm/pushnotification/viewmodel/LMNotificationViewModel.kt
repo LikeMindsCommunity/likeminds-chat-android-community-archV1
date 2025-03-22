@@ -19,8 +19,6 @@ class LMNotificationViewModel @Inject constructor(
     private val userPreferences: UserPreferences
 ) : AndroidViewModel(applicationContext) {
 
-    private val lmChatClient = LMChatClient.getInstance()
-
     // fetches the list of unread conversations to show in notification stack
     fun fetchUnreadConversations(
         unreadFollowNotification: ChatroomNotificationViewData,
@@ -31,7 +29,7 @@ class LMNotificationViewModel @Inject constructor(
             val request =
                 ViewDataConverter.createGetUnreadChatroomsRequest(unreadFollowNotification)
 
-            val response = lmChatClient.getUnreadChatrooms(request)
+            val response = LMChatClient.getInstance().getUnreadChatrooms(request)
             if (response.success) {
                 val data = response.data?.unreadConversation ?: return@launchIO
                 val conversations = ViewDataConverter.convertChatroomNotificationDataList(data)

@@ -39,25 +39,23 @@ object LMChatCore {
         shareLogsWithLM: Boolean = true,
         excludeConversationStates: List<ConversationState> = emptyList()
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
-            Log.d(SDKApplication.LOG_TAG, "LMChatCore setup called")
+        Log.d(SDKApplication.LOG_TAG, "LMChatCore setup called")
 
-            //create object of SDKApplication
-            val sdk = SDKApplication.getInstance()
+        //create object of SDKApplication
+        val sdk = SDKApplication.getInstance()
 
-            //call initSDKApplication to initialise sdk
-            sdk.initSDKApplication(
-                application,
-                theme,
-                lmChatCoreCallback,
-                lmChatAppearanceRequest,
-                domain,
-                enablePushNotifications,
-                deviceId,
-                shareLogsWithLM,
-                excludeConversationStates
-            )
-        }
+        //call initSDKApplication to initialise sdk
+        sdk.initSDKApplication(
+            application,
+            theme,
+            lmChatCoreCallback,
+            lmChatAppearanceRequest,
+            domain,
+            enablePushNotifications,
+            deviceId,
+            shareLogsWithLM,
+            excludeConversationStates
+        )
     }
 
     /**
