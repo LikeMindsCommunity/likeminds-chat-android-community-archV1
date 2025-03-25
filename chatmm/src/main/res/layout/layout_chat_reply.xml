@@ -75,6 +75,44 @@
                     tools:visibility="visible" />
                 <!-- TODO: removed some attributes due to error -->
 
+                <View
+                    android:id="@+id/view_dot_reply_privately_chatroom_name"
+                    android:layout_width="3dp"
+                    android:layout_height="3dp"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/lm_chat_shape_center_dot_cloudy_blue"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_conversation_member_name"
+                    app:layout_constraintStart_toEndOf="@+id/tv_conversation_member_name"
+                    app:layout_constraintTop_toTopOf="@+id/tv_conversation_member_name"
+                    tools:visibility="visible" />
+
+                <com.likeminds.chatmm.theme.customview.LikeMindsTextView
+                    android:id="@+id/tv_reply_privately_chatroom_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="#11c5b2"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    app:fontType="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/view_dot_reply_privately_chatroom_name"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_reply_attachment"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@+id/view_dot_reply_privately_chatroom_name"
+                    app:layout_constraintTop_toTopOf="@+id/view_dot_reply_privately_chatroom_name"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    tools:text="LikeMinds"
+                    tools:visibility="visible" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/grp_reply_privately_views"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="view_dot_reply_privately_chatroom_name, tv_reply_privately_chatroom_name"/>
+
                 <com.likeminds.chatmm.theme.customview.LikeMindsTextView
                     android:id="@+id/tv_conversation"
                     android:layout_width="0dp"

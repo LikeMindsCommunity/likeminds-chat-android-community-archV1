@@ -568,14 +568,22 @@ object ViewDataConverter {
      */
     private fun convertWidget(widget: Widget?): WidgetViewData? {
         if (widget == null) return null
-        return WidgetViewData.Builder()
+        val builder = WidgetViewData.Builder()
             .id(widget.id)
             .parentEntityId(widget.parentEntityId)
             .parentEntityType(widget.parentEntityType)
-            .metadata(widget.metadata.toString())
             .createdAt(widget.createdAt)
             .updatedAt(widget.updatedAt)
-            .build()
+
+        if (widget.metadata != null) {
+            builder.metadata(widget.metadata.toString())
+        }
+
+        if (widget.lmMeta != null) {
+            builder.lmMeta(widget.lmMeta.toString())
+        }
+
+        return builder.build()
     }
 
     /**

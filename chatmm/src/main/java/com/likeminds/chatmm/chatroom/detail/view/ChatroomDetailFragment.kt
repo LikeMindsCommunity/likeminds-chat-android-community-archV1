@@ -36,6 +36,7 @@ import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.themes.GridType
 import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.Gson
 import com.likeminds.chatmm.*
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.chatroom.detail.model.*
@@ -135,7 +136,6 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
-import kotlin.Pair
 import kotlin.math.abs
 
 class ChatroomDetailFragment :
@@ -482,11 +482,13 @@ class ChatroomDetailFragment :
             requireActivity().supportFragmentManager.popBackStack()
             return
         }
+
         chatroomDetailExtras = ExtrasUtil.getParcelable(
             requireArguments(),
             CHATROOM_DETAIL_EXTRAS,
             ChatroomDetailExtras::class.java
         ) ?: return
+
         isGuestUser = userPreferences.getIsGuestUser()
         checkForExplicitActions()
         fetchInitialData()
@@ -1065,11 +1067,26 @@ class ChatroomDetailFragment :
             checkDMStatus()
             disableAllGraphicViewTypes()
             removeChatroomItem()
+            checkReplyPrivatelyFlow()
+        } else {
+            viewModel.checkDMStatus()
         }
     }
 
     private fun checkDMStatus() {
         viewModel.checkDMStatus(chatroomId)
+    }
+
+    private fun checkReplyPrivatelyFlow() {
+        val replyPrivatelyExtras = chatroomDetailExtras.replyPrivatelyExtras
+        if (replyPrivatelyExtras != null) {
+            val sourceConversation = replyPrivatelyExtras.sourceConversation
+            setChatInputBoxViewType(CHAT_BOX_REPLY)
+            setReplyViewConversationData(
+                sourceConversation,
+                "reply_privately"
+            )
+        }
     }
 
     private fun initReplyView() {
@@ -1502,6 +1519,10 @@ class ChatroomDetailFragment :
             setText("")
             requestFocus()
             viewModel.clearLinkPreview()
+            // Clear the reply privately extras as these extras are not required now
+            chatroomDetailExtras = chatroomDetailExtras.toBuilder()
+                .replyPrivatelyExtras(null)
+                .build()
         }
     }
 
@@ -1571,7 +1592,10 @@ class ChatroomDetailFragment :
 
                         isDMRequestSent = true
                         inputBox.ivAttachment.visibility = View.INVISIBLE
-                        return
+
+                        if (chatroomDetailExtras.replyPrivatelyExtras == null || type != CHAT_BOX_REPLY) {
+                            return
+                        }
                     }
 
                     ChatRequestState.INITIATED -> {
@@ -1916,11 +1940,11 @@ class ChatroomDetailFragment :
     }
 
     private fun isReplyViewVisible(): Boolean {
-        return binding.inputBox.viewReply.clReply.visibility == View.VISIBLE
+        return binding.inputBox.viewReply.clReply.isVisible
     }
 
     private fun isLinkViewVisible(): Boolean {
-        return binding.inputBox.viewLink.clLink.visibility == View.VISIBLE
+        return binding.inputBox.viewLink.clLink.isVisible
     }
 
     private fun isSecretChatRoom() = getChatroomViewData()?.isSecret == true
@@ -1988,7 +2012,7 @@ class ChatroomDetailFragment :
                     callGuestFlowCallback()
                 } else {
                     var editableText = inputBox.etAnswer.editableText
-                    if (isReplyViewVisible()) {
+                    if (isReplyViewVisible() && chatroomDetailExtras.replyPrivatelyExtras == null) {
                         val chatReplyData = inputBox.viewReply.chatReplyData
                         if (chatReplyData?.isEditMessage == true) {
                             postEditConversation(editableText)
@@ -2047,9 +2071,16 @@ class ChatroomDetailFragment :
                             return@setOnClickListener
                         }
 
+                        val replyPrivatelyMetadata = getReplyPrivatelyMetadata()
+
                         // if the DM is M2M then show dialog otherwise send dm request directly
                         if (viewModel.getChatroomViewData()?.isPrivateMember == true) {
-                            SendDMRequestDialogFragment.showDialog(childFragmentManager, inputText)
+                            SendDMRequestDialogFragment.showDialog(
+                                childFragmentManager,
+                                inputText,
+                                replyPrivatelyMetadata
+                            )
+
                             setChatInputBoxViewType(
                                 CHAT_BOX_NORMAL,
                                 viewModel.showDM.value
@@ -2059,7 +2090,8 @@ class ChatroomDetailFragment :
                                 viewModel.getChatroomViewData()?.id.toString(),
                                 ChatRequestState.ACCEPTED,
                                 true,
-                                inputText
+                                inputText,
+                                metadata = replyPrivatelyMetadata
                             )
                         }
                         clearEditTextAnswer()
@@ -2073,6 +2105,17 @@ class ChatroomDetailFragment :
                     )
                 }
             }
+        }
+    }
+
+    private fun getReplyPrivatelyMetadata(): JSONObject? {
+        val replyPrivatelyExtras = chatroomDetailExtras.replyPrivatelyExtras ?: return null
+
+        return JSONObject().apply {
+            put("type", "REPLY_PRIVATELY")
+            put("source_chatroom_id", replyPrivatelyExtras.sourceChatroomId)
+            put("source_chatroom_name", replyPrivatelyExtras.sourceChatroomName)
+            put("source_conversation", JSONObject(Gson().toJson(replyPrivatelyExtras.sourceConversation)))
         }
     }
 
@@ -2108,7 +2151,10 @@ class ChatroomDetailFragment :
                 var replyChatRoomId: String? = null
                 var replyChatData: ChatReplyViewData? = null
 
-                if (isReplyViewVisible()) {
+                // Update the meta data if it is reply privately flow
+                val replyPrivatelyMetadata = getReplyPrivatelyMetadata()
+
+                if (isReplyViewVisible() && replyPrivatelyMetadata == null) {
                     when (inputBox.viewReply.replySourceType) {
                         REPLY_SOURCE_CHATROOM -> {
                             val repliedChatRoom = inputBox.viewReply.chatRoomViewData
@@ -2127,6 +2173,8 @@ class ChatroomDetailFragment :
                 val conversationCreatedEpoch = System.currentTimeMillis()
                 val temporaryId = "-$conversationCreatedEpoch"
 
+                val finalMetadata = replyPrivatelyMetadata ?: metadata
+
                 val uuidString = viewModel.postConversation(
                     requireContext(),
                     updatedConversation,
@@ -2135,7 +2183,7 @@ class ChatroomDetailFragment :
                     shareTextLink,
                     replyConversationId,
                     replyChatRoomId,
-                    metadata
+                    finalMetadata
                 )
 
                 uuidString?.let { uuid ->
@@ -3016,6 +3064,7 @@ class ChatroomDetailFragment :
         observeDMStatus()
         observeChatRequestState()
         observeDMInitiatedForCM()
+        observeReplyPrivatelyChatroomResponse()
     }
 
     /**
@@ -3792,7 +3841,12 @@ class ChatroomDetailFragment :
             if (canMemberRespond != null) {
                 initAttachmentsPickerBarView()
             }
-            setChatInputBoxViewType(CHAT_BOX_NORMAL)
+            val chatroomType = if (chatroomDetailExtras.replyPrivatelyExtras != null) {
+                CHAT_BOX_REPLY
+            } else {
+                CHAT_BOX_NORMAL
+            }
+            setChatInputBoxViewType(chatroomType)
         }
         viewModel.canMemberCreatePoll.observe(viewLifecycleOwner) { canMemberCreatePoll ->
             if (canMemberCreatePoll != null) {
@@ -3805,8 +3859,13 @@ class ChatroomDetailFragment :
     private fun observeMemberBlocked() {
         viewModel.memberBlocked.observe(viewLifecycleOwner) { memberBlocked ->
             showTapToUndoLocally = false
+            val chatBoxType = if (chatroomDetailExtras.replyPrivatelyExtras != null) {
+                CHAT_BOX_REPLY
+            } else {
+                CHAT_BOX_NORMAL
+            }
             setChatInputBoxViewType(
-                CHAT_BOX_NORMAL,
+                chatBoxType,
                 viewModel.showDM.value,
                 memberBlocked
             )
@@ -3883,6 +3942,11 @@ class ChatroomDetailFragment :
     // observes the showDM LiveData
     private fun observeDMStatus() {
         viewModel.showDM.observe(viewLifecycleOwner) { showDM ->
+            val chatBoxType = if (chatroomDetailExtras.replyPrivatelyExtras != null) {
+                CHAT_BOX_REPLY
+            } else {
+                CHAT_BOX_NORMAL
+            }
             setChatInputBoxViewType(
                 CHAT_BOX_NORMAL,
                 showDM
@@ -3905,6 +3969,35 @@ class ChatroomDetailFragment :
         viewModel.dmInitiatedForCM.observe(viewLifecycleOwner) { dmInitiatedForCM ->
             if (dmInitiatedForCM && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)) {
                 syncChatroom()
+            }
+        }
+    }
+
+    // observes replyPrivatelyChatroomResponse live data
+    private fun observeReplyPrivatelyChatroomResponse() {
+        viewModel.replyPrivatelyChatroomResponse.observe(viewLifecycleOwner) { response ->
+            val errorMessage = response.second
+
+            if (errorMessage != null) {
+                ViewUtils.showShortToast(requireContext(), errorMessage)
+            } else {
+                val chatroomId = response.first ?: return@observe
+                ChatroomDetailActivity.start(
+                    requireContext(),
+                    ChatroomDetailExtras.Builder()
+                        .chatroomId(chatroomId)
+                        .communityId(communityId)
+                        .communityName(getChatroomViewData()?.communityName)
+                        .source(LMAnalytics.Source.DIRECT_MESSAGES_SCREEN)
+                        .replyPrivatelyExtras(
+                            LMChatReplyPrivatelyExtras.Builder()
+                                .sourceChatroomId(getChatroomViewData()?.id ?: "")
+                                .sourceChatroomName(getChatroomViewData()?.title ?: "")
+                                .sourceConversation(response.third)
+                                .build()
+                        )
+                        .build()
+                )
             }
         }
     }
@@ -4250,6 +4343,13 @@ class ChatroomDetailFragment :
      */
     override fun onActionItemClick(item: MenuItem?) {
         when (item?.itemId) {
+            R.id.menu_item_reply_privately -> {
+                if (selectedConversations.isNotEmpty()) {
+                    val selectedConversation = selectedConversations.values.first()
+                    viewModel.getReplyPrivatelyDMChatroom(selectedConversation)
+                }
+            }
+
             R.id.menu_item_reply -> {
                 if (selectedConversations.isNotEmpty()) {
                     val conversation = selectedConversations.values.firstOrNull()
@@ -4312,6 +4412,7 @@ class ChatroomDetailFragment :
         actionModeData: ChatroomDetailActionModeData?,
     ) {
         actionModeData?.let {
+            item?.findItem(R.id.menu_item_reply_privately)?.isVisible = it.showReplyPrivatelyAction
             item?.findItem(R.id.menu_item_reply)?.isVisible = it.showReplyAction
             item?.findItem(R.id.menu_item_copy)?.isVisible = it.showCopyAction
             item?.findItem(R.id.menu_item_edit)?.isVisible = it.showEditAction
@@ -5300,6 +5401,7 @@ class ChatroomDetailFragment :
     /**
      * showCopyAction -> This will be true if either of the selected chatroom or conversation has title/answer text and is not deleted.
      * showReplyAction -> This will be true if either only chatroom is selected or single conversation is selected.
+     * showReplyPrivatelyAction -> This will be true if only single conversation is selected and the conditions for reply privately are satisfied.
      * showEditAction -> This will be true if either only chatroom is selected or single conversation is selected.
      *                    Also selected chatroom or conversation should have title/answer text and is should not be deleted.
      * showDeleteAction -> This will be true if Chatroom is not selected and any of the following case is true:
@@ -5320,6 +5422,7 @@ class ChatroomDetailFragment :
         } else {
             startActionMode()
 
+            var showReplyPrivatelyAction = false
             var showReplyAction = false
             var showCopyAction = false
             var showEditAction = false
@@ -5345,6 +5448,7 @@ class ChatroomDetailFragment :
             } else if (!isChatRoomSelected && selectedConversations.size == 1) {
                 val conversation = selectedConversations[selectedConversations.keys.first()]!!
 
+                showReplyPrivatelyAction = viewModel.toShowReplyPrivatelyOption(conversation)
                 showReplyAction = conversation.isNotDeleted()
                 showSetAsTopic =
                     (viewModel.canSetChatroomTopic())
@@ -5408,6 +5512,7 @@ class ChatroomDetailFragment :
 
             actionModeCallback?.invalidate(
                 ChatroomDetailActionModeData.Builder()
+                    .showReplyPrivatelyAction(showReplyPrivatelyAction)
                     .showReplyAction(showReplyAction)
                     .showCopyAction(showCopyAction)
                     .showEditAction(showEditAction)
@@ -5525,14 +5630,18 @@ class ChatroomDetailFragment :
      * Initializes the reply view in input box when the user tries to reply on a conversation
      * @param conversation Conversation object
      */
-    private fun setReplyViewConversationData(conversation: ConversationViewData, type: String) {
+    private fun setReplyViewConversationData(
+        conversation: ConversationViewData,
+        type: String
+    ) {
         binding.inputBox.viewReply.apply {
             replySourceType = REPLY_SOURCE_CONVERSATION
             conversationViewData = conversation
             val replyData = ChatReplyUtil.getConversationReplyData(
                 conversation,
                 userPreferences.getUUID(),
-                type = type
+                type = type,
+                replyPrivatelyChatroomName = chatroomDetailExtras.replyPrivatelyExtras?.sourceChatroomName
             )
             setReplyViewData(replyData)
         }
@@ -5574,6 +5683,13 @@ class ChatroomDetailFragment :
                     replyData.imageUrl,
                     placeholder
                 )
+            }
+
+            if (!replyData.replyPrivatelyChatroomName.isNullOrEmpty()) {
+                grpReplyPrivatelyViews.show()
+                tvReplyPrivatelyChatroomName.text = replyData.replyPrivatelyChatroomName
+            } else {
+                grpReplyPrivatelyViews.hide()
             }
 
             when {
@@ -6005,8 +6121,13 @@ class ChatroomDetailFragment :
     }
 
     // sends dm request when the user clicks on confirm
-    override fun sendDMRequest(requestText: String) {
-        viewModel.sendDMRequest(chatroomId, ChatRequestState.INITIATED, requestText = requestText)
+    override fun sendDMRequest(requestText: String, replyPrivatelyMetadata: JSONObject?) {
+        viewModel.sendDMRequest(
+            chatroomId,
+            ChatRequestState.INITIATED,
+            requestText = requestText,
+            metadata = replyPrivatelyMetadata
+        )
         clearEditTextAnswer()
     }
 
