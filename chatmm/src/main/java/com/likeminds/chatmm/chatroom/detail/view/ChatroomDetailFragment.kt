@@ -3988,7 +3988,7 @@ class ChatroomDetailFragment :
                         .chatroomId(chatroomId)
                         .communityId(communityId)
                         .communityName(getChatroomViewData()?.communityName)
-                        .source(LMAnalytics.Source.DIRECT_MESSAGES_SCREEN)
+                        .source(LMAnalytics.Source.REPLY_PRIVATELY)
                         .replyPrivatelyExtras(
                             LMChatReplyPrivatelyExtras.Builder()
                                 .sourceChatroomId(getChatroomViewData()?.id ?: "")
@@ -4511,6 +4511,29 @@ class ChatroomDetailFragment :
                 chatroomDetailAdapter.items()
             )
         }
+    }
+
+    /**
+     * Invoked on click of a reply privately conversation.
+     * @param sourceChatroomId The id of the chatroom of the conversation
+     * @param sourceConversationId Id of the source conversation to which user has replied
+     */
+    override fun onReplyPrivatelyConversationClicked(
+        sourceChatroomId: String,
+        sourceConversationId: String
+    ) {
+        super.onReplyPrivatelyConversationClicked(sourceChatroomId, sourceConversationId)
+
+        ChatroomDetailActivity.start(
+            requireContext(),
+            ChatroomDetailExtras.Builder()
+                .chatroomId(sourceChatroomId)
+                .communityId(communityId)
+                .communityName(getChatroomViewData()?.communityName)
+                .source(LMAnalytics.Source.REPLY_PRIVATELY)
+                .conversationId(sourceConversationId)
+                .build()
+        )
     }
 
     /**

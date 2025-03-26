@@ -21,6 +21,8 @@ import androidx.core.view.isVisible
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.android.material.button.MaterialButton
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.likeminds.chatmm.*
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomViewData
 import com.likeminds.chatmm.chatroom.detail.model.TYPE_DIRECT_MESSAGE
@@ -52,6 +54,7 @@ import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
 import com.likeminds.chatmm.utils.model.*
 import com.likeminds.likemindschat.helper.LMChatLogger
 import com.likeminds.likemindschat.helper.model.LMSeverity
+import org.json.JSONObject
 import java.util.UUID
 
 object ChatroomConversationItemViewDataBinderUtil {
@@ -847,12 +850,23 @@ object ChatroomConversationItemViewDataBinderUtil {
                 }
             }
 
-            if (replyChatRoom == null && replyConversation == null) {
-                root.isVisible = false
+            val lmMeta = if (!conversation.widgetId.isNullOrEmpty() && conversation.widgetViewData?.lmMeta != null) {
+                JSONObject(conversation.widgetViewData.lmMeta.toString())
             } else {
+                null
+            }
+
+            val isReplyPrivatelyConversation =
+                (lmMeta != null && lmMeta.optString("type") == "REPLY_PRIVATELY")
+
+            var replyPrivatelySourceConversationId = ""
+            var replyPrivatelySourceChatroomId = ""
+
+            if (replyChatRoom != null || replyConversation != null || isReplyPrivatelyConversation) {
                 root.isVisible = true
                 val replyData = when {
                     replyConversation != null -> {
+                        grpReplyPrivatelyViews.hide()
                         ChatReplyUtil.getConversationReplyData(
                             replyConversation,
                             currentMemberId
@@ -860,9 +874,30 @@ object ChatroomConversationItemViewDataBinderUtil {
                     }
 
                     replyChatRoom != null -> {
+                        grpReplyPrivatelyViews.hide()
                         ChatReplyUtil.getChatRoomReplyData(
                             replyChatRoom,
                             currentMemberId
+                        )
+                    }
+
+                    isReplyPrivatelyConversation -> {
+                        grpReplyPrivatelyViews.show()
+                        val sourceConversationObj = lmMeta?.optString("source_conversation")
+                        val type = object : TypeToken<ConversationViewData>() {}.type
+                        val replyPrivatelyConversation: ConversationViewData =
+                            Gson().fromJson(sourceConversationObj, type)
+
+                        val sourceChatroomName = lmMeta?.optString("source_chatroom_name")
+                        tvReplyPrivatelyChatroomName.text = sourceChatroomName
+
+                        replyPrivatelySourceConversationId = replyPrivatelyConversation.id
+                        replyPrivatelySourceChatroomId = lmMeta?.optString("source_chatroom_id") ?: ""
+
+                        ChatReplyUtil.getConversationReplyData(
+                            replyPrivatelyConversation,
+                            currentMemberId,
+                            replyPrivatelyChatroomName = sourceChatroomName
                         )
                     }
 
@@ -910,7 +945,12 @@ object ChatroomConversationItemViewDataBinderUtil {
                                 LMAnalytics.Source.MESSAGE_REACTIONS_FROM_LONG_PRESS
                             )
                         } else {
-                            if (replyConversation != null) {
+                            if (isReplyPrivatelyConversation) {
+                                listener.onReplyPrivatelyConversationClicked(
+                                    replyPrivatelySourceChatroomId,
+                                    replyPrivatelySourceConversationId
+                                )
+                            } else if (replyConversation != null) {
                                 listener.scrollToRepliedAnswer(conversation, replyConversation.id)
                             } else if (replyChatRoom != null) {
                                 listener.scrollToRepliedChatroom(replyChatRoom.id)
@@ -918,6 +958,8 @@ object ChatroomConversationItemViewDataBinderUtil {
                         }
                     }
                 }
+            } else {
+                root.isVisible = false
             }
         }
     }
