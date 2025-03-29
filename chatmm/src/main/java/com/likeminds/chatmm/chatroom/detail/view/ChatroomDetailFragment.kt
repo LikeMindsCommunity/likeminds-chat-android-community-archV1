@@ -1519,11 +1519,15 @@ class ChatroomDetailFragment :
             setText("")
             requestFocus()
             viewModel.clearLinkPreview()
-            // Clear the reply privately extras as these extras are not required now
-            chatroomDetailExtras = chatroomDetailExtras.toBuilder()
-                .replyPrivatelyExtras(null)
-                .build()
+            clearReplyPrivatelyExtras()
         }
+    }
+
+    // Clear the reply privately extras as these extras are not required now
+    private fun clearReplyPrivatelyExtras() {
+        chatroomDetailExtras = chatroomDetailExtras.toBuilder()
+            .replyPrivatelyExtras(null)
+            .build()
     }
 
     /**
@@ -1594,6 +1598,7 @@ class ChatroomDetailFragment :
                         inputBox.ivAttachment.visibility = View.INVISIBLE
 
                         if (chatroomDetailExtras.replyPrivatelyExtras == null || type != CHAT_BOX_REPLY) {
+                            inputBox.viewReply.clReply.visibility = View.GONE
                             return
                         }
                     }
@@ -3725,6 +3730,7 @@ class ChatroomDetailFragment :
                     viewLink.ivCross.setOnClickListener {
                         viewModel.removeLinkPreview()
                         viewLink.clLink.visibility = View.GONE
+                        clearReplyPrivatelyExtras()
                         setChatInputBoxViewType(CHAT_BOX_NORMAL)
                     }
 
@@ -3951,7 +3957,7 @@ class ChatroomDetailFragment :
                 CHAT_BOX_NORMAL
             }
             setChatInputBoxViewType(
-                CHAT_BOX_NORMAL,
+                chatBoxType,
                 showDM
             )
         }
