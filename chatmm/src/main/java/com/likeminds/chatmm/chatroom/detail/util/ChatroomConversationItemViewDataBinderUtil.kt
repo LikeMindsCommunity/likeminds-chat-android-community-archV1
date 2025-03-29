@@ -54,6 +54,7 @@ import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
 import com.likeminds.chatmm.utils.model.*
 import com.likeminds.likemindschat.helper.LMChatLogger
 import com.likeminds.likemindschat.helper.model.LMSeverity
+import com.likeminds.likemindschat.widget.model.LMMetaType
 import org.json.JSONObject
 import java.util.UUID
 
@@ -850,14 +851,10 @@ object ChatroomConversationItemViewDataBinderUtil {
                 }
             }
 
-            val lmMeta = if (!conversation.widgetId.isNullOrEmpty() && conversation.widgetViewData?.lmMeta != null) {
-                JSONObject(conversation.widgetViewData.lmMeta.toString())
-            } else {
-                null
-            }
+            val lmMeta = conversation.widgetViewData?.lmMeta
 
             val isReplyPrivatelyConversation =
-                (lmMeta != null && lmMeta.optString("type") == "REPLY_PRIVATELY")
+                (lmMeta != null && lmMeta.type == LMMetaType.REPLY_PRIVATELY.name)
 
             var replyPrivatelySourceConversationId = ""
             var replyPrivatelySourceChatroomId = ""
@@ -883,21 +880,17 @@ object ChatroomConversationItemViewDataBinderUtil {
 
                     isReplyPrivatelyConversation -> {
                         grpReplyPrivatelyViews.show()
-                        val sourceConversationObj = lmMeta?.optString("source_conversation")
-                        val type = object : TypeToken<ConversationViewData>() {}.type
-                        val replyPrivatelyConversation: ConversationViewData =
-                            Gson().fromJson(sourceConversationObj, type)
 
-                        val sourceChatroomName = lmMeta?.optString("source_chatroom_name")
-                        tvReplyPrivatelyChatroomName.text = sourceChatroomName
+                        val replyPrivatelyConversation = lmMeta?.sourceConversation ?: return
 
+                        tvReplyPrivatelyChatroomName.text = lmMeta.sourceChatroomName
                         replyPrivatelySourceConversationId = replyPrivatelyConversation.id
-                        replyPrivatelySourceChatroomId = lmMeta?.optString("source_chatroom_id") ?: ""
+                        replyPrivatelySourceChatroomId = lmMeta.sourceChatroomId ?: ""
 
                         ChatReplyUtil.getConversationReplyData(
                             replyPrivatelyConversation,
                             currentMemberId,
-                            replyPrivatelyChatroomName = sourceChatroomName
+                            replyPrivatelyChatroomName = lmMeta.sourceChatroomName
                         )
                     }
 

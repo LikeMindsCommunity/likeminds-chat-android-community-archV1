@@ -1461,7 +1461,8 @@ class ChatroomDetailViewModel @Inject constructor(
         shareLink: String?,
         replyConversationId: String?,
         replyChatRoomId: String?,
-        metadata: JSONObject? = null
+        metadata: JSONObject? = null,
+        replyPrivatelyConversation: ConversationViewData? = null
     ): String? {
         val chatroomId = chatroomDetail.chatroom?.id ?: return null
         val communityId = chatroomDetail.chatroom?.communityId
@@ -1494,6 +1495,14 @@ class ChatroomDetailViewModel @Inject constructor(
                         postConversationRequestBuilder.shareLink(shareLink)
                 }
             }
+        }
+
+        if (replyPrivatelyConversation != null) {
+            postConversationRequestBuilder.replyPrivatelySourceConversation(
+                ViewDataConverter.convertConversation(
+                    replyPrivatelyConversation
+                )
+            )
         }
 
         if (metadata != null) {
@@ -2128,14 +2137,14 @@ class ChatroomDetailViewModel @Inject constructor(
                 return false
             }
 
-            showList == 2 -> {
-                return (selectedConversation.memberViewData.state == 1)
+            showList == CommunityMembersFilter.ONLY_CMS.value -> {
+                return (selectedConversation.memberViewData.state == STATE_ADMIN)
             }
 
-            showList == 1 -> {
+            showList == CommunityMembersFilter.ALL_MEMBERS.value -> {
                 val allowedScope = sdkPreferences.getReplyPrivatelyAllowedScope()
                 return (allowedScope == ReplyPrivatelyAllowedScope.ALL_MEMBERS.name
-                        || (allowedScope == ReplyPrivatelyAllowedScope.ONLY_CMS.name && (selectedConversation.memberViewData.state == 1)))
+                        || (allowedScope == ReplyPrivatelyAllowedScope.ONLY_CMS.name && (selectedConversation.memberViewData.state == STATE_ADMIN)))
             }
 
             else -> {
@@ -2182,14 +2191,21 @@ class ChatroomDetailViewModel @Inject constructor(
         chatRequestState: ChatRequestState,
         isM2CM: Boolean = false,
         requestText: String? = null,
-        metadata: JSONObject? = null
+        metadata: Pair<JSONObject, ConversationViewData>? = null
     ) {
         viewModelScope.launchIO {
+            val replyPrivatelySourceConversation = if (metadata?.second != null) {
+                ViewDataConverter.convertConversation(metadata.second)
+            } else {
+                null
+            }
+
             val request = SendDMRequest.Builder()
                 .chatroomId(chatroomId)
                 .text(requestText)
                 .chatRequestState(chatRequestState)
-                .metadata(metadata)
+                .metadata(metadata?.first)
+                .replyPrivatelySourceConversation(replyPrivatelySourceConversation)
                 .build()
 
             val response = lmChatClient.sendDMRequest(request)

@@ -48,10 +48,10 @@ class ConversationWidgetItemViewDataBinder(
             val context = root.context
 
             //Custom Widget Data
-            val metadata = if (data.widgetViewData?.metadata == null) {
-                JSONObject(data.widgetViewData?.lmMeta.toString())
-            } else {
+            val metadata = if (data.widgetViewData?.metadata != null) {
                 JSONObject(data.widgetViewData.metadata.toString())
+            } else {
+                null
             }
 
             ChatroomConversationItemViewDataBinderUtil.initConversationBubbleView(

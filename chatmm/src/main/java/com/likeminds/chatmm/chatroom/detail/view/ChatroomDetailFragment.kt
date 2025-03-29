@@ -36,7 +36,6 @@ import com.giphy.sdk.ui.themes.GPHTheme
 import com.giphy.sdk.ui.themes.GridType
 import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.gson.Gson
 import com.likeminds.chatmm.*
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.chatroom.detail.model.*
@@ -127,6 +126,7 @@ import com.likeminds.likemindschat.conversation.model.ConversationState
 import com.likeminds.likemindschat.helper.LMChatLogger
 import com.likeminds.likemindschat.helper.model.LMSeverity
 import com.likeminds.likemindschat.user.model.MemberBlockState
+import com.likeminds.likemindschat.widget.model.LMMetaType
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -2108,15 +2108,17 @@ class ChatroomDetailFragment :
         }
     }
 
-    private fun getReplyPrivatelyMetadata(): JSONObject? {
+    private fun getReplyPrivatelyMetadata(): kotlin.Pair<JSONObject, ConversationViewData>? {
         val replyPrivatelyExtras = chatroomDetailExtras.replyPrivatelyExtras ?: return null
 
-        return JSONObject().apply {
-            put("type", "REPLY_PRIVATELY")
-            put("source_chatroom_id", replyPrivatelyExtras.sourceChatroomId)
-            put("source_chatroom_name", replyPrivatelyExtras.sourceChatroomName)
-            put("source_conversation", JSONObject(Gson().toJson(replyPrivatelyExtras.sourceConversation)))
-        }
+        return kotlin.Pair(
+            JSONObject().apply {
+                put("type", LMMetaType.REPLY_PRIVATELY.name)
+                put("source_chatroom_id", replyPrivatelyExtras.sourceChatroomId)
+                put("source_chatroom_name", replyPrivatelyExtras.sourceChatroomName)
+            },
+            replyPrivatelyExtras.sourceConversation
+        )
     }
 
     private fun postConversation(
@@ -2173,7 +2175,7 @@ class ChatroomDetailFragment :
                 val conversationCreatedEpoch = System.currentTimeMillis()
                 val temporaryId = "-$conversationCreatedEpoch"
 
-                val finalMetadata = replyPrivatelyMetadata ?: metadata
+                val finalMetadata = replyPrivatelyMetadata?.first ?: metadata
 
                 val uuidString = viewModel.postConversation(
                     requireContext(),
@@ -2183,7 +2185,8 @@ class ChatroomDetailFragment :
                     shareTextLink,
                     replyConversationId,
                     replyChatRoomId,
-                    finalMetadata
+                    finalMetadata,
+                    replyPrivatelyMetadata?.second
                 )
 
                 uuidString?.let { uuid ->
@@ -6144,7 +6147,7 @@ class ChatroomDetailFragment :
     }
 
     // sends dm request when the user clicks on confirm
-    override fun sendDMRequest(requestText: String, replyPrivatelyMetadata: JSONObject?) {
+    override fun sendDMRequest(requestText: String, replyPrivatelyMetadata: kotlin.Pair<JSONObject, ConversationViewData>?) {
         viewModel.sendDMRequest(
             chatroomId,
             ChatRequestState.INITIATED,

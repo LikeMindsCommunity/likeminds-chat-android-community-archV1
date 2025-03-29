@@ -9,7 +9,7 @@ class WidgetViewData private constructor(
     val parentEntityId: String,
     val parentEntityType: String,
     val metadata: String?,
-    val lmMeta: String?,
+    val lmMeta: LMMetaViewData?,
     val createdAt: Long,
     val updatedAt: Long
 ) : Parcelable {
@@ -18,7 +18,7 @@ class WidgetViewData private constructor(
         private var parentEntityId: String = ""
         private var parentEntityType: String = ""
         private var metadata: String? = null
-        private var lmMeta: String? = null
+        private var lmMeta: LMMetaViewData? = null
         private var createdAt: Long = 0L
         private var updatedAt: Long = 0L
 
@@ -38,7 +38,7 @@ class WidgetViewData private constructor(
             this.metadata = metadata
         }
 
-        fun lmMeta(lmMeta: String?) = apply {
+        fun lmMeta(lmMeta: LMMetaViewData?) = apply {
             this.lmMeta = lmMeta
         }
 

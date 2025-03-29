@@ -2,6 +2,7 @@ package com.likeminds.chatmm.dm.view
 
 import android.content.Context
 import androidx.fragment.app.FragmentManager
+import com.likeminds.chatmm.conversation.model.ConversationViewData
 import com.likeminds.chatmm.databinding.DialogFragmentSendDmRequestBinding
 import com.likeminds.chatmm.utils.customview.BaseDialogFragment
 import com.likeminds.likemindschat.helper.LMChatLogger
@@ -16,13 +17,13 @@ class SendDMRequestDialogFragment :
     companion object {
         private const val TAG = "SendDMRequestDialogFragment"
         private var inputText: String = ""
-        private var replyPrivatelyMetadata: JSONObject? = null
+        private var replyPrivatelyMetadata: Pair<JSONObject, ConversationViewData>? = null
 
         @JvmStatic
         fun showDialog(
             supportFragmentManager: FragmentManager,
             inputText: String,
-            replyPrivatelyMetadata: JSONObject? = null
+            replyPrivatelyMetadata: Pair<JSONObject, ConversationViewData>? = null
         ) {
             this.inputText = inputText
             this.replyPrivatelyMetadata = replyPrivatelyMetadata
@@ -68,5 +69,5 @@ class SendDMRequestDialogFragment :
 }
 
 interface SendDMRequestDialogListener {
-    fun sendDMRequest(requestText: String, replyPrivatelyMetadata: JSONObject?)
+    fun sendDMRequest(requestText: String, replyPrivatelyMetadata: Pair<JSONObject, ConversationViewData>?)
 }
