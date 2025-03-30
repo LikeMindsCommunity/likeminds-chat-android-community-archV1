@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_item_reply_privately"
+        android:background="?selectableItemBackgroundBorderless"
+        android:title="@string/lm_chat_reply_privately"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_item_reply"
         android:background="?selectableItemBackgroundBorderless"
         android:icon="@drawable/lm_chat_ic_reply"

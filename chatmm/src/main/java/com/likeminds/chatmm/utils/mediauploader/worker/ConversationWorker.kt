@@ -2,7 +2,6 @@ package com.likeminds.chatmm.utils.mediauploader.worker
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.work.*
 import com.google.gson.Gson
 import com.likeminds.chatmm.SDKApplication

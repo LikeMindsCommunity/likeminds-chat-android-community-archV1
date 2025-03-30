@@ -7,16 +7,19 @@ import android.os.Build
 import android.util.Log
 import android.util.Patterns
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import androidx.lifecycle.*
 import androidx.work.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.likeminds.chatmm.LMAnalytics
+import com.likeminds.chatmm.LMChatTheme
 import com.likeminds.chatmm.SDKApplication
 import com.likeminds.chatmm.chatroom.detail.model.*
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil
 import com.likeminds.chatmm.chatroom.detail.util.ChatroomUtil.getTypeName
 import com.likeminds.chatmm.conversation.model.*
+import com.likeminds.chatmm.dm.util.LMChatDMUtil
 import com.likeminds.chatmm.media.MediaRepository
 import com.likeminds.chatmm.media.model.*
 import com.likeminds.chatmm.member.model.*
@@ -35,6 +38,7 @@ import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.LMResponse
 import com.likeminds.likemindschat.chatroom.model.*
 import com.likeminds.likemindschat.community.model.GetMemberRequest
+import com.likeminds.likemindschat.community.model.ReplyPrivatelyAllowedScope
 import com.likeminds.likemindschat.conversation.model.*
 import com.likeminds.likemindschat.conversation.util.ConversationChangeListener
 import com.likeminds.likemindschat.conversation.util.ConversationStateUtil
@@ -134,6 +138,12 @@ class ChatroomDetailViewModel @Inject constructor(
 
     private val _conversationPosted: MutableLiveData<Boolean> by lazy { MutableLiveData() }
     val conversationPosted: LiveData<Boolean> by lazy { _conversationPosted }
+
+    // Triple of Error Message, ChatroomId, Conversation replied to
+    private val _replyPrivatelyChatroomResponse: MutableLiveData<Triple<String?, String?, ConversationViewData>> by lazy { MutableLiveData() }
+    val replyPrivatelyChatroomResponse: LiveData<Triple<String?, String?, ConversationViewData>> by lazy { _replyPrivatelyChatroomResponse }
+
+    private var checkDMStatusResponse: CheckDMStatusResponse? = null
 
     private var sendLinkPreview = true
 
@@ -1451,7 +1461,8 @@ class ChatroomDetailViewModel @Inject constructor(
         shareLink: String?,
         replyConversationId: String?,
         replyChatRoomId: String?,
-        metadata: JSONObject? = null
+        metadata: JSONObject? = null,
+        replyPrivatelyConversation: ConversationViewData? = null
     ): String? {
         val chatroomId = chatroomDetail.chatroom?.id ?: return null
         val communityId = chatroomDetail.chatroom?.communityId
@@ -1484,6 +1495,14 @@ class ChatroomDetailViewModel @Inject constructor(
                         postConversationRequestBuilder.shareLink(shareLink)
                 }
             }
+        }
+
+        if (replyPrivatelyConversation != null) {
+            postConversationRequestBuilder.replyPrivatelySourceConversation(
+                ViewDataConverter.convertConversation(
+                    replyPrivatelyConversation
+                )
+            )
         }
 
         if (metadata != null) {
@@ -2070,6 +2089,20 @@ class ChatroomDetailViewModel @Inject constructor(
     }
 
     // calls api to check the status of the DM
+    fun checkDMStatus() {
+        viewModelScope.launchIO {
+            val request = CheckDMStatusRequest.Builder()
+                .requestFrom(DMRequestFrom.GROUP_CHANNEL)
+                .build()
+
+            val response = lmChatClient.checkDMStatus(request)
+            if (response.success) {
+                checkDMStatusResponse = response.data
+            }
+        }
+    }
+
+    // calls api to check the status of the DM
     fun checkDMStatus(chatroomId: String) {
         viewModelScope.launchIO {
             val request = CheckDMStatusRequest.Builder()
@@ -2087,18 +2120,92 @@ class ChatroomDetailViewModel @Inject constructor(
         }
     }
 
+    fun toShowReplyPrivatelyOption(selectedConversation: ConversationViewData): Boolean {
+        val uri = checkDMStatusResponse?.cta?.toUri() ?: return false
+        val showList = uri.getQueryParameter("show_list")?.toIntOrNull() ?: 0
+
+        return when {
+            SDKApplication.selectedTheme != LMChatTheme.COMMUNITY_HYBRID_CHAT -> {
+                false
+            }
+
+            ChatroomType.isDMRoom(getChatroomViewData()?.type) -> {
+                false
+            }
+
+            !isConversationValidForReplyPrivately(selectedConversation) -> {
+                return false
+            }
+
+            showList == CommunityMembersFilter.ONLY_CMS.value -> {
+                return (selectedConversation.memberViewData.state == STATE_ADMIN)
+            }
+
+            showList == CommunityMembersFilter.ALL_MEMBERS.value -> {
+                val allowedScope = sdkPreferences.getReplyPrivatelyAllowedScope()
+                return (allowedScope == ReplyPrivatelyAllowedScope.ALL_MEMBERS.name
+                        || (allowedScope == ReplyPrivatelyAllowedScope.ONLY_CMS.name && (selectedConversation.memberViewData.state == STATE_ADMIN)))
+            }
+
+            else -> {
+                false
+            }
+        }
+    }
+
+    private fun isConversationValidForReplyPrivately(selectedConversation: ConversationViewData): Boolean {
+        val loggedInUserUUID = userPreferences.getUUID()
+        return when {
+            (selectedConversation.memberViewData.sdkClientInfo.uuid == loggedInUserUUID) -> {
+                false
+            }
+
+            selectedConversation.isDeleted() -> {
+                false
+            }
+
+            else -> {
+                true
+            }
+        }
+    }
+
+    fun getReplyPrivatelyDMChatroom(replyPrivatelyConversation: ConversationViewData) {
+        viewModelScope.launchIO {
+            val uuid = replyPrivatelyConversation.memberViewData.sdkClientInfo.uuid
+            val response = LMChatDMUtil.createOrGetExistingDMChatroom(uuid)
+
+            _replyPrivatelyChatroomResponse.postValue(
+                Triple(
+                    response.first,
+                    response.second,
+                    replyPrivatelyConversation
+                )
+            )
+        }
+    }
+
     // calls api to send dm request
     fun sendDMRequest(
         chatroomId: String,
         chatRequestState: ChatRequestState,
         isM2CM: Boolean = false,
-        requestText: String? = null
+        requestText: String? = null,
+        metadata: Pair<JSONObject, ConversationViewData>? = null
     ) {
         viewModelScope.launchIO {
+            val replyPrivatelySourceConversation = if (metadata?.second != null) {
+                ViewDataConverter.convertConversation(metadata.second)
+            } else {
+                null
+            }
+
             val request = SendDMRequest.Builder()
                 .chatroomId(chatroomId)
                 .text(requestText)
                 .chatRequestState(chatRequestState)
+                .metadata(metadata?.first)
+                .replyPrivatelySourceConversation(replyPrivatelySourceConversation)
                 .build()
 
             val response = lmChatClient.sendDMRequest(request)

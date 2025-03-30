@@ -11,6 +11,7 @@ import com.likeminds.chatmm.utils.SDKPreferences
 import com.likeminds.likemindschat.LMChatClient
 import com.likeminds.likemindschat.community.model.CommunitySetting
 import com.likeminds.likemindschat.community.model.ConfigurationType
+import com.likeminds.likemindschat.community.model.ReplyPrivatelyAllowedScope
 import com.likeminds.likemindschat.helper.LMChatLogger
 import com.likeminds.likemindschat.helper.model.LMSeverity
 import com.likeminds.likemindschat.user.model.RegisterDeviceRequest
@@ -26,6 +27,7 @@ class LMChatUserMetaData {
     companion object {
         private var instance: LMChatUserMetaData? = null
         const val WIDGET_MESSAGE_KEY = "message"
+        private const val ALLOWED_SCOPE_KEY = "allowed_scope"
 
         fun getInstance(): LMChatUserMetaData {
             if (instance == null) {
@@ -104,19 +106,29 @@ class LMChatUserMetaData {
         CoroutineScope(Dispatchers.IO).launch {
             val communityConfigurationResponse = mChatClient.getCommunityConfigurations()
             if (communityConfigurationResponse.success) {
-                val widgetConfiguration =
-                    communityConfigurationResponse.data?.configurations?.find {
-                        it.type == ConfigurationType.WIDGET_METADATA
-                    } ?: return@launch
-
-                val value = widgetConfiguration.value
-
                 val sdkPreferences = SDKPreferences(context)
-                if (value.has(WIDGET_MESSAGE_KEY)) {
-                    val isEnabled = value.getBoolean(WIDGET_MESSAGE_KEY)
-                    sdkPreferences.setIsWidgetEnabled(isEnabled)
-                } else {
-                    sdkPreferences.setIsWidgetEnabled(false)
+
+                communityConfigurationResponse.data?.configurations?.forEach {
+                    if (it.type == ConfigurationType.WIDGET_METADATA) {
+                        val value = it.value
+
+                        if (value.has(WIDGET_MESSAGE_KEY)) {
+                            val isEnabled = value.getBoolean(WIDGET_MESSAGE_KEY)
+                            sdkPreferences.setIsWidgetEnabled(isEnabled)
+                        } else {
+                            sdkPreferences.setIsWidgetEnabled(false)
+                        }
+                    }
+
+                    if (it.type == ConfigurationType.REPLY_PRIVATELY) {
+                        val value = it.value
+                        if (value.has(ALLOWED_SCOPE_KEY)) {
+                            val allowedScope = value.getString(ALLOWED_SCOPE_KEY)
+                            sdkPreferences.setReplyPrivatelyAllowedScope(allowedScope)
+                        } else {
+                            sdkPreferences.setReplyPrivatelyAllowedScope(ReplyPrivatelyAllowedScope.NO_ONE.name)
+                        }
+                    }
                 }
             }
         }

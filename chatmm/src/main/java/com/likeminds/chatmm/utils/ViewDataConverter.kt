@@ -23,6 +23,7 @@ import com.likeminds.chatmm.utils.file.util.FileUtil
 import com.likeminds.chatmm.utils.mediauploader.worker.UploadHelper
 import com.likeminds.chatmm.utils.membertagging.model.TagViewData
 import com.likeminds.chatmm.utils.model.ITEM_VIEW_PARTICIPANTS
+import com.likeminds.chatmm.widget.model.LMMetaViewData
 import com.likeminds.chatmm.widget.model.WidgetViewData
 import com.likeminds.likemindschat.chatroom.model.*
 import com.likeminds.likemindschat.community.model.Member
@@ -36,6 +37,7 @@ import com.likeminds.likemindschat.poll.model.Poll
 import com.likeminds.likemindschat.search.model.SearchChatroom
 import com.likeminds.likemindschat.search.model.SearchConversation
 import com.likeminds.likemindschat.user.model.*
+import com.likeminds.likemindschat.widget.model.LMMeta
 import com.likeminds.likemindschat.widget.model.Widget
 import java.io.File
 
@@ -568,13 +570,36 @@ object ViewDataConverter {
      */
     private fun convertWidget(widget: Widget?): WidgetViewData? {
         if (widget == null) return null
-        return WidgetViewData.Builder()
+        val builder = WidgetViewData.Builder()
             .id(widget.id)
             .parentEntityId(widget.parentEntityId)
             .parentEntityType(widget.parentEntityType)
-            .metadata(widget.metadata.toString())
             .createdAt(widget.createdAt)
             .updatedAt(widget.updatedAt)
+            .lmMeta(convertLMMeta(widget.lmMeta))
+
+        if (widget.metadata != null) {
+            builder.metadata(widget.metadata.toString())
+        }
+
+        return builder.build()
+    }
+
+    /**
+     * convert [LMMeta] to [LMMetaViewData]
+     *
+     * @param lmMeta: object to [LMMeta]
+     */
+    private fun convertLMMeta(lmMeta: LMMeta?): LMMetaViewData? {
+        if (lmMeta == null) {
+            return null
+        }
+
+        return LMMetaViewData.Builder()
+            .sourceChatroomId(lmMeta.sourceChatroomId)
+            .sourceChatroomName(lmMeta.sourceChatroomName)
+            .sourceConversation(convertConversation(lmMeta.sourceConversation))
+            .type(lmMeta.type)
             .build()
     }
 
@@ -737,8 +762,16 @@ object ViewDataConverter {
     fun convertConversation(
         conversationViewData: ConversationViewData
     ): Conversation {
+        val pollInfoData = conversationViewData.pollInfoData
+        val polls = if (pollInfoData?.pollViewDataList == null) {
+            null
+        } else {
+            createPolls(pollInfoData.pollViewDataList)
+        }
+
         return Conversation.Builder()
             .id(conversationViewData.id)
+            .member(createMember(conversationViewData.memberViewData))
             .chatroomId(conversationViewData.chatroomId)
             .communityId(conversationViewData.communityId)
             .answer(conversationViewData.answer)
@@ -752,7 +785,6 @@ object ViewDataConverter {
             .isEdited(conversationViewData.isEdited)
             .state(conversationViewData.state)
             .replyConversationId(conversationViewData.replyConversation?.id)
-            .replyChatroomId(conversationViewData.replyChatroomId)
             .attachmentCount(conversationViewData.attachmentCount)
             .attachmentUploaded(conversationViewData.attachmentsUploaded)
             .workerUUID(conversationViewData.workerUUID)
@@ -762,6 +794,16 @@ object ViewDataConverter {
             .isEdited(conversationViewData.isEdited)
             .replyChatroomId(conversationViewData.replyChatroomId)
             .attachmentsUploadedEpoch(conversationViewData.attachmentsUploadedEpoch)
+            .polls(polls)
+            .multipleSelectState(pollInfoData?.multipleSelectState)
+            .pollType(pollInfoData?.pollType)
+            .pollTypeText(pollInfoData?.pollTypeText)
+            .multipleSelectNum(pollInfoData?.multipleSelectNum)
+            .expiryTime(pollInfoData?.expiryTime)
+            .isAnonymous(pollInfoData?.isAnonymous)
+            .allowAddOption(pollInfoData?.allowAddOption)
+            .submitTypeText(pollInfoData?.submitTypeText)
+            .pollAnswerText(pollInfoData?.pollAnswerTextUpdated())
             .build()
     }
 

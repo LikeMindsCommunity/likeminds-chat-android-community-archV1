@@ -1,6 +1,5 @@
 package com.likeminds.chatmm.chatroom.detail.view
 
-import android.app.Activity
 import android.app.NotificationManager
 import android.content.*
 import android.os.Bundle
@@ -140,7 +139,6 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
             }
 
             else -> {
-                setResult(Activity.RESULT_OK)
                 redirectActivity(false)
             }
         }

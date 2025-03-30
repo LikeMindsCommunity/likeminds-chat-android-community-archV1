@@ -14,7 +14,8 @@ class ChatReplyViewData private constructor(
     val type: String?,
     val repliedMemberState: String?,
     val repliedMemberId: String?,
-    val deleteMessage: String?
+    val deleteMessage: String?,
+    val replyPrivatelyChatroomName: String?
 ) {
     class Builder {
         private var memberName: String = ""
@@ -30,26 +31,55 @@ class ChatReplyViewData private constructor(
         private var repliedMemberState: String? = null
         private var repliedMemberId: String? = null
         private var deleteMessage: String? = null
+        private var replyPrivatelyChatroomName: String? = null
 
-        fun memberName(memberName: String) = apply { this.memberName = memberName }
-        fun conversationText(conversationText: String?) =
-            apply { this.conversationText = conversationText }
+        fun memberName(memberName: String) = apply {
+            this.memberName = memberName
+        }
 
-        fun drawable(@DrawableRes drawable: Int?) = apply { this.drawable = drawable }
-        fun imageUrl(imageUrl: String?) = apply { this.imageUrl = imageUrl }
-        fun attachmentType(attachmentType: String) = apply { this.attachmentType = attachmentType }
-        fun isEditMessage(isEditMessage: Boolean) = apply { this.isEditMessage = isEditMessage }
-        fun isMessageDeleted(isMessageDeleted: Boolean) =
-            apply { this.isMessageDeleted = isMessageDeleted }
+        fun conversationText(conversationText: String?) = apply {
+            this.conversationText = conversationText
+        }
 
-        fun type(type: String?) = apply { this.type = type }
-        fun repliedMemberState(repliedMemberState: String?) =
-            apply { this.repliedMemberState = repliedMemberState }
+        fun drawable(@DrawableRes drawable: Int?) = apply {
+            this.drawable = drawable
+        }
 
-        fun repliedMemberId(repliedMemberId: String?) =
-            apply { this.repliedMemberId = repliedMemberId }
+        fun imageUrl(imageUrl: String?) = apply {
+            this.imageUrl = imageUrl
+        }
 
-        fun deleteMessage(deleteMessage: String?) = apply { this.deleteMessage = deleteMessage }
+        fun attachmentType(attachmentType: String) = apply {
+            this.attachmentType = attachmentType
+        }
+
+        fun isEditMessage(isEditMessage: Boolean) = apply {
+            this.isEditMessage = isEditMessage
+        }
+
+        fun isMessageDeleted(isMessageDeleted: Boolean) = apply {
+            this.isMessageDeleted = isMessageDeleted
+        }
+
+        fun type(type: String?) = apply {
+            this.type = type
+        }
+
+        fun repliedMemberState(repliedMemberState: String?) = apply {
+            this.repliedMemberState = repliedMemberState
+        }
+
+        fun repliedMemberId(repliedMemberId: String?) = apply {
+            this.repliedMemberId = repliedMemberId
+        }
+
+        fun deleteMessage(deleteMessage: String?) = apply {
+            this.deleteMessage = deleteMessage
+        }
+
+        fun replyPrivatelyChatroomName(replyPrivatelyChatroomName: String?) = apply {
+            this.replyPrivatelyChatroomName = replyPrivatelyChatroomName
+        }
 
         fun build() = ChatReplyViewData(
             memberName,
@@ -62,7 +92,8 @@ class ChatReplyViewData private constructor(
             type,
             repliedMemberState,
             repliedMemberId,
-            deleteMessage
+            deleteMessage,
+            replyPrivatelyChatroomName
         )
     }
 
@@ -78,5 +109,6 @@ class ChatReplyViewData private constructor(
             .repliedMemberState(repliedMemberState)
             .repliedMemberId(repliedMemberId)
             .deleteMessage(deleteMessage)
+            .replyPrivatelyChatroomName(replyPrivatelyChatroomName)
     }
 }
