@@ -577,6 +577,7 @@ class ChatroomDetailFragment :
         binding.apply {
             toolbarColor = LMChatAppearance.getToolbarColor()
             buttonColor = LMChatAppearance.getButtonsColor()
+            inputBox.viewReply.buttonColor = LMChatAppearance.getButtonsColor()
 
             (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
@@ -1091,6 +1092,7 @@ class ChatroomDetailFragment :
 
     private fun initReplyView() {
         binding.inputBox.viewReply.ivReplyClose.setOnClickListener {
+            clearReplyPrivatelyExtras()
             if (isEditConversationViewVisible()) {
                 clearEditTextAnswer()
             }
@@ -1601,6 +1603,14 @@ class ChatroomDetailFragment :
                             inputBox.viewReply.clReply.visibility = View.GONE
                             return
                         }
+
+                        if (!memberTagging.isShowing) {
+                            inputBox.clChatContainer.setBackgroundResource(R.drawable.lm_chat_background_white_12top_24_bottom_black10_1)
+                        }
+                        inputBox.viewLink.clLink.visibility = View.GONE
+                        inputBox.viewReply.clReply.visibility = View.VISIBLE
+
+                        return
                     }
 
                     ChatRequestState.INITIATED -> {
@@ -3730,7 +3740,6 @@ class ChatroomDetailFragment :
                     viewLink.ivCross.setOnClickListener {
                         viewModel.removeLinkPreview()
                         viewLink.clLink.visibility = View.GONE
-                        clearReplyPrivatelyExtras()
                         setChatInputBoxViewType(CHAT_BOX_NORMAL)
                     }
 
@@ -4001,7 +4010,7 @@ class ChatroomDetailFragment :
                         .replyPrivatelyExtras(
                             LMChatReplyPrivatelyExtras.Builder()
                                 .sourceChatroomId(getChatroomViewData()?.id ?: "")
-                                .sourceChatroomName(getChatroomViewData()?.title ?: "")
+                                .sourceChatroomName(getChatroomViewData()?.header ?: "")
                                 .sourceConversation(response.third)
                                 .build()
                         )

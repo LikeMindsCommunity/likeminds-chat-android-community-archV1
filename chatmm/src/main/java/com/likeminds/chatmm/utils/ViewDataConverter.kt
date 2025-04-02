@@ -38,6 +38,7 @@ import com.likeminds.likemindschat.search.model.SearchChatroom
 import com.likeminds.likemindschat.search.model.SearchConversation
 import com.likeminds.likemindschat.user.model.*
 import com.likeminds.likemindschat.widget.model.LMMeta
+import com.likeminds.likemindschat.widget.model.LMMetaType
 import com.likeminds.likemindschat.widget.model.Widget
 import java.io.File
 
@@ -645,16 +646,30 @@ object ViewDataConverter {
         conversationCreatedEpoch: Long,
         loggedInUserUUID: String
     ): Conversation {
-
         val metadata = request.metadata
         val widget = if (metadata != null) {
+            val widgetBuilder =
             Widget.Builder()
                 .id("-$conversationCreatedEpoch")
                 .metadata(metadata)
                 .parentEntityType("message")
                 .createdAt(conversationCreatedEpoch)
                 .updatedAt(conversationCreatedEpoch)
-                .build()
+
+            if (request.replyPrivatelySourceConversation != null) {
+                val sourceChatroomId = request.metadata?.getString("source_chatroom_id")
+                val sourceChatroomName = request.metadata?.getString("source_chatroom_name")
+                widgetBuilder.lmMeta(
+                    LMMeta.Builder()
+                        .type(LMMetaType.REPLY_PRIVATELY.name)
+                        .sourceChatroomName(sourceChatroomName)
+                        .sourceChatroomId(sourceChatroomId)
+                        .sourceConversation(request.replyPrivatelySourceConversation)
+                        .build()
+                )
+            }
+
+            widgetBuilder.build()
         } else {
             null
         }

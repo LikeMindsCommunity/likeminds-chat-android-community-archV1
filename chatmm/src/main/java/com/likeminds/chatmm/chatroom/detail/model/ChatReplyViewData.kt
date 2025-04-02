@@ -111,4 +111,21 @@ class ChatReplyViewData private constructor(
             .deleteMessage(deleteMessage)
             .replyPrivatelyChatroomName(replyPrivatelyChatroomName)
     }
+
+    override fun toString(): String {
+        return "ChatReplyViewData(" +
+                "memberName='$memberName', " +
+                "conversationText=$conversationText, " +
+                "drawable=$drawable, " +
+                "imageUrl=$imageUrl, " +
+                "attachmentType='$attachmentType', " +
+                "isEditMessage=$isEditMessage, " +
+                "isMessageDeleted=$isMessageDeleted, " +
+                "type=$type, " +
+                "repliedMemberState=$repliedMemberState, " +
+                "repliedMemberId=$repliedMemberId, " +
+                "deleteMessage=$deleteMessage, " +
+                "replyPrivatelyChatroomName=$replyPrivatelyChatroomName" +
+                ")"
+    }
 }
