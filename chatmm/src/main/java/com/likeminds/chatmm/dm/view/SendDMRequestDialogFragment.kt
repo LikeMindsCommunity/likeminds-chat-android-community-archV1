@@ -2,10 +2,12 @@ package com.likeminds.chatmm.dm.view
 
 import android.content.Context
 import androidx.fragment.app.FragmentManager
+import com.likeminds.chatmm.conversation.model.ConversationViewData
 import com.likeminds.chatmm.databinding.DialogFragmentSendDmRequestBinding
 import com.likeminds.chatmm.utils.customview.BaseDialogFragment
 import com.likeminds.likemindschat.helper.LMChatLogger
 import com.likeminds.likemindschat.helper.model.LMSeverity
+import org.json.JSONObject
 
 class SendDMRequestDialogFragment :
     BaseDialogFragment<DialogFragmentSendDmRequestBinding>() {
@@ -15,13 +17,16 @@ class SendDMRequestDialogFragment :
     companion object {
         private const val TAG = "SendDMRequestDialogFragment"
         private var inputText: String = ""
+        private var replyPrivatelyMetadata: Pair<JSONObject, ConversationViewData>? = null
 
         @JvmStatic
         fun showDialog(
             supportFragmentManager: FragmentManager,
-            inputText: String
+            inputText: String,
+            replyPrivatelyMetadata: Pair<JSONObject, ConversationViewData>? = null
         ) {
             this.inputText = inputText
+            this.replyPrivatelyMetadata = replyPrivatelyMetadata
             SendDMRequestDialogFragment().show(supportFragmentManager, TAG)
         }
     }
@@ -56,7 +61,7 @@ class SendDMRequestDialogFragment :
             }
 
             tvConfirm.setOnClickListener {
-                sendDMRequestDialogListener.sendDMRequest(inputText)
+                sendDMRequestDialogListener.sendDMRequest(inputText, replyPrivatelyMetadata)
                 this@SendDMRequestDialogFragment.dismiss()
             }
         }
@@ -64,5 +69,5 @@ class SendDMRequestDialogFragment :
 }
 
 interface SendDMRequestDialogListener {
-    fun sendDMRequest(requestText: String)
+    fun sendDMRequest(requestText: String, replyPrivatelyMetadata: Pair<JSONObject, ConversationViewData>?)
 }
