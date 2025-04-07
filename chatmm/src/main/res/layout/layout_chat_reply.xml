@@ -22,6 +22,10 @@
         <variable
             name="chatReplyData"
             type="com.likeminds.chatmm.chatroom.detail.model.ChatReplyViewData" />
+
+        <variable
+            name="buttonColor"
+            type="int" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -64,7 +68,7 @@
                     android:layout_marginTop="4dp"
                     android:letterSpacing="-0.02"
                     android:text="@{chatReplyData.isEditMessage ? `Edit message` : chatReplyData.memberName}"
-                    android:textColor="#11c5b2"
+                    android:textColor="@{buttonColor}"
                     android:textSize="13sp"
                     android:ellipsize="end"
                     android:maxLines="1"
@@ -97,7 +101,7 @@
                     android:layout_marginHorizontal="4dp"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textColor="#11c5b2"
+                    android:textColor="@{buttonColor}"
                     android:textSize="13sp"
                     app:layout_constrainedWidth="true"
                     android:visibility="gone"

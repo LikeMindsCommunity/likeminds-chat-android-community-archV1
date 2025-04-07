@@ -1499,9 +1499,7 @@ class ChatroomDetailViewModel @Inject constructor(
 
         if (replyPrivatelyConversation != null) {
             postConversationRequestBuilder.replyPrivatelySourceConversation(
-                ViewDataConverter.convertConversation(
-                    replyPrivatelyConversation
-                )
+                ViewDataConverter.convertConversation(replyPrivatelyConversation)
             )
         }
 

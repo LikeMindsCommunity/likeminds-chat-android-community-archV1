@@ -48,4 +48,13 @@ class LMMetaViewData private constructor(
             .sourceConversation(sourceConversation)
             .type(type)
     }
+
+    override fun toString(): String {
+        return "LMMetaViewData(" +
+                "sourceChatroomId=$sourceChatroomId, " +
+                "sourceChatroomName=$sourceChatroomName, " +
+                "sourceConversation=$sourceConversation, " +
+                "type=$type" +
+                ")"
+    }
 }

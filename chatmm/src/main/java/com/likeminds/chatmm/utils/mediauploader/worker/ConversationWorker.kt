@@ -111,6 +111,14 @@ abstract class ConversationWorker(
                         postConversationRequestBuilder.metadata(JSONObject(widget.metadata.toString()))
                     }
 
+                    if (widget?.lmMeta != null) {
+                        widget.lmMeta.sourceConversation?.let {
+                            postConversationRequestBuilder.replyPrivatelySourceConversation(
+                                ViewDataConverter.convertConversation(it)
+                            )
+                        }
+                    }
+
                     if (isOtherUserAI) {
                         postConversationRequestBuilder.triggerBot(true)
                     }

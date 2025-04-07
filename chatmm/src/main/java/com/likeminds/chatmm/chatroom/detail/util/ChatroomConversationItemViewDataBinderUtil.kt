@@ -21,8 +21,6 @@ import androidx.core.view.isVisible
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.android.material.button.MaterialButton
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.likeminds.chatmm.*
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomViewData
 import com.likeminds.chatmm.chatroom.detail.model.TYPE_DIRECT_MESSAGE
@@ -843,6 +841,7 @@ object ChatroomConversationItemViewDataBinderUtil {
         conversation: ConversationViewData,
     ) {
         binding.apply {
+            buttonColor = LMChatAppearance.getButtonsColor()
             var replyChatRoom: ChatroomViewData? = null
             if (replyChatRoomId != null) {
                 val chatRoom = listener.getChatRoom()

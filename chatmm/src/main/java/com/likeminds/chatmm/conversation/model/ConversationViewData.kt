@@ -81,6 +81,13 @@ class ConversationViewData private constructor(
                 val audioCount: Int = ChatroomUtil.getMediaCount(AUDIO, attachments)
                 val voiceNoteCount: Int = ChatroomUtil.getMediaCount(VOICE_NOTE, attachments)
 
+                // if lmMeta is present i.e. view will be handled by LikeMinds.
+                val isCustomWidget = if (widgetViewData != null) {
+                    widgetViewData.lmMeta == null
+                } else {
+                    false
+                }
+
 
                 when {
                     (imageCount == 1 && gifCount == 0 && pdfCount == 0 && videoCount == 0 && audioCount == 0 && voiceNoteCount == 0) -> {
@@ -115,7 +122,7 @@ class ConversationViewData private constructor(
                         ITEM_CONVERSATION_MULTIPLE_MEDIA
                     }
 
-                    (widgetViewData != null) -> {
+                    isCustomWidget -> {
                         ITEM_CONVERSATION_CUSTOM_WIDGET
                     }
 

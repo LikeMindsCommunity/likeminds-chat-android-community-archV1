@@ -70,4 +70,16 @@ class WidgetViewData private constructor(
             .createdAt(createdAt)
             .updatedAt(updatedAt)
     }
+
+    override fun toString(): String {
+        return "WidgetViewData(" +
+                "id='$id', " +
+                "parentEntityId='$parentEntityId', " +
+                "parentEntityType='$parentEntityType', " +
+                "metadata=$metadata, " +
+                "lmMeta=$lmMeta, " +
+                "createdAt=$createdAt, " +
+                "updatedAt=$updatedAt" +
+                ")"
+    }
 }
