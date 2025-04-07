@@ -19,6 +19,7 @@ class SDKPreferences @Inject constructor(
         private const val VOICE_NOTE_ENABLED = "voice_note_enabled"
         private const val SLIDE_UP_VOICE_NOTE_TOAST = "SLIDE_UP_VOICE_NOTE_TOAST"
         private const val WIDGET_ENABLED = "widget_enabled"
+        private const val REPLY_PRIVATELY_ALLOWED_SCOPE = "reply_private_allowed_scope"
     }
 
     fun setAPIKey(apiKey: String) {
@@ -75,6 +76,14 @@ class SDKPreferences @Inject constructor(
 
     fun getIsWidgetEnabled(): Boolean {
         return getPreference(WIDGET_ENABLED, false)
+    }
+
+    fun setReplyPrivatelyAllowedScope(replyPrivatelyAllowedScope: String) {
+        putPreference(REPLY_PRIVATELY_ALLOWED_SCOPE, replyPrivatelyAllowedScope)
+    }
+
+    fun getReplyPrivatelyAllowedScope(): String {
+        return getPreference(REPLY_PRIVATELY_ALLOWED_SCOPE, "") ?: ""
     }
 
     fun setDefaultConfigPrefs() {

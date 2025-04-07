@@ -1,6 +1,7 @@
 package com.likeminds.chatmm.theme.model
 
 import android.graphics.Color
+import androidx.core.graphics.toColorInt
 
 // responsible for all the theme-related things like colors and fonts
 object LMChatAppearance {
@@ -23,17 +24,17 @@ object LMChatAppearance {
 
     // returns button color
     fun getButtonsColor(): Int {
-        return Color.parseColor(buttonsColor)
+        return buttonsColor.toColorInt()
     }
 
     // returns header color
     fun getHeaderColor(): Int {
-        return Color.parseColor(headerColor)
+        return headerColor.toColorInt()
     }
 
     // returns text link color
     fun getTextLinkColor(): Int {
-        return Color.parseColor(textLinkColor)
+        return textLinkColor.toColorInt()
     }
 
     // returns toolbar color

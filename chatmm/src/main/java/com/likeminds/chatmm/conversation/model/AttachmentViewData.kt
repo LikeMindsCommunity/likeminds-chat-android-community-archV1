@@ -16,6 +16,7 @@ class AttachmentViewData private constructor(
     val name: String?,
     @SerializedName("url")
     val url: String?,
+    @Transient
     val uri: Uri,
     @SerializedName("type")
     val type: String,

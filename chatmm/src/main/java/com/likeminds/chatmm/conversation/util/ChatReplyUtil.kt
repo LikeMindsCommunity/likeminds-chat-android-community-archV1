@@ -31,7 +31,8 @@ object ChatReplyUtil {
     fun getConversationReplyData(
         conversation: ConversationViewData,
         currentMemberId: String,
-        type: String? = null
+        type: String? = null,
+        replyPrivatelyChatroomName: String? = null
     ): ChatReplyViewData {
         return getReplyData(
             conversation.answer,
@@ -40,7 +41,8 @@ object ChatReplyUtil {
             conversation.attachments,
             conversation.ogTags,
             conversationStateViewData = conversation.state,
-            type = type
+            type = type,
+            replyPrivatelyChatroomName = replyPrivatelyChatroomName
         )
     }
 
@@ -51,7 +53,8 @@ object ChatReplyUtil {
         attachments: MutableList<AttachmentViewData>? = null,
         linkOgTags: LinkOGTagsViewData? = null,
         conversationStateViewData: Int? = null,
-        type: String?
+        type: String?,
+        replyPrivatelyChatroomName: String? = null
     ): ChatReplyViewData {
         val memberName = MemberUtil.getMemberNameForDisplay(memberViewData, currentMemberId)
         val memberState = MemberState.getMemberState(memberViewData.state)
@@ -123,6 +126,7 @@ object ChatReplyUtil {
             .repliedMemberId(uuid)
             .repliedMemberState(memberState)
             .type(type)
+            .replyPrivatelyChatroomName(replyPrivatelyChatroomName)
             .build()
     }
 

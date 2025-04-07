@@ -23,7 +23,8 @@ class ChatroomDetailExtras private constructor(
     val searchKey: String?,
     val sourceLinkOrRoute: String?,
     val cohortId: String?,
-    val notificationId: Int?
+    val notificationId: Int?,
+    val replyPrivatelyExtras: LMChatReplyPrivatelyExtras?
 ) : Parcelable {
     class Builder {
         private var chatroomId: String = ""
@@ -45,27 +46,49 @@ class ChatroomDetailExtras private constructor(
         private var sourceLinkOrRoute: String? = null
         private var cohortId: String? = null
         private var notificationId: Int? = null
+        private var replyPrivatelyExtras: LMChatReplyPrivatelyExtras? = null
 
-        fun chatroomId(chatroomId: String) = apply { this.chatroomId = chatroomId }
+        fun chatroomId(chatroomId: String) = apply {
+            this.chatroomId = chatroomId
+        }
+
         fun fromNotification(fromNotification: Boolean) =
-            apply { this.fromNotification = fromNotification }
+            apply {
+                this.fromNotification = fromNotification
+            }
 
-        fun communityId(communityId: String?) = apply { this.communityId = communityId }
-        fun communityName(communityName: String?) = apply { this.communityName = communityName }
+        fun communityId(communityId: String?) = apply {
+            this.communityId = communityId
+        }
 
-        fun source(source: String?) = apply { this.source = source }
-        fun reportedConversationId(reportedConversationId: String?) =
-            apply { this.reportedConversationId = reportedConversationId }
+        fun communityName(communityName: String?) = apply {
+            this.communityName = communityName
+        }
 
-        fun conversationId(conversationId: String?) = apply { this.conversationId = conversationId }
+        fun source(source: String?) = apply {
+            this.source = source
+        }
+
+        fun reportedConversationId(reportedConversationId: String?) = apply {
+            this.reportedConversationId = reportedConversationId
+        }
+
+        fun conversationId(conversationId: String?) = apply {
+            this.conversationId = conversationId
+        }
+
         fun openedFromLink(openedFromLink: Boolean?) =
-            apply { this.openedFromLink = openedFromLink }
+            apply {
+                this.openedFromLink = openedFromLink
+            }
 
-        fun isFromSearchMessage(isFromSearchMessage: Boolean?) =
-            apply { this.isFromSearchMessage = isFromSearchMessage }
+        fun isFromSearchMessage(isFromSearchMessage: Boolean?) = apply {
+            this.isFromSearchMessage = isFromSearchMessage
+        }
 
-        fun isFromSearchChatroom(isFromSearchChatroom: Boolean?) =
-            apply { this.isFromSearchChatroom = isFromSearchChatroom }
+        fun isFromSearchChatroom(isFromSearchChatroom: Boolean?) = apply {
+            this.isFromSearchChatroom = isFromSearchChatroom
+        }
 
         fun scrollToExtremeTopForHighlightingTitle(scrollToExtremeTopForHighlightingTitle: Boolean?) =
             apply {
@@ -73,22 +96,41 @@ class ChatroomDetailExtras private constructor(
             }
 
         fun sourceChatroomId(sourceChatroomId: String?) =
-            apply { this.sourceChatroomId = sourceChatroomId }
+            apply {
+                this.sourceChatroomId = sourceChatroomId
+            }
 
-        fun sourceCommunityId(sourceCommunityId: String?) =
-            apply { this.sourceCommunityId = sourceCommunityId }
+        fun sourceCommunityId(sourceCommunityId: String?) = apply {
+            this.sourceCommunityId = sourceCommunityId
+        }
 
-        fun loadFromTop(loadFromTop: Boolean?) = apply { this.loadFromTop = loadFromTop }
-        fun loadingAfterSync(loadingAfterSync: Boolean) =
-            apply { this.loadingAfterSync = loadingAfterSync }
+        fun loadFromTop(loadFromTop: Boolean?) = apply {
+            this.loadFromTop = loadFromTop
+        }
 
-        fun searchKey(searchKey: String?) = apply { this.searchKey = searchKey }
+        fun loadingAfterSync(loadingAfterSync: Boolean) = apply {
+            this.loadingAfterSync = loadingAfterSync
+        }
 
-        fun sourceLinkOrRoute(sourceLinkOrRoute: String?) =
-            apply { this.sourceLinkOrRoute = sourceLinkOrRoute }
+        fun searchKey(searchKey: String?) = apply {
+            this.searchKey = searchKey
+        }
 
-        fun cohortId(cohortId: String?) = apply { this.cohortId = cohortId }
-        fun notificationId(notificationId: Int?) = apply { this.notificationId = notificationId }
+        fun sourceLinkOrRoute(sourceLinkOrRoute: String?) = apply {
+            this.sourceLinkOrRoute = sourceLinkOrRoute
+        }
+
+        fun cohortId(cohortId: String?) = apply {
+            this.cohortId = cohortId
+        }
+
+        fun notificationId(notificationId: Int?) = apply {
+            this.notificationId = notificationId
+        }
+        
+        fun replyPrivatelyExtras(replyPrivatelyExtras: LMChatReplyPrivatelyExtras?) = apply { 
+            this.replyPrivatelyExtras = replyPrivatelyExtras
+        }
 
         fun build() = ChatroomDetailExtras(
             chatroomId,
@@ -109,7 +151,8 @@ class ChatroomDetailExtras private constructor(
             searchKey,
             sourceLinkOrRoute,
             cohortId,
-            notificationId
+            notificationId,
+            replyPrivatelyExtras
         )
     }
 
@@ -133,5 +176,6 @@ class ChatroomDetailExtras private constructor(
             .sourceLinkOrRoute(sourceLinkOrRoute)
             .cohortId(cohortId)
             .notificationId(notificationId)
+            .replyPrivatelyExtras(replyPrivatelyExtras)
     }
 }
