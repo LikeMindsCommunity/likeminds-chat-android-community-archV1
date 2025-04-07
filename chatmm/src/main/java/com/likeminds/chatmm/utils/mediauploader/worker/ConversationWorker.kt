@@ -2,7 +2,6 @@ package com.likeminds.chatmm.utils.mediauploader.worker
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.work.*
 import com.google.gson.Gson
 import com.likeminds.chatmm.SDKApplication
@@ -110,6 +109,14 @@ abstract class ConversationWorker(
 
                     if (widget?.metadata != null) {
                         postConversationRequestBuilder.metadata(JSONObject(widget.metadata.toString()))
+                    }
+
+                    if (widget?.lmMeta != null) {
+                        widget.lmMeta.sourceConversation?.let {
+                            postConversationRequestBuilder.replyPrivatelySourceConversation(
+                                ViewDataConverter.convertConversation(it)
+                            )
+                        }
                     }
 
                     if (isOtherUserAI) {

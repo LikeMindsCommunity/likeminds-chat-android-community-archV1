@@ -52,6 +52,8 @@ import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
 import com.likeminds.chatmm.utils.model.*
 import com.likeminds.likemindschat.helper.LMChatLogger
 import com.likeminds.likemindschat.helper.model.LMSeverity
+import com.likeminds.likemindschat.widget.model.LMMetaType
+import org.json.JSONObject
 import java.util.UUID
 
 object ChatroomConversationItemViewDataBinderUtil {
@@ -839,6 +841,7 @@ object ChatroomConversationItemViewDataBinderUtil {
         conversation: ConversationViewData,
     ) {
         binding.apply {
+            buttonColor = LMChatAppearance.getButtonsColor()
             var replyChatRoom: ChatroomViewData? = null
             if (replyChatRoomId != null) {
                 val chatRoom = listener.getChatRoom()
@@ -847,12 +850,19 @@ object ChatroomConversationItemViewDataBinderUtil {
                 }
             }
 
-            if (replyChatRoom == null && replyConversation == null) {
-                root.isVisible = false
-            } else {
+            val lmMeta = conversation.widgetViewData?.lmMeta
+
+            val isReplyPrivatelyConversation =
+                (lmMeta != null && lmMeta.type == LMMetaType.REPLY_PRIVATELY.name)
+
+            var replyPrivatelySourceConversationId = ""
+            var replyPrivatelySourceChatroomId = ""
+
+            if (replyChatRoom != null || replyConversation != null || isReplyPrivatelyConversation) {
                 root.isVisible = true
                 val replyData = when {
                     replyConversation != null -> {
+                        grpReplyPrivatelyViews.hide()
                         ChatReplyUtil.getConversationReplyData(
                             replyConversation,
                             currentMemberId
@@ -860,9 +870,26 @@ object ChatroomConversationItemViewDataBinderUtil {
                     }
 
                     replyChatRoom != null -> {
+                        grpReplyPrivatelyViews.hide()
                         ChatReplyUtil.getChatRoomReplyData(
                             replyChatRoom,
                             currentMemberId
+                        )
+                    }
+
+                    isReplyPrivatelyConversation -> {
+                        grpReplyPrivatelyViews.show()
+
+                        val replyPrivatelyConversation = lmMeta?.sourceConversation ?: return
+
+                        tvReplyPrivatelyChatroomName.text = lmMeta.sourceChatroomName
+                        replyPrivatelySourceConversationId = replyPrivatelyConversation.id
+                        replyPrivatelySourceChatroomId = lmMeta.sourceChatroomId ?: ""
+
+                        ChatReplyUtil.getConversationReplyData(
+                            replyPrivatelyConversation,
+                            currentMemberId,
+                            replyPrivatelyChatroomName = lmMeta.sourceChatroomName
                         )
                     }
 
@@ -910,7 +937,12 @@ object ChatroomConversationItemViewDataBinderUtil {
                                 LMAnalytics.Source.MESSAGE_REACTIONS_FROM_LONG_PRESS
                             )
                         } else {
-                            if (replyConversation != null) {
+                            if (isReplyPrivatelyConversation) {
+                                listener.onReplyPrivatelyConversationClicked(
+                                    replyPrivatelySourceChatroomId,
+                                    replyPrivatelySourceConversationId
+                                )
+                            } else if (replyConversation != null) {
                                 listener.scrollToRepliedAnswer(conversation, replyConversation.id)
                             } else if (replyChatRoom != null) {
                                 listener.scrollToRepliedChatroom(replyChatRoom.id)
@@ -918,6 +950,8 @@ object ChatroomConversationItemViewDataBinderUtil {
                         }
                     }
                 }
+            } else {
+                root.isVisible = false
             }
         }
     }
