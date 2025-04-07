@@ -14,7 +14,6 @@ import android.text.Editable
 import android.text.Spannable
 import android.text.style.ImageSpan
 import android.util.*
-import android.util.Base64
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.TextView
@@ -131,10 +130,11 @@ import com.vanniktech.emoji.EmojiPopup
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -6162,7 +6162,10 @@ class ChatroomDetailFragment :
     }
 
     // sends dm request when the user clicks on confirm
-    override fun sendDMRequest(requestText: String, replyPrivatelyMetadata: kotlin.Pair<JSONObject, ConversationViewData>?) {
+    override fun sendDMRequest(
+        requestText: String,
+        replyPrivatelyMetadata: kotlin.Pair<JSONObject, ConversationViewData>?
+    ) {
         viewModel.sendDMRequest(
             chatroomId,
             ChatRequestState.INITIATED,
