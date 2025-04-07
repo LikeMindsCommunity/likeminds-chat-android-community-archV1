@@ -58,6 +58,7 @@
     <string name="lm_chat_long_press_to_react">Press and hold to react.</string>
     <string name="lm_chat_tap_and_hold_to_record">Tap and Hold to record a voice message.</string>
     <string name="lm_chat_reply">Reply</string>
+    <string name="lm_chat_reply_privately">Reply Privately</string>
     <string name="lm_chat_voice_note">Voice Note</string>
     <string name="lm_chat_type_your_response">Type your response</string>
     <string name="lm_chat_the_community_managers_have_restricted_you_from_responding_here">The community managers have restricted you from responding here.</string>

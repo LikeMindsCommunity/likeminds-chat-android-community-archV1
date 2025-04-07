@@ -249,4 +249,5 @@ interface ChatroomDetailAdapterListener {
 
     fun blockMember(index: Int, state: MemberBlockState) {}
     fun onMemberTagClicked(memberTag: Uri) {}
+    fun onReplyPrivatelyConversationClicked(sourceChatroomId: String, sourceConversationId: String) {}
 }
