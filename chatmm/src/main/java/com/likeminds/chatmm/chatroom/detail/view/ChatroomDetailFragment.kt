@@ -130,7 +130,6 @@ import com.vanniktech.emoji.EmojiPopup
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
-import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
@@ -536,6 +535,7 @@ class ChatroomDetailFragment :
      */
     @RequiresApi(Build.VERSION_CODES.N)
     private fun fetchInitialData() {
+        Log.d("PUI", "initialData: ")
         viewModel.getInitialData(chatroomDetailExtras)
     }
 
@@ -1122,10 +1122,12 @@ class ChatroomDetailFragment :
             when (state) {
                 WorkInfo.State.SUCCEEDED -> {
                     Log.i(TAG, "blocker syncChatroom state - SUCCEEDED")
+                    Log.d("PUI", "syncChatroom: 1")
                     //If shimmer is showing that means chatroom is not present. So after syncing fetch again.
                     if (isShimmerShowing()) {
                         /* Adding a flag to extras that we are trying to fetch the data again after syncing. Still if
                         chatroom is not found, that means chatroom id is invalid or user don't have access to it */
+                        Log.d("PUI", "syncChatroom: 2 ${chatroomDetailExtras.conversationId}")
                         chatroomDetailExtras = chatroomDetailExtras.toBuilder()
                             .loadingAfterSync(true)
                             .build()
@@ -4422,6 +4424,19 @@ class ChatroomDetailFragment :
             R.id.menu_item_set_topic -> {
                 setChatroomTopic()
             }
+
+            R.id.menu_item_share -> {
+                if (selectedConversations.isNotEmpty()) {
+                    val conversation = selectedConversations.values.firstOrNull()
+                    if (conversation != null) {
+                        ShareUtils.shareConversation(
+                            requireContext(),
+                            conversation,
+                            LMChatUserMetaData.getInstance().domain ?: ShareUtils.DOMAIN
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -4437,6 +4452,7 @@ class ChatroomDetailFragment :
             item?.findItem(R.id.menu_item_delete)?.isVisible = it.showDeleteAction
             item?.findItem(R.id.menu_item_report)?.isVisible = it.showReportAction
             item?.findItem(R.id.menu_item_set_topic)?.isVisible = it.showSetAsTopic
+            item?.findItem(R.id.menu_item_share)?.isVisible = it.showShareAction
         }
     }
 
@@ -5470,6 +5486,7 @@ class ChatroomDetailFragment :
             var showDeleteAction = false
             var showReportAction = false
             var showSetAsTopic = false
+            var showShareMenu = false
 
             if (isChatRoomSelected && selectedConversations.isEmpty()) {
                 if (!isNotAdminInAnnouncementRoom()) {
@@ -5478,6 +5495,9 @@ class ChatroomDetailFragment :
                 showReportAction = false
                 showCopyAction = selectedChatRoom?.hasTitle() == true
                 showDeleteAction = false
+                showReplyPrivatelyAction = false
+                // TODO: check this case
+                showShareMenu = false
 
                 showEditAction = if (viewModel.isAnnouncementChatroom()) {
                     !isNotAdminInAnnouncementRoom() && viewModel.hasEditCommunityDetailRight()
@@ -5497,6 +5517,7 @@ class ChatroomDetailFragment :
                             && (conversation.id != getChatroomViewData()?.topic?.id)
 
                 showCopyAction = conversation.hasAnswer() && conversation.isNotDeleted()
+                showShareMenu = !viewModel.isDmChatroom()
 
                 when {
                     conversation.memberViewData.sdkClientInfo.uuid == userPreferences.getUUID() -> {
@@ -5522,6 +5543,8 @@ class ChatroomDetailFragment :
                 showReplyAction = false
                 showReportAction = false
                 showSetAsTopic = false
+                showReplyPrivatelyAction = false
+                showShareMenu = false
 
                 if (selectedConversations.values.any { it.hasAnswer() && it.isNotDeleted() }) {
                     showCopyAction = true
@@ -5540,6 +5563,9 @@ class ChatroomDetailFragment :
             } else if (isChatRoomSelected && selectedConversations.size > 0) {
                 showReplyAction = false
                 showReportAction = false
+                showReplyPrivatelyAction = false
+                // TODO: check this
+                showShareMenu = false
 
                 if (selectedChatRoom?.hasTitle() == true
                     || selectedConversations.values.any { it.hasAnswer() && it.isNotDeleted() }
@@ -5560,6 +5586,7 @@ class ChatroomDetailFragment :
                     .showDeleteAction(showDeleteAction)
                     .showReportAction(showReportAction)
                     .showSetAsTopic(showSetAsTopic)
+                    .showShareAction(showShareMenu)
                     .build()
             )
         }
