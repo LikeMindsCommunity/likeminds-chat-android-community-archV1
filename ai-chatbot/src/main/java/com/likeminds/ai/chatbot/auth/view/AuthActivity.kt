@@ -3,7 +3,6 @@ package com.likeminds.ai.chatbot.auth.view
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog
 import com.github.dhaval2404.colorpicker.model.ColorShape
@@ -72,7 +71,6 @@ class AuthActivity : AppCompatActivity() {
 
     // parses deep link to start corresponding activity
     private fun parseDeepLink() {
-        Log.d("PUI", "parseDeepLink: ")
         //get intent for route
         val intent = Route.handleDeepLink(
             this,

@@ -3,7 +3,6 @@ package com.likeminds.chatmm.utils
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import com.facebook.common.util.UriUtil.HTTPS_SCHEME
 import com.facebook.common.util.UriUtil.HTTP_SCHEME
 import com.likeminds.chatmm.LMAnalytics
@@ -62,13 +61,10 @@ object Route {
     }
 
     fun handleDeepLink(context: Context, url: String?): Intent? {
-        Log.d("PUI", "parseDeepLink: 1")
         val data = Uri.parse(url).normalizeScheme() ?: return null
-        Log.d("PUI", "parseDeepLink: 2")
         if (data.pathSegments.isNullOrEmpty()) {
             return null
         }
-        Log.d("PUI", "parseDeepLink: 3")
         val firstPath = getRouteFromDeepLink(data) ?: return null
         return getRouteIntent(
             context,
@@ -81,7 +77,6 @@ object Route {
     private fun getRouteFromDeepLink(data: Uri?): String? {
         data?.host ?: return null
         val firstPathSegment = data.pathSegments.firstOrNull()
-        Log.d("PUI", "getRouteFromDeepLink: $firstPathSegment")
         when {
             (firstPathSegment == DEEP_LINK_CHATROOM) -> {
                 return createChatroomRoute(data)
@@ -110,12 +105,9 @@ object Route {
 
     // https://<domain>/chatroom/chatroom_id=<chatroom_id>
     private fun createChatroomDetailRoute(data: Uri): String? {
-        Log.d("PUI", "createChatroomDetailRoute: 1")
         val chatroomId = data.getQueryParameter(PARAM_CHATROOM_ID) ?: return null
-        Log.d("PUI", "createChatroomDetailRoute: 2")
         val conversationId = data.getNullableQueryParameter(PARAM_CONVERSATION_ID)
 
-        Log.d("PUI", "createChatroomDetailRoute: $conversationId")
         val uriBuilder = Uri.Builder()
             .scheme(ROUTE_SCHEME)
             .authority(ROUTE_CHATROOM_DETAIL)

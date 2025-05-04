@@ -517,8 +517,6 @@ class ChatroomDetailViewModel @Inject constructor(
             val getChatroomResponse = lmChatClient.getChatroom(request)
             val chatroom = getChatroomResponse.data?.chatroom
 
-            Log.d("PUI", "getInitialData: ")
-
             val dataList = mutableListOf<BaseViewType>()
             //1st case -> chatroom is not present, if yes return
             if (chatroom == null) {
@@ -568,7 +566,6 @@ class ChatroomDetailViewModel @Inject constructor(
             val initialData = when {
                 //3rd case -> open a conversation directly through search/deep links
                 medianConversationId != null -> {
-                    Log.d("PUI", "getInitialData: ${chatroom.isConversationStored}")
                     if (!chatroom.isConversationStored) {
                         dataList.add(getConversationListShimmerView())
                         InitialViewData.Builder()
@@ -577,20 +574,27 @@ class ChatroomDetailViewModel @Inject constructor(
                             .build()
                     } else {
                         Log.d(TAG, "case 3")
-                        dataList.addAll(
-                            fetchIntermediateConversations(
-                                chatroomViewData,
-                                medianConversationId = medianConversationId
-                            )
+                        val intermediateConversations = fetchIntermediateConversations(
+                            chatroomViewData,
+                            medianConversationId = medianConversationId
                         )
-                        dataList.addAll(getActionViewList())
-                        val scrollIndex =
-                            getFirstTimeScrollIndex(chatroom.lastSeenConversation, dataList)
-                        InitialViewData.Builder()
-                            .chatroom(chatroomViewData)
-                            .data(dataList)
-                            .scrollPosition(scrollIndex)
-                            .build()
+                        if (intermediateConversations.isEmpty()) {
+                            dataList.add(getConversationListShimmerView())
+                            InitialViewData.Builder()
+                                .chatroom(chatroomViewData)
+                                .data(dataList)
+                                .build()
+                        } else {
+                            dataList.addAll(intermediateConversations)
+                            dataList.addAll(getActionViewList())
+                            val scrollIndex =
+                                getFirstTimeScrollIndex(chatroom.lastSeenConversation, dataList)
+                            InitialViewData.Builder()
+                                .chatroom(chatroomViewData)
+                                .data(dataList)
+                                .scrollPosition(scrollIndex)
+                                .build()
+                        }
                     }
                 }
                 //4th case -> chatroom is present and conversation is not present
