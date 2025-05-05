@@ -566,25 +566,31 @@ class ChatroomDetailViewModel @Inject constructor(
             val initialData = when {
                 //3rd case -> open a conversation directly through search/deep links
                 medianConversationId != null -> {
+                    Log.d(TAG, "case 3")
                     if (!chatroom.isConversationStored) {
+                        // When the conversations for the chatroom are yet not available in local db then we show the shimmer to the user while syncing conversations
+                        Log.d(TAG, "case 3a")
                         dataList.add(getConversationListShimmerView())
                         InitialViewData.Builder()
                             .chatroom(chatroomViewData)
                             .data(dataList)
                             .build()
                     } else {
-                        Log.d(TAG, "case 3")
                         val intermediateConversations = fetchIntermediateConversations(
                             chatroomViewData,
                             medianConversationId = medianConversationId
                         )
                         if (intermediateConversations.isEmpty()) {
+                            // When the median conversation is not available in DB then we still show the shimmer and wait for the conversation in the new conversations callback
+                            Log.d(TAG, "case 3b")
                             dataList.add(getConversationListShimmerView())
                             InitialViewData.Builder()
                                 .chatroom(chatroomViewData)
                                 .data(dataList)
                                 .build()
                         } else {
+                            // When the media conversation is available and corresponding intermediate conversations are also available
+                            Log.d(TAG, "case 3c")
                             dataList.addAll(intermediateConversations)
                             dataList.addAll(getActionViewList())
                             val scrollIndex =
@@ -739,17 +745,10 @@ class ChatroomDetailViewModel @Inject constructor(
             .conversationId(medianConversationId ?: medianConversation?.id ?: "")
             .build()
         val getConversationResponse = lmChatClient.getConversation(getConversationRequest)
-        Log.d(
-            "PUI",
-            "fetchIntermediateConversations: ${getConversationResponse.data?.conversation?.id}"
-        )
         val median = medianConversation
             ?: getConversationResponse.data?.conversation
             ?: return emptyList()
-        Log.d("PUI", "fetchIntermediateConversations median: ${median.id}")
-
         val medianViewData = ViewDataConverter.convertConversation(median) ?: return emptyList()
-        Log.d("PUI", "fetchIntermediateConversations medianViewData: ${medianViewData.id}")
 
         val dataList = mutableListOf<BaseViewType>()
 
@@ -761,11 +760,6 @@ class ChatroomDetailViewModel @Inject constructor(
             .build()
         val getAboveConversationsResponse =
             lmChatClient.getConversations(getAboveConversationsRequest)
-        Log.d(
-            "PUI",
-            "getAboveConversationsResponse ${getAboveConversationsResponse.data?.conversations?.size}"
-        )
-
         val aboveConversations = getAboveConversationsResponse.data?.conversations ?: emptyList()
         val aboveConversationsViewData = ViewDataConverter.convertConversations(aboveConversations)
 
@@ -777,25 +771,15 @@ class ChatroomDetailViewModel @Inject constructor(
             .build()
         val getBelowConversationsResponse =
             lmChatClient.getConversations(getBelowConversationsRequest)
-
-        Log.d(
-            "PUI",
-            "getBelowConversationsResponse ${getBelowConversationsResponse.data?.conversations?.size}"
-        )
-
         val belowConversations = getBelowConversationsResponse.data?.conversations ?: emptyList()
         val belowConversationsViewData = ViewDataConverter.convertConversations(belowConversations)
 
         var conversations =
             (aboveConversationsViewData + medianViewData + belowConversationsViewData)
 
-        Log.d("PUI", "conversations ${conversations.size}")
-
-
         if (aboveConversationsViewData.size < CONVERSATIONS_LIMIT
             || aboveConversationsViewData.firstOrNull()?.state == ConversationState.FIRST_CONVERSATION.value
         ) {
-            Log.d("PUI", "if")
             dataList.add(chatroomViewData)
             val headerConversation = getHeaderConversation(conversations)
             if (headerConversation != null) {
@@ -803,7 +787,6 @@ class ChatroomDetailViewModel @Inject constructor(
                 conversations = conversations.drop(1)
             }
         } else {
-            Log.d("PUI", "else")
             val aboveTopConversationsCount =
                 getConversationsAboveCount(aboveConversationsViewData.firstOrNull())
             if (aboveTopConversationsCount == 0) {
@@ -822,7 +805,6 @@ class ChatroomDetailViewModel @Inject constructor(
                 null
             )
         )
-        Log.d("PUI", "${dataList.size}")
         return dataList
     }
 
@@ -872,6 +854,7 @@ class ChatroomDetailViewModel @Inject constructor(
     /**
      * Observe current chatroom conversations
      * @param chatroomId
+     * @param navigationConversationId
      */
     private fun observeConversations(chatroomId: String, navigationConversationId: String? = null) {
         viewModelScope.launchMain {
@@ -885,13 +868,13 @@ class ChatroomDetailViewModel @Inject constructor(
                 }
 
                 override fun getNewConversations(conversations: List<Conversation>?) {
-                    Log.d("PUI", "getNewConversations: ${conversations?.size}")
                     if (!conversations.isNullOrEmpty()) {
+                        // This is the case when the user opened the chatroom through deep link etc and the conversation was not there in db and the median conversation is still not loaded
                         if (navigationConversationId != null && !hasLoadedMedianConversation) {
                             conversations.forEach {
+                                // Here we look for the median conversation, as soon as we find that conversation, we set [hasLoadedMedianConversation] to true and send it to UI along with the intermediate conversations
                                 if (it.id == navigationConversationId) {
                                     hasLoadedMedianConversation = true
-                                    Log.d("PUI", "found!!: $navigationConversationId")
                                     val dataList = mutableListOf<BaseViewType>()
                                     dataList.addAll(
                                         fetchIntermediateConversations(

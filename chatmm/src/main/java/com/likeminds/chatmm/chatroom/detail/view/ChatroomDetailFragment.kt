@@ -535,7 +535,6 @@ class ChatroomDetailFragment :
      */
     @RequiresApi(Build.VERSION_CODES.N)
     private fun fetchInitialData() {
-        Log.d("PUI", "initialData: ")
         viewModel.getInitialData(chatroomDetailExtras)
     }
 
@@ -1122,12 +1121,10 @@ class ChatroomDetailFragment :
             when (state) {
                 WorkInfo.State.SUCCEEDED -> {
                     Log.i(TAG, "blocker syncChatroom state - SUCCEEDED")
-                    Log.d("PUI", "syncChatroom: 1")
                     //If shimmer is showing that means chatroom is not present. So after syncing fetch again.
                     if (isShimmerShowing()) {
                         /* Adding a flag to extras that we are trying to fetch the data again after syncing. Still if
                         chatroom is not found, that means chatroom id is invalid or user don't have access to it */
-                        Log.d("PUI", "syncChatroom: 2 ${chatroomDetailExtras.conversationId}")
                         chatroomDetailExtras = chatroomDetailExtras.toBuilder()
                             .loadingAfterSync(true)
                             .build()
@@ -5496,7 +5493,6 @@ class ChatroomDetailFragment :
                 showCopyAction = selectedChatRoom?.hasTitle() == true
                 showDeleteAction = false
                 showReplyPrivatelyAction = false
-                // TODO: check this case
                 showShareMenu = false
 
                 showEditAction = if (viewModel.isAnnouncementChatroom()) {
@@ -5564,7 +5560,6 @@ class ChatroomDetailFragment :
                 showReplyAction = false
                 showReportAction = false
                 showReplyPrivatelyAction = false
-                // TODO: check this
                 showShareMenu = false
 
                 if (selectedChatRoom?.hasTitle() == true
