@@ -2270,26 +2270,6 @@ class ChatroomDetailFragment :
                                             replyConversationId,
                                             replyChatRoomId
                                         )
-
-                                        //send analytics
-                                        val chatReplyData = binding.inputBox.viewReply.chatReplyData
-
-                                        if (chatReplyData != null) {
-                                            viewModel.sendMessageReplyEvent(
-                                                conversation,
-                                                chatReplyData.repliedMemberId,
-                                                chatReplyData.repliedMemberState,
-                                                conversation.replyConversation?.id,
-                                                chatReplyData.type
-                                            )
-                                        }
-                                        viewModel.sendChatroomResponded(
-                                            memberTagging.getTaggedMembers().map { it.name },
-                                            conversation
-                                        )
-                                        if (ChatroomUtil.getConversationType(conversation) == VOICE_NOTE) {
-                                            viewModel.sendVoiceNoteSent(conversation.id)
-                                        }
                                     }
 
                                     //clear old values
@@ -2304,15 +2284,11 @@ class ChatroomDetailFragment :
                             val errorResponseString =
                                 workInfo.outputData.getString(OUTPUT_POST_CONVERSATION_RESPONSE)
 
-                            errorResponseString?.let {
-                                // convert to LMResponse
-                                val errorResponse =
-                                    viewModel.parseCreateConversationResponse(it)
-
+                            errorResponseString?.let { errorMessage ->
                                 //show error toast
                                 ViewUtils.showErrorMessageToast(
                                     requireContext(),
-                                    errorResponse.errorMessage
+                                    errorMessage
                                 )
                             }
 
