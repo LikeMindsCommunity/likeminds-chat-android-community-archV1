@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.conversation.model.ConversationViewData
+import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
 
 object ShareUtils {
     const val DOMAIN = "https://www.chatsampleapp.com"
@@ -37,8 +38,10 @@ object ShareUtils {
     ) {
         val shareLink =
             "${domain}/chatroom_detail?chatroom_id=${conversation.chatroomId}&conversation_id=${conversation.id}"
-        val shareTitle = conversation.answer.ifEmpty {
+        val shareTitle = if (conversation.answer.isEmpty()) {
             "Message"
+        } else {
+            MemberTaggingDecoder.decode(conversation.answer)
         }
 
         shareLink(context, shareLink, shareTitle)
