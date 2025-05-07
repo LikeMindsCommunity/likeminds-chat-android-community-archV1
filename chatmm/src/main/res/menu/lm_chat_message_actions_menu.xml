@@ -42,6 +42,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_item_share"
+        android:background="?selectableItemBackgroundBorderless"
+        android:title="@string/lm_chat_share_button"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_item_report"
         android:title="@string/lm_chat_report_message"
         app:showAsAction="never" />

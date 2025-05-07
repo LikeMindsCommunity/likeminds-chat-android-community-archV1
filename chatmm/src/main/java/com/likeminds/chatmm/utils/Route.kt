@@ -32,6 +32,7 @@ object Route {
     private const val DEEP_LINK_COMMUNITY_FEED = "community_feed"
 
     const val PARAM_CHATROOM_ID = "chatroom_id"
+    const val PARAM_CONVERSATION_ID = "conversation_id"
     const val PARAM_COMMUNITY_ID = "community_id"
     const val PARAM_COMMUNITY_NAME = "community_name"
     private const val PARAM_COHORT_ID = "cohort_id"
@@ -105,10 +106,18 @@ object Route {
     // https://<domain>/chatroom/chatroom_id=<chatroom_id>
     private fun createChatroomDetailRoute(data: Uri): String? {
         val chatroomId = data.getQueryParameter(PARAM_CHATROOM_ID) ?: return null
-        return Uri.Builder()
+        val conversationId = data.getNullableQueryParameter(PARAM_CONVERSATION_ID)
+
+        val uriBuilder = Uri.Builder()
             .scheme(ROUTE_SCHEME)
             .authority(ROUTE_CHATROOM_DETAIL)
             .appendQueryParameter(PARAM_CHATROOM_ID, chatroomId)
+
+        if (!conversationId.isNullOrEmpty()) {
+            uriBuilder.appendQueryParameter(PARAM_CONVERSATION_ID, conversationId)
+        }
+
+        return uriBuilder
             .build()
             .toString()
     }
