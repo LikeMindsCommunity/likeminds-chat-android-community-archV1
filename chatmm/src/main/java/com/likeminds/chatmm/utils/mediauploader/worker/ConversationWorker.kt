@@ -129,7 +129,7 @@ abstract class ConversationWorker(
                         lmChatClient.postConversation(postConversationRequest)
                     if (postConversationResponse.success) {
                         // Serialize response to JSON
-                        val outputJson = gson.toJson(postConversationResponse.data)
+                        val outputJson = gson.toJson(postConversationResponse)
 
                         // Pass the created conversation as output
                         val outputData = workDataOf(OUTPUT_POST_CONVERSATION_RESPONSE to outputJson)
