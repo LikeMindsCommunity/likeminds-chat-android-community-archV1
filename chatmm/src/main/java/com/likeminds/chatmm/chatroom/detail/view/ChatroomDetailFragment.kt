@@ -5489,7 +5489,7 @@ class ChatroomDetailFragment :
                             && (conversation.id != getChatroomViewData()?.topic?.id)
 
                 showCopyAction = conversation.hasAnswer() && conversation.isNotDeleted()
-                showShareMenu = !viewModel.isDmChatroom()
+                showShareMenu = !viewModel.isDmChatroom() && conversation.isNotDeleted()
 
                 when {
                     conversation.memberViewData.sdkClientInfo.uuid == userPreferences.getUUID() -> {
