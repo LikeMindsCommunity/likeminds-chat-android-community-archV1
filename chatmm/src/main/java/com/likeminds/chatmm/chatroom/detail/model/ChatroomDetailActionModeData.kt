@@ -7,7 +7,8 @@ class ChatroomDetailActionModeData private constructor(
     val showEditAction: Boolean,
     val showDeleteAction: Boolean,
     val showReportAction: Boolean,
-    val showSetAsTopic: Boolean
+    val showSetAsTopic: Boolean,
+    val showShareAction: Boolean
 ) {
     class Builder {
         private var showReplyPrivatelyAction: Boolean = false
@@ -17,6 +18,7 @@ class ChatroomDetailActionModeData private constructor(
         private var showDeleteAction: Boolean = false
         private var showReportAction: Boolean = false
         private var showSetAsTopic: Boolean = false
+        private var showShareAction: Boolean = false
 
         fun showReplyPrivatelyAction(showReplyPrivatelyAction: Boolean) = apply {
             this.showReplyPrivatelyAction = showReplyPrivatelyAction
@@ -46,6 +48,10 @@ class ChatroomDetailActionModeData private constructor(
             this.showSetAsTopic = showSetAsTopic
         }
 
+        fun showShareAction(showShareAction: Boolean) = apply {
+            this.showShareAction = showShareAction
+        }
+
         fun build() = ChatroomDetailActionModeData(
             showReplyPrivatelyAction,
             showReplyAction,
@@ -53,7 +59,8 @@ class ChatroomDetailActionModeData private constructor(
             showEditAction,
             showDeleteAction,
             showReportAction,
-            showSetAsTopic
+            showSetAsTopic,
+            showShareAction
         )
     }
 
@@ -65,5 +72,6 @@ class ChatroomDetailActionModeData private constructor(
             .showDeleteAction(showDeleteAction)
             .showReportAction(showReportAction)
             .showSetAsTopic(showSetAsTopic)
+            .showShareAction(showShareAction)
     }
 }

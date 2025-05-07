@@ -16,7 +16,7 @@ interface LMChatCoreCallback {
         //implement to get widget data in conversation id
     }
 
-    fun getAnalyticsEvents(eventName: String, eventProperties: Map<String, String?> = mapOf()){
+    fun getAnalyticsEvents(eventName: String, eventProperties: Map<String, String?> = mapOf()) {
         //implement to get analytics events
     }
 
