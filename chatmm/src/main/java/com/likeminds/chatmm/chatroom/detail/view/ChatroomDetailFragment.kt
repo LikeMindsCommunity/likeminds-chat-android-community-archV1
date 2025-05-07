@@ -129,7 +129,6 @@ import com.vanniktech.emoji.EmojiPopup
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
-import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
@@ -2270,26 +2269,6 @@ class ChatroomDetailFragment :
                                             replyConversationId,
                                             replyChatRoomId
                                         )
-
-                                        //send analytics
-                                        val chatReplyData = binding.inputBox.viewReply.chatReplyData
-
-                                        if (chatReplyData != null) {
-                                            viewModel.sendMessageReplyEvent(
-                                                conversation,
-                                                chatReplyData.repliedMemberId,
-                                                chatReplyData.repliedMemberState,
-                                                conversation.replyConversation?.id,
-                                                chatReplyData.type
-                                            )
-                                        }
-                                        viewModel.sendChatroomResponded(
-                                            memberTagging.getTaggedMembers().map { it.name },
-                                            conversation
-                                        )
-                                        if (ChatroomUtil.getConversationType(conversation) == VOICE_NOTE) {
-                                            viewModel.sendVoiceNoteSent(conversation.id)
-                                        }
                                     }
 
                                     //clear old values
@@ -2304,15 +2283,11 @@ class ChatroomDetailFragment :
                             val errorResponseString =
                                 workInfo.outputData.getString(OUTPUT_POST_CONVERSATION_RESPONSE)
 
-                            errorResponseString?.let {
-                                // convert to LMResponse
-                                val errorResponse =
-                                    viewModel.parseCreateConversationResponse(it)
-
+                            errorResponseString?.let { errorMessage ->
                                 //show error toast
                                 ViewUtils.showErrorMessageToast(
                                     requireContext(),
-                                    errorResponse.errorMessage
+                                    errorMessage
                                 )
                             }
 
@@ -4421,6 +4396,19 @@ class ChatroomDetailFragment :
             R.id.menu_item_set_topic -> {
                 setChatroomTopic()
             }
+
+            R.id.menu_item_share -> {
+                if (selectedConversations.isNotEmpty()) {
+                    val conversation = selectedConversations.values.firstOrNull()
+                    if (conversation != null) {
+                        ShareUtils.shareConversation(
+                            requireContext(),
+                            conversation,
+                            LMChatUserMetaData.getInstance().domain ?: ShareUtils.DOMAIN
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -4436,6 +4424,7 @@ class ChatroomDetailFragment :
             item?.findItem(R.id.menu_item_delete)?.isVisible = it.showDeleteAction
             item?.findItem(R.id.menu_item_report)?.isVisible = it.showReportAction
             item?.findItem(R.id.menu_item_set_topic)?.isVisible = it.showSetAsTopic
+            item?.findItem(R.id.menu_item_share)?.isVisible = it.showShareAction
         }
     }
 
@@ -5469,6 +5458,7 @@ class ChatroomDetailFragment :
             var showDeleteAction = false
             var showReportAction = false
             var showSetAsTopic = false
+            var showShareMenu = false
 
             if (isChatRoomSelected && selectedConversations.isEmpty()) {
                 if (!isNotAdminInAnnouncementRoom()) {
@@ -5477,6 +5467,8 @@ class ChatroomDetailFragment :
                 showReportAction = false
                 showCopyAction = selectedChatRoom?.hasTitle() == true
                 showDeleteAction = false
+                showReplyPrivatelyAction = false
+                showShareMenu = false
 
                 showEditAction = if (viewModel.isAnnouncementChatroom()) {
                     !isNotAdminInAnnouncementRoom() && viewModel.hasEditCommunityDetailRight()
@@ -5496,6 +5488,7 @@ class ChatroomDetailFragment :
                             && (conversation.id != getChatroomViewData()?.topic?.id)
 
                 showCopyAction = conversation.hasAnswer() && conversation.isNotDeleted()
+                showShareMenu = !viewModel.isDmChatroom() && conversation.isNotDeleted()
 
                 when {
                     conversation.memberViewData.sdkClientInfo.uuid == userPreferences.getUUID() -> {
@@ -5521,6 +5514,8 @@ class ChatroomDetailFragment :
                 showReplyAction = false
                 showReportAction = false
                 showSetAsTopic = false
+                showReplyPrivatelyAction = false
+                showShareMenu = false
 
                 if (selectedConversations.values.any { it.hasAnswer() && it.isNotDeleted() }) {
                     showCopyAction = true
@@ -5539,6 +5534,8 @@ class ChatroomDetailFragment :
             } else if (isChatRoomSelected && selectedConversations.size > 0) {
                 showReplyAction = false
                 showReportAction = false
+                showReplyPrivatelyAction = false
+                showShareMenu = false
 
                 if (selectedChatRoom?.hasTitle() == true
                     || selectedConversations.values.any { it.hasAnswer() && it.isNotDeleted() }
@@ -5559,6 +5556,7 @@ class ChatroomDetailFragment :
                     .showDeleteAction(showDeleteAction)
                     .showReportAction(showReportAction)
                     .showSetAsTopic(showSetAsTopic)
+                    .showShareAction(showShareMenu)
                     .build()
             )
         }

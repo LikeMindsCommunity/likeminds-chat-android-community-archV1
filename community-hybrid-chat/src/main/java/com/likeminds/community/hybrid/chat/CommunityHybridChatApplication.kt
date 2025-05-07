@@ -6,6 +6,7 @@ import android.provider.Settings
 import com.likeminds.chatmm.*
 import com.likeminds.chatmm.theme.model.LMChatAppearanceRequest
 import com.likeminds.chatmm.theme.model.LMFonts
+import com.likeminds.chatmm.utils.ShareUtils
 import com.likeminds.community.hybrid.chat.auth.util.AuthPreferences
 import com.likeminds.likemindschat.conversation.model.ConversationState
 
@@ -41,7 +42,7 @@ class CommunityHybridChatApplication : Application(), LMChatCoreCallback {
             theme = LMChatTheme.COMMUNITY_HYBRID_CHAT,
             lmChatCoreCallback = this,
             lmChatAppearanceRequest = lmChatAppearanceRequest,
-            domain = deviceId(),
+            domain = ShareUtils.DOMAIN,
             enablePushNotifications = true,
             deviceId = deviceId(),
             shareLogsWithLM = true,
