@@ -2,6 +2,7 @@ package com.likeminds.community.hybrid.chat
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Intent
 import android.provider.Settings
 import com.likeminds.chatmm.*
 import com.likeminds.chatmm.theme.model.LMChatAppearanceRequest
@@ -37,6 +38,10 @@ class CommunityHybridChatApplication : Application(), LMChatCoreCallback {
             )
             .build()
 
+        val launcherIntent = Intent(this, CommunityHybridChatActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
         LMChatCore.setup(
             application = this,
             theme = LMChatTheme.COMMUNITY_HYBRID_CHAT,
@@ -50,7 +55,8 @@ class CommunityHybridChatApplication : Application(), LMChatCoreCallback {
                 ConversationState.MEMBER_LEFT_OPEN_CHATROOM,
                 ConversationState.MEMBER_JOINED_OPEN_CHATROOM,
                 ConversationState.MEMBER_ADDED_TO_CHATROOM
-            )
+            ),
+            launcherIntent
         )
     }
 

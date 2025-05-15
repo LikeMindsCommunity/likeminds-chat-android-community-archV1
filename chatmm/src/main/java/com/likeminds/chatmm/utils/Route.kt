@@ -175,6 +175,7 @@ object Route {
     ): Intent? {
         val route = Uri.parse(routeString)
         var intent: Intent? = null
+        var finalFlags = flags
         when (route.host) {
             ROUTE_CHATROOM, ROUTE_POLL_CHATROOM -> {
                 intent = getRouteToChatroom(
@@ -191,6 +192,10 @@ object Route {
             }
 
             ROUTE_CHATROOM_DETAIL -> {
+                if (finalFlags == 0) {
+                    finalFlags =
+                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
                 intent = getRouteToChatroomDetail(
                     context,
                     route,
@@ -208,7 +213,7 @@ object Route {
             }
         }
         if (intent != null) {
-            intent.flags = flags
+            intent.flags = finalFlags
         }
         return intent
     }

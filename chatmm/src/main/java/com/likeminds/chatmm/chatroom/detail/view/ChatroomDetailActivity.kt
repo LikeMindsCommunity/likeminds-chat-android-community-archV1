@@ -1,11 +1,15 @@
 package com.likeminds.chatmm.chatroom.detail.view
 
 import android.app.NotificationManager
-import android.content.*
+import android.content.ClipData
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.likeminds.chatmm.*
+import com.likeminds.chatmm.LMAnalytics
+import com.likeminds.chatmm.R
+import com.likeminds.chatmm.SDKApplication
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.databinding.ActivityChatroomDetailBinding
 import com.likeminds.chatmm.utils.ErrorUtil.emptyExtrasException
@@ -155,19 +159,30 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
         }
     }
 
-    private fun redirectActivity(isError: Boolean) {
+    fun redirectActivity(isError: Boolean) {
         if (isError) {
             ViewUtils.showShortToast(
                 this,
                 getString(R.string.lm_chat_the_chatroom_link_is_either_tampered_or_invalid)
             )
         }
-        supportFragmentManager.popBackStack()
-        super.onBackPressed()
-        overridePendingTransition(
-            R.anim.lm_chat_slide_from_left,
-            R.anim.lm_chat_slide_to_right
-        )
+
+        if (isTaskRoot && SDKApplication.launcherIntent != null) {
+            supportFragmentManager.popBackStack()
+            startActivity(SDKApplication.launcherIntent)
+            overridePendingTransition(
+                R.anim.lm_chat_slide_from_left,
+                R.anim.lm_chat_slide_to_right
+            )
+            finish()
+        } else {
+            supportFragmentManager.popBackStack()
+            super.onBackPressed()
+            overridePendingTransition(
+                R.anim.lm_chat_slide_from_left,
+                R.anim.lm_chat_slide_to_right
+            )
+        }
     }
 
     // triggers an event when chatroom search is closed
