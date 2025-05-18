@@ -11,7 +11,6 @@ import com.likeminds.ai.chatbot.AIChatbotApplication
 import com.likeminds.ai.chatbot.auth.model.LoginExtras
 import com.likeminds.ai.chatbot.auth.util.AuthPreferences
 import com.likeminds.chatmm.LMChatCore
-import com.likeminds.chatmm.R
 import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
 import com.likeminds.chatmm.utils.ExtrasUtil
 import com.likeminds.community.ai.chatbot.databinding.ActivityAfterLoginBinding
@@ -28,9 +27,6 @@ class AfterLoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Call before the DecorView is accessed in setContentView
-        theme.applyStyle(R.style.OptOutEdgeToEdgeEnforcement, /* force */ false)
 
         val binding = ActivityAfterLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
