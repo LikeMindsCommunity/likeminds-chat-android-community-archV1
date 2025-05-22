@@ -1,5 +1,6 @@
 package com.likeminds.chatmm.chatroom.detail.util
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -8,8 +9,9 @@ import android.text.*
 import android.text.style.ImageSpan
 import android.util.DisplayMetrics
 import android.view.WindowInsets
-import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomViewData
 import com.likeminds.chatmm.chatroom.detail.model.TYPE_ANNOUNCEMENT
@@ -391,15 +393,26 @@ object ChatroomUtil {
         return answer.replace(videoText, "").replace(gifText, "").replace(audioText, "")
     }
 
+    @SuppressLint("InlinedApi")
+    @Suppress("Deprecation")
     fun setStatusBarColor(activity: Activity, context: Context, isFullScreen: Boolean) {
         val window = activity.window
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        if (isFullScreen) {
-            window.statusBarColor = ContextCompat.getColor(context, R.color.lm_chat_black)
+        val statusBarColor = if (isFullScreen) {
+            ContextCompat.getColor(context, R.color.lm_chat_black)
         } else {
-            window.statusBarColor =
-                ContextCompat.getColor(context, R.color.lm_chat_colorPrimaryDark)
+            ContextCompat.getColor(context, R.color.lm_chat_colorPrimaryDark)
+        }
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+            windowInsetsController.isAppearanceLightStatusBars = true
+            window.statusBarColor = statusBarColor
+        } else {
+            val insetsController = WindowInsetsControllerCompat(window, window.decorView)
+            insetsController.isAppearanceLightStatusBars = true
+
+            window.decorView.setBackgroundColor(statusBarColor)
+            window.insetsController?.hide(WindowInsets.Type.statusBars())
+            window.insetsController?.show(WindowInsets.Type.statusBars())
         }
     }
 }
