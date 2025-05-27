@@ -12,10 +12,10 @@ import android.util.SparseArray
 import android.view.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.likeminds.chatmm.R
-import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.connectivity.ConnectivityBroadcastReceiver
 import com.likeminds.chatmm.utils.connectivity.ConnectivityReceiverListener
 import com.likeminds.chatmm.utils.permissions.*
@@ -74,7 +74,7 @@ open class BaseAppCompatActivity : ConnectivityReceiverListener, AppCompatActivi
 
     override fun onStart() {
         super.onStart()
-        setStatusBarColor(LMChatAppearance.getHeaderColor())
+        setStatusBarColor()
     }
 
     override fun onPause() {
@@ -82,8 +82,8 @@ open class BaseAppCompatActivity : ConnectivityReceiverListener, AppCompatActivi
     }
 
     @SuppressLint("InlinedApi")
-    @Suppress("Deprecation")
-    private fun setStatusBarColor(statusBarColor: Int) {
+    private fun setStatusBarColor() {
+        val statusBarColor = ContextCompat.getColor(this, R.color.lm_chat_white)
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
             windowInsetsController.isAppearanceLightStatusBars = true
