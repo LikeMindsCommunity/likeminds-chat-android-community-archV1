@@ -6,18 +6,16 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.likeminds.chatmm.LMChatCore
-import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
-import com.likeminds.chatmm.utils.ExtrasUtil
 import com.likeminds.ai.chatbot.AIChatbotActivity
 import com.likeminds.ai.chatbot.AIChatbotApplication
 import com.likeminds.ai.chatbot.auth.model.LoginExtras
 import com.likeminds.ai.chatbot.auth.util.AuthPreferences
+import com.likeminds.chatmm.LMChatCore
+import com.likeminds.chatmm.SDKApplication.Companion.LOG_TAG
+import com.likeminds.chatmm.utils.ExtrasUtil
 import com.likeminds.community.ai.chatbot.databinding.ActivityAfterLoginBinding
 import com.likeminds.likemindschat.user.model.LogoutRequest
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class AfterLoginActivity : AppCompatActivity() {
 
@@ -29,6 +27,7 @@ class AfterLoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val binding = ActivityAfterLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
