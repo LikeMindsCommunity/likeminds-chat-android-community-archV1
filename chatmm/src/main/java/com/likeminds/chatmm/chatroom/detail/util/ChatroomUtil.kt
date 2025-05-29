@@ -19,6 +19,7 @@ import com.likeminds.chatmm.chatroom.detail.view.YouTubeVideoPlayerPopup
 import com.likeminds.chatmm.conversation.model.AttachmentViewData
 import com.likeminds.chatmm.conversation.model.ConversationViewData
 import com.likeminds.chatmm.media.model.*
+import com.likeminds.chatmm.theme.model.LMChatAppearance
 import com.likeminds.chatmm.utils.ValueUtils.containsUrl
 import com.likeminds.chatmm.utils.ViewUtils
 import com.likeminds.chatmm.utils.membertagging.MemberTaggingDecoder
@@ -395,13 +396,9 @@ object ChatroomUtil {
 
     @SuppressLint("InlinedApi")
     @Suppress("Deprecation")
-    fun setStatusBarColor(activity: Activity, context: Context, isFullScreen: Boolean) {
+    fun setStatusBarColor(activity: Activity) {
         val window = activity.window
-        val statusBarColor = if (isFullScreen) {
-            ContextCompat.getColor(context, R.color.lm_chat_black)
-        } else {
-            ContextCompat.getColor(context, R.color.lm_chat_colorPrimaryDark)
-        }
+        val statusBarColor = LMChatAppearance.getHeaderColor()
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
             windowInsetsController.isAppearanceLightStatusBars = true

@@ -6155,7 +6155,7 @@ class ChatroomDetailFragment :
             inAppVideoPlayerPopup,
             isFullScreen
         )
-        ChatroomUtil.setStatusBarColor(requireActivity(), requireContext(), isFullScreen)
+        ChatroomUtil.setStatusBarColor(requireActivity())
     }
 
     // sends dm request when the user clicks on confirm
