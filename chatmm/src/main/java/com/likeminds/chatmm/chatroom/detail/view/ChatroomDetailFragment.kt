@@ -580,7 +580,11 @@ class ChatroomDetailFragment :
             (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
             ivBack.setOnClickListener {
-                requireActivity().finish()
+                if (requireActivity() is ChatroomDetailActivity) {
+                    (requireActivity() as ChatroomDetailActivity).redirectActivity(false)
+                } else {
+                    requireActivity().finish()
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ package com.likeminds.chatmm
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import com.likeminds.chatmm.member.model.UserResponse
 import com.likeminds.chatmm.member.util.UserResponseConvertor
@@ -27,6 +28,7 @@ object LMChatCore {
      * @param deviceId: device id
      * @param shareLogsWithLM: share logs with LM
      * @param excludeConversationStates: list of [ConversationState] to be excluded in chatroom
+     * @param launcherIntent: intent to be used if the user pressed back from the Chatroom Detail when opened via deeplink
      **/
     fun setup(
         application: Application,
@@ -37,7 +39,8 @@ object LMChatCore {
         enablePushNotifications: Boolean = false,
         deviceId: String? = null,
         shareLogsWithLM: Boolean = true,
-        excludeConversationStates: List<ConversationState> = emptyList()
+        excludeConversationStates: List<ConversationState> = emptyList(),
+        launcherIntent: Intent? = null
     ) {
         Log.d(SDKApplication.LOG_TAG, "LMChatCore setup called")
 
@@ -54,7 +57,8 @@ object LMChatCore {
             enablePushNotifications,
             deviceId,
             shareLogsWithLM,
-            excludeConversationStates
+            excludeConversationStates,
+            launcherIntent
         )
     }
 
