@@ -396,9 +396,14 @@ object ChatroomUtil {
 
     @SuppressLint("InlinedApi")
     @Suppress("Deprecation")
-    fun setStatusBarColor(activity: Activity) {
+    fun setStatusBarColor(activity: Activity, isFullScreen: Boolean) {
         val window = activity.window
-        val statusBarColor = LMChatAppearance.getHeaderColor()
+        val statusBarColor = if (isFullScreen) {
+            ContextCompat.getColor(activity, R.color.lm_chat_black)
+        } else {
+            LMChatAppearance.getHeaderColor()
+        }
+
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
             windowInsetsController.isAppearanceLightStatusBars = true
