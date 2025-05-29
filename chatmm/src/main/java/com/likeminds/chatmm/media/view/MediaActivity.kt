@@ -3,6 +3,8 @@ package com.likeminds.chatmm.media.view
 import android.content.*
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
 import com.likeminds.chatmm.R
 import com.likeminds.chatmm.SDKApplication
@@ -55,9 +57,26 @@ class MediaActivity : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Call before the DecorView is accessed in setContentView
-        theme.applyStyle(R.style.OptOutEdgeToEdgeEnforcement, /* force */ false)
         setContentView(R.layout.activity_media)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.nav_host)) { view, windowInsets ->
+            val innerPadding = windowInsets.getInsets(
+                // Notice we're using systemBars, not statusBar
+                WindowInsetsCompat.Type.systemBars()
+                        // Notice we're also accounting for the display cutouts
+                        or WindowInsetsCompat.Type.displayCutout()
+                        // If using EditText, also add
+                        or WindowInsetsCompat.Type.ime()
+            )
+            // Apply the insets as padding to the view. Here, set all the dimensions
+            // as appropriate to your layout. You can also update the view's margin if
+            // more appropriate.
+            view.setPadding(0, innerPadding.top, 0, innerPadding.bottom)
+
+            // Return CONSUMED if you don't want the window insets to keep passing down
+            // to descendant views.
+            WindowInsetsCompat.CONSUMED
+        }
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host) as? NavHostFragment ?: return
