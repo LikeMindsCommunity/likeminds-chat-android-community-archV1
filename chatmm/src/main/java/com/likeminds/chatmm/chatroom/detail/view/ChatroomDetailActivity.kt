@@ -1,11 +1,17 @@
 package com.likeminds.chatmm.chatroom.detail.view
 
 import android.app.NotificationManager
-import android.content.*
+import android.content.ClipData
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.likeminds.chatmm.*
+import com.likeminds.chatmm.LMAnalytics
+import com.likeminds.chatmm.R
+import com.likeminds.chatmm.SDKApplication
 import com.likeminds.chatmm.chatroom.detail.model.ChatroomDetailExtras
 import com.likeminds.chatmm.databinding.ActivityChatroomDetailBinding
 import com.likeminds.chatmm.utils.ErrorUtil.emptyExtrasException
@@ -64,6 +70,26 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityChatroomDetailBinding.inflate(layoutInflater)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.navHostFragment) { view, windowInsets ->
+            val innerPadding = windowInsets.getInsets(
+                // Notice we're using systemBars, not statusBar
+                WindowInsetsCompat.Type.systemBars()
+                        // Notice we're also accounting for the display cutouts
+                        or WindowInsetsCompat.Type.displayCutout()
+                        // If using EditText, also add
+                        or WindowInsetsCompat.Type.ime()
+            )
+            // Apply the insets as padding to the view. Here, set all the dimensions
+            // as appropriate to your layout. You can also update the view's margin if
+            // more appropriate.
+            view.setPadding(0, innerPadding.top, 0, innerPadding.bottom)
+
+            // Return CONSUMED if you don't want the window insets to keep passing down
+            // to descendant views.
+            WindowInsetsCompat.CONSUMED
+        }
+
         setContentView(binding.root)
 
         val bundle = intent.getBundleExtra("bundle")
@@ -155,19 +181,30 @@ class ChatroomDetailActivity : BaseAppCompatActivity() {
         }
     }
 
-    private fun redirectActivity(isError: Boolean) {
+    fun redirectActivity(isError: Boolean) {
         if (isError) {
             ViewUtils.showShortToast(
                 this,
                 getString(R.string.lm_chat_the_chatroom_link_is_either_tampered_or_invalid)
             )
         }
-        supportFragmentManager.popBackStack()
-        super.onBackPressed()
-        overridePendingTransition(
-            R.anim.lm_chat_slide_from_left,
-            R.anim.lm_chat_slide_to_right
-        )
+
+        if (isTaskRoot && SDKApplication.launcherIntent != null) {
+            supportFragmentManager.popBackStack()
+            startActivity(SDKApplication.launcherIntent)
+            overridePendingTransition(
+                R.anim.lm_chat_slide_from_left,
+                R.anim.lm_chat_slide_to_right
+            )
+            finish()
+        } else {
+            supportFragmentManager.popBackStack()
+            super.onBackPressed()
+            overridePendingTransition(
+                R.anim.lm_chat_slide_from_left,
+                R.anim.lm_chat_slide_to_right
+            )
+        }
     }
 
     // triggers an event when chatroom search is closed

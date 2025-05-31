@@ -2,6 +2,7 @@ package com.likeminds.chatmm
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import com.amazonaws.mobile.client.*
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.likeminds.chatmm.di.DaggerLikeMindsChatComponent
@@ -67,6 +68,7 @@ class SDKApplication : LMChatSDKCallback {
         private var lmChatCoreCallback: LMChatCoreCallback? = null
 
         var selectedTheme = LMChatTheme.COMMUNITY_CHAT
+        var launcherIntent: Intent? = null
 
         /**
          * @return Singleton Instance of SDK Application class, which used for injecting dagger in fragments.
@@ -97,7 +99,8 @@ class SDKApplication : LMChatSDKCallback {
         enablePushNotifications: Boolean = false,
         deviceId: String? = null,
         shareLogsWithLM: Boolean,
-        excludeConversationStates: List<ConversationState> = emptyList()
+        excludeConversationStates: List<ConversationState> = emptyList(),
+        intent: Intent? = null
     ) {
         val initiateLoggerRequest = if (shareLogsWithLM) {
             LMChatInitiateLoggerRequest.Builder()
@@ -119,6 +122,7 @@ class SDKApplication : LMChatSDKCallback {
             .build()
 
         selectedTheme = theme
+        launcherIntent = intent
 
         SDKApplication.lmChatCoreCallback = lmChatCoreCallback
         setupTheme(lmChatAppearanceRequest)

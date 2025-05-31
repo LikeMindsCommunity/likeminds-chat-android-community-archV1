@@ -32,7 +32,6 @@ import androidx.work.WorkManager
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.ui.*
 import com.giphy.sdk.ui.themes.GPHTheme
-import com.giphy.sdk.ui.themes.GridType
 import com.giphy.sdk.ui.views.GiphyDialogFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.likeminds.chatmm.*
@@ -581,7 +580,11 @@ class ChatroomDetailFragment :
             (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
             ivBack.setOnClickListener {
-                requireActivity().finish()
+                if (requireActivity() is ChatroomDetailActivity) {
+                    (requireActivity() as ChatroomDetailActivity).redirectActivity(false)
+                } else {
+                    requireActivity().finish()
+                }
             }
         }
     }
@@ -731,7 +734,7 @@ class ChatroomDetailFragment :
             requireContext(),
             String(Base64.decode(InternalKeys.GIPHY_SDK, Base64.DEFAULT))
         )
-        val settings = GPHSettings(GridType.waterfall, GPHTheme.Light)
+        val settings = GPHSettings(GPHTheme.Light)
         settings.mediaTypeConfig = arrayOf(GPHContentType.recents, GPHContentType.gif)
         settings.selectedContentType = GPHContentType.gif
         val giphyDialog = GiphyDialogFragment.newInstance(settings)
@@ -5203,7 +5206,7 @@ class ChatroomDetailFragment :
         val map = conversations.map { it.id }.toMutableList()
         var i = 0
         val max = conversations.size - 1
-        for (item in chatroomDetailAdapter.items().reversed()) {
+        for (item in chatroomDetailAdapter.items().asReversed()) {
             if (i > max) {
                 break
             }
@@ -6156,7 +6159,7 @@ class ChatroomDetailFragment :
             inAppVideoPlayerPopup,
             isFullScreen
         )
-        ChatroomUtil.setStatusBarColor(requireActivity(), requireContext(), isFullScreen)
+        ChatroomUtil.setStatusBarColor(requireActivity(), isFullScreen)
     }
 
     // sends dm request when the user clicks on confirm
